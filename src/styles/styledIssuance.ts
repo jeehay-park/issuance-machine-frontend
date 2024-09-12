@@ -18,7 +18,7 @@ export const TabItem = styled.div<{ active: boolean }>`
   border: 1px solid #ddd;
   border-bottom: none;
   margin-right: 5px;
-  border-radius: 8px 8px 0 0;
+  /* border-radius: 8px 8px 0 0; */
   font-weight: bold;
   transition: background-color 0.3s ease;
   display: flex;

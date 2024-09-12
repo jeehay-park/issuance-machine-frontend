@@ -5,22 +5,21 @@ import { useAuth } from "../components/contexts/AuthContext";
 import {
   DashboardContainer,
   Round,
-  InfoContainer,
   InfoItem,
-  JobInfoContainer,
-  Table,
-  Header,
-  Row,
-  RowContainer,
-  Status,
-  Button,
   TabContainer,
   Tab,
 } from "../styles/styledDashboard";
+import DynamicTable from "../components/Table/DynamicTable";
+import { dashboardResponse } from "../mockData/mockData";
 
 const Dashboard: React.FC = () => {
   const auth = useRecoilValue(authAtom);
   const { user, setUser } = useAuth();
+  const headers = dashboardResponse.body.headerInfos.map((item) => item.name);
+  const keyName = dashboardResponse.body.headerInfos.map(
+    (item) => item.keyName
+  );
+  const data = dashboardResponse.body.items;
 
   const handleShowId = (event: React.MouseEvent) => {
     event.preventDefault();
@@ -36,91 +35,6 @@ const Dashboard: React.FC = () => {
     // Add your data fetching logic here based on the `tab` value
     console.log("Fetching data for: ", tab);
   };
-
-  const jobs = [
-    {
-      name: "wki_956_240612-07 lgcns(가온브로드밴드) g3u_rev3 udfn 20k 09/25",
-      goal: 20000,
-      completed: 17150,
-      remaining: 2848,
-      failed: 164,
-      status: "85.78% (발급중)",
-      failureRate: "0.95% (실패율)",
-    },
-    {
-      name: "wki_956_240612-07 lgcns(가온브로드밴드) g3u_rev3 udfn 20k 09/25",
-      goal: 20000,
-      completed: 17150,
-      remaining: 2848,
-      failed: 164,
-      status: "85.78% (발급중)",
-      failureRate: "0.95% (실패율)",
-    },
-    {
-      name: "wki_956_240612-07 lgcns(가온브로드밴드) g3u_rev3 udfn 20k 09/25",
-      goal: 20000,
-      completed: 17150,
-      remaining: 2848,
-      failed: 164,
-      status: "85.78% (발급중)",
-      failureRate: "0.95% (실패율)",
-    },
-    {
-      name: "wki_956_240612-07 lgcns(가온브로드밴드) g3u_rev3 udfn 20k 09/25",
-      goal: 20000,
-      completed: 17150,
-      remaining: 2848,
-      failed: 164,
-      status: "85.78% (발급중)",
-      failureRate: "0.95% (실패율)",
-    },
-    {
-      name: "wki_956_240612-07 lgcns(가온브로드밴드) g3u_rev3 udfn 20k 09/25",
-      goal: 20000,
-      completed: 17150,
-      remaining: 2848,
-      failed: 164,
-      status: "85.78% (발급중)",
-      failureRate: "0.95% (실패율)",
-    },
-    {
-      name: "wki_956_240612-07 lgcns(가온브로드밴드) g3u_rev3 udfn 20k 09/25",
-      goal: 20000,
-      completed: 17150,
-      remaining: 2848,
-      failed: 164,
-      status: "85.78% (발급중)",
-      failureRate: "0.95% (실패율)",
-    },
-    {
-      name: "wki_956_240612-07 lgcns(가온브로드밴드) g3u_rev3 udfn 20k 09/25",
-      goal: 20000,
-      completed: 17150,
-      remaining: 2848,
-      failed: 164,
-      status: "85.78% (발급중)",
-      failureRate: "0.95% (실패율)",
-    },
-    {
-      name: "wki_956_240612-07 lgcns(가온브로드밴드) g3u_rev3 udfn 20k 09/25",
-      goal: 20000,
-      completed: 17150,
-      remaining: 2848,
-      failed: 164,
-      status: "85.78% (발급중)",
-      failureRate: "0.95% (실패율)",
-    },
-    {
-      name: "wki_956_240612-07 lgcns(가온브로드밴드) g3u_rev3 udfn 20k 09/25",
-      goal: 20000,
-      completed: 17150,
-      remaining: 2848,
-      failed: 164,
-      status: "85.78% (발급중)",
-      failureRate: "0.95% (실패율)",
-    },
-    // You can add more jobs here as needed
-  ];
 
   return (
     <>
@@ -175,8 +89,8 @@ const Dashboard: React.FC = () => {
               justifyContent: "center",
               alignItems: "center",
               padding: "20px 20px",
-              // borderRadius: "20px",
               gap: "2rem",
+              // border: "1px solid purple"
             }}
           >
             <div
@@ -204,7 +118,6 @@ const Dashboard: React.FC = () => {
               >
                 123456
               </Round>
-
             </div>
 
             <div
@@ -264,7 +177,6 @@ const Dashboard: React.FC = () => {
                 textAlign: "center",
                 padding: "2rem 2rem",
                 border: "1px solid #ddd",
-                // borderRadius: "10%",
                 boxShadow:
                   "0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.1)",
               }}
@@ -292,43 +204,23 @@ const Dashboard: React.FC = () => {
           <div
             style={{
               gridArea: "table",
-              height: "100%",
-              overflowY: "auto",
+              height: "90%",
+              overflow: "hidden",
+
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
             }}
           >
-            <JobInfoContainer>
-              <Table>
-                <Header>작업명</Header>
-                <Header>목표</Header>
-                <Header>완성</Header>
-                <Header>잔여</Header>
-                <Header>실패</Header>
-                <Header>작업상태</Header>
-                <Header>실패율</Header>
-              </Table>
-
-              <Table style={{ border: "1px solid purple" }}>
-                {jobs.map((job, index) => (
-                  <React.Fragment key={index}>
-                    <Row>{job.name}</Row>
-                    <Row>{job.goal}</Row>
-                    <Row>{job.completed}</Row>
-                    <Row>{job.remaining}</Row>
-                    <Row>{job.failed}</Row>
-                    <Row>
-                      <Status
-                        status={
-                          job.status.includes("발급중") ? "발급중" : "실패"
-                        }
-                      >
-                        {job.status}
-                      </Status>
-                    </Row>
-                    <Row>{job.failureRate}</Row>
-                  </React.Fragment>
-                ))}
-              </Table>
-            </JobInfoContainer>
+            <div style={{ width: "98%" }}>
+              <DynamicTable
+                headers={headers}
+                data={data}
+                keyName={keyName}
+                checkbox={false}
+                height="300px"
+              />
+            </div>
           </div>
         </DashboardContainer>
       </div>

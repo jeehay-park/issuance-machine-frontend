@@ -5,7 +5,8 @@ type TableProps = {
   keyName: string[];
   data: Array<{ [key: string]: any }>; // Array of objects for the rows
   checkbox: Boolean;
-  handleAddTab: (item: string) => void;
+  handleAddTab?: (item: string) => void;
+  height?: string;
 };
 
 const DynamicTable: React.FC<TableProps> = ({
@@ -13,10 +14,11 @@ const DynamicTable: React.FC<TableProps> = ({
   data,
   keyName,
   checkbox,
+  height,
   handleAddTab,
 }) => {
   return (
-    <div style={{ height: "400px", overflowY: "auto" }}>
+    <div style={{ height: height || "400px", overflowY: "auto" }}>
       <table style={{ width: "100%", borderCollapse: "collapse" }}>
         <thead>
           <tr>
@@ -29,11 +31,9 @@ const DynamicTable: React.FC<TableProps> = ({
                   borderBottom: "2px solid #ddd",
                   padding: "8px",
                   textAlign: "left",
-                  fontFamily:"Noto Sans KR",
+                  fontFamily: "Noto Sans KR",
                   color: "#777",
-                  fontSize : "15px",
-                  
-                  
+                  fontSize: "15px",
                 }}
               >
                 선택
@@ -48,8 +48,8 @@ const DynamicTable: React.FC<TableProps> = ({
                   backgroundColor: "#f1f1f1",
                   borderBottom: "2px solid #ddd",
                   padding: "8px",
-                   color: "#777",
-                  fontSize : "15px"
+                  color: "#777",
+                  fontSize: "15px",
                 }}
               >
                 {header}
@@ -77,7 +77,7 @@ const DynamicTable: React.FC<TableProps> = ({
                 )}
                 {keyName?.map((keyNameItem, colIndex) => (
                   <>
-                    {keyNameItem === "name" ? (
+                    {keyNameItem === "name" && handleAddTab ? (
                       <td
                         key={colIndex}
                         style={{

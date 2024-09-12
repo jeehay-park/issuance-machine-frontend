@@ -14,8 +14,9 @@ import {
   Button,
 } from "../styles/styledIssuance";
 import DynamicTable from "../components/Table/DynamicTable";
-import { mockResponse } from "../mockData/td";
+import { workResponse } from "../mockData/mockData";
 import Search from "../components/Table/Search";
+import closeIcon from "../components/assets/closeIcon.png";
 
 const Issuance: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>("작업화면"); // Default active tab
@@ -24,46 +25,14 @@ const Issuance: React.FC = () => {
   const [filterStatus, setFilterStatus] = useState<string>("전체"); // Filter state for 발급 상태
   const [searchProgram, setSearchProgram] = useState<string>(""); // Search state for Program
 
-  const headers = mockResponse.body.headerInfos.map((item) => item.name);
-  const keyName = mockResponse.body.headerInfos.map((item) => item.keyName);
-  const data = mockResponse.body.items;
+  const headers = workResponse.body.headerInfos.map((item) => item.name);
+  const keyName = workResponse.body.headerInfos.map((item) => item.keyName);
+  const data = workResponse.body.items;
 
   const handleSearch = (searchText: string, selectedOption: string) => {
     console.log(`Searching for "${searchText}" in "${selectedOption}"`);
     // Implement your search logic here
   };
-
-  // Example table data
-  const tableData = [
-    {
-      name: "LGU+(LGU+) g5_usim usim test no lock 07/01_3",
-      workno: "wki_631",
-      programNo: "pj-120",
-      orderNo: "202040701_6",
-      program: "SIMUX_TEST_NO_LOCK_3(G5)",
-      lockStatus: false,
-      details: "3000/0/3000/3",
-      fail: "100%",
-      status: "0.00%(중지상태)",
-      register: "24/07/30",
-      due: "24/07/08",
-      machineInfo: "USIM_3",
-    },
-    {
-      name: "LGU+(LGU+) g5_usim usim test no lock 07/01_4",
-      workno: "wki_632",
-      programNo: "pj-120",
-      orderNo: "202040701_6",
-      program: "SIMUX_TEST_NO_LOCK_3(G5)",
-      lockStatus: false,
-      details: "3000/0/3000/3",
-      fail: "100%",
-      status: "0.00%(중지상태)",
-      register: "24/07/30",
-      due: "24/07/08",
-      machineInfo: "USIM_3",
-    },
-  ];
 
   // Function to add a new tab from table item
   const handleAddTab = (tabName: string) => {
@@ -162,7 +131,7 @@ const Issuance: React.FC = () => {
                   handleCloseTab(tab);
                 }}
               >
-                x
+                <img src={closeIcon} alt="close" width={"20px"} />
               </CloseIcon>
             )}
           </TabItem>

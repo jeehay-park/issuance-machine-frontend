@@ -69,7 +69,6 @@ export const Sidebar = styled.aside<{ isExpanded: boolean }>`
 
 export const MainContent = styled.main`
   grid-area: main;
-
 `;
 
 export const ToggleButton = styled.button`

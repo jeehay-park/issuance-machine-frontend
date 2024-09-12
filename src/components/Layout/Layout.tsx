@@ -11,16 +11,16 @@ import {
   DropdownItem,
 } from "../../styles/styledLayout";
 import { Link } from "react-router-dom";
-import dashboard from "./dashboard.gif";
-import code from "./code.gif";
-import issuance from "./issuance.gif";
-import program from "./program.gif";
-import sn from "./sn.gif";
-import setting from "./setting.gif";
-import machine from "./machine.gif";
-import id from "./id.gif";
-import chevronRight from "./chevronRight.gif";
-import chevronLeft from "./chevronLeft.gif";
+import dashboard from "../assets/dashboard.gif";
+import code from "../assets/code.gif";
+import issuance from "../assets/issuance.gif";
+import program from "../assets/program.gif";
+import sn from "../assets/sn.gif";
+import setting from "../assets/setting.gif";
+import machine from "../assets/machine.gif";
+import id from "../assets/id.gif";
+import chevronRight from "../assets/chevronRight.gif";
+import chevronLeft from "../assets/chevronLeft.gif";
 
 const Layout: React.FC = () => {
   const [isSidebarExpanded, setSidebarExpanded] = useState(true);
@@ -71,36 +71,36 @@ const Layout: React.FC = () => {
           item: { name: string; path: string; icon: string; alt: string },
           index
         ) => (
-          <div
-            key={index}
+          <Link
+            to={item.path}
             style={{
-              display: "flex",
-              alignItems: "center", // Centers items vertically
-              padding: "20px 15px",
+              color: "white",
+              textDecoration: "none",
+              fontSize: "15px",
+              fontWeight: "bold",
             }}
           >
-            <img
-              src={item.icon}
-              alt={item.alt}
-              width={"25px"}
-              style={{ borderRadius: "5px", marginLeft: "10px" }}
-            />
+            <div
+              key={index}
+              style={{
+                display: "flex",
+                alignItems: "center", // Centers items vertically
+                padding: "20px 15px",
+              }}
+              onClick={() => console.log("clicked!")}
+            >
+              <img
+                src={item.icon}
+                alt={item.alt}
+                width={"25px"}
+                style={{ borderRadius: "5px", marginLeft: "10px" }}
+              />
 
-            {isSidebarExpanded && (
-              <Link
-                to={item.path}
-                style={{
-                  color: "white",
-                  textDecoration: "none",
-                  fontSize: "15px",
-                  marginLeft: "20px",
-                  fontWeight: "bold",
-                }}
-              >
-                {item.name}
-              </Link>
-            )}
-          </div>
+              {isSidebarExpanded && (
+                <span style={{ marginLeft: "20px" }}>{item.name}</span>
+              )}
+            </div>
+          </Link>
         )
       )}
     </MenuBox>
@@ -135,7 +135,7 @@ const Layout: React.FC = () => {
           }}
         >
           <img
-            src={isSidebarExpanded ? chevronRight : chevronLeft}
+            src={isSidebarExpanded ? chevronLeft : chevronRight}
             alt={"chevron"}
             width={"25px"}
             style={{ borderRadius: "5px", marginLeft: "10px" }}
@@ -161,7 +161,7 @@ const Layout: React.FC = () => {
             <DropdownItem>로그 아웃</DropdownItem>
           </Dropdown>
         </Header>
-        
+
         <Outlet />
       </MainContent>
     </Container>
