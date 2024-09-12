@@ -1,0 +1,63 @@
+{
+  "challenge": {
+    "header": {
+        "trId": "020001",
+        "rtnCode": "000000",
+        "rtnMessage": "성공입니다."
+      },
+      "body": {
+        "salt": "a6e2c8be-b0cb-4865-bde7-806e865b3d99",
+        "uuid": "99bce5bea72ce7e77a2933919c128fa2f19e624531bd9a8f1a2d951689c5b324",
+        "mfaOption": 0
+      }
+  },
+  "req": {
+    "header": {
+        "trId": "020002",
+        "rtnCode": "000000",
+        "rtnMessage": "성공입니다."
+      },
+      "body": {
+        "sessionId": "23cc7788-6eb9-4094-9786-259d57f3a1a3",
+        "mfa": {
+          "challenge": null,
+          "sessionId": null,
+          "mfaOption": 0,
+          "token": null
+        },
+        "token": {
+          "accessToken": "eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NiJ9.eyJDRVJUX1JPTEUiOiJDQV9DRVJUX01HUl9QT0xJQ1ksREVWSUNFX0NFUlRfSVNTVUVfUE9MSUNZIiwiaXNzIjoiSUNUSyIsIlJFR19EQVRFIjoxNzI1MzQwNjI1LCJVU0VSX0lEIjoiYWRtaW4iLCJBQ0NFU1NfTEVWRUwiOiJBRE1JTl9DT05TT0xFIiwiU0VTU0lPTl9JRCI6IjIzY2M3Nzg4LTZlYjktNDA5NC05Nzg2LTI1OWQ1N2YzYTFhMyIsImV4cCI6MTcyNTM0NDIyNSwiU0VRIjoiNzkzMTVmNWQzODc0YWU2ZTg1ZDM3MzdlN2ExZDZhNmEzYTUwNDU0MmNiMDViNmRhYjllZjllYWMzZDE3YjY1YSIsIlVTRVJfTEVWRUwiOiJVU0VSIn0.5QSpaDVUNHEQM2PxPNkJazyjQjWadYE80Awg8Khi0goof-1_40SnWZ_Z-9lgbxRtAsSRs2sn-CGOendFti0hLQ",
+          "expired": "1725344225335",
+          "expiredCount": "3600"
+        },
+        "sessionKey": "c4ee0ad649865662705162e2ccdd67445be44c49e44d988ac806cb3a80555640",
+        "userInfo": {
+          "userId": "admin",
+          "userName": "ADMIN",
+          "userLevel": "USER",
+          "failCnt": 0,
+          "status": "ACTIVE",
+          "email": "test1@ictk.com"
+        },
+        "menuPolicies": [
+          { "id": "010000", "name": "대쉬보드", "isAccess": true },
+          { "id": "020000", "name": "사용자관리", "isAccess": true },
+          { "id": "020001", "name": "사용자 목록", "isAccess": true },
+          { "id": "020100", "name": "사용자 그룹", "isAccess": true },
+          { "id": "030000", "name": "키관리", "isAccess": true },
+          { "id": "030001", "name": "마스터키", "isAccess": true },
+          { "id": "030100", "name": "시스템키", "isAccess": true },
+          { "id": "100000", "name": "인증서", "isAccess": true },
+          { "id": "100001", "name": "인증서 관리", "isAccess": true },
+          { "id": "100002", "name": "인증서 발급", "isAccess": true },
+          { "id": "040000", "name": "접근통제", "isAccess": true },
+          { "id": "050000", "name": "감사로그", "isAccess": true },
+          { "id": "060000", "name": "엑세스키", "isAccess": false },
+          { "id": "070000", "name": "PC AGENT 관리", "isAccess": true },
+          { "id": "080000", "name": "설정", "isAccess": true }
+        ],
+        "isChangePassword": false,
+        "isNeedMasterKeyUpdate": false
+      }
+  }
+}
