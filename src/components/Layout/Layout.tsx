@@ -57,7 +57,7 @@ const Layout: React.FC = () => {
       icon: machine,
       alt: "machine",
     },
-    { name: "코드 정보", path: "/dashboard", icon: code, alt: "code" },
+    { name: "코드 정보", path: "/codeinfo", icon: code, alt: "code" },
   ];
 
   const toggleSidebar = () => {

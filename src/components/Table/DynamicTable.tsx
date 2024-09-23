@@ -1,5 +1,10 @@
 import React from "react";
 
+type SortOption = {
+  key: number; // Assuming 'key' is the index of the header
+  order: string; // Restricting order to only "ASC" or "DESC"
+};
+
 type TableProps = {
   headers: string[]; // Array of header titles
   keyName: string[];
@@ -7,6 +12,9 @@ type TableProps = {
   checkbox: Boolean;
   handleAddTab?: (item: string) => void;
   height?: string;
+  headerInfos?: Array<{ [key: string]: any }>;
+  sortOption?: SortOption; // Optional sorting information
+  handleSort?: (headerKey: number) => void;
 };
 
 const DynamicTable: React.FC<TableProps> = ({
@@ -16,6 +24,9 @@ const DynamicTable: React.FC<TableProps> = ({
   checkbox,
   height,
   handleAddTab,
+  headerInfos,
+  sortOption,
+  handleSort,
 }) => {
   return (
     <div style={{ height: height || "400px", overflowY: "auto" }}>
@@ -39,22 +50,53 @@ const DynamicTable: React.FC<TableProps> = ({
                 선택
               </th>
             ) : undefined}
-            {headers.map((header, index) => (
-              <th
-                key={index}
-                style={{
-                  position: "sticky",
-                  top: 0,
-                  backgroundColor: "#f1f1f1",
-                  borderBottom: "2px solid #ddd",
-                  padding: "8px",
-                  color: "#777",
-                  fontSize: "15px",
-                }}
-              >
-                {header}
-              </th>
-            ))}
+
+            {headerInfos?.map((header, index) =>
+              header.isDisplay || header.display ? (
+                <th
+                  key={index}
+                  style={{
+                    position: "sticky",
+                    top: 0,
+                    backgroundColor: "#f1f1f1",
+                    borderBottom: "2px solid #ddd",
+                    padding: "8px",
+
+                    fontSize: "15px",
+                  }}
+                >
+                  <div
+                    style={{ display: "flex", justifyContent: "space-between" }}
+                  >
+                    <div
+                      style={{
+                        textDecoration: header.isFilter
+                          ? "underline"
+                          : undefined,
+                      }}
+                    >
+                      {header.name}
+                    </div>
+                    <div>
+                      {header.isSort && (
+                        <span
+                          onClick={() => {
+                            if (handleSort) handleSort(header.idx);
+                          }} // Sort based on the column clicked
+                        >
+                          {header.idx === sortOption?.key &&
+                          sortOption?.order === "ASC" ? (
+                            <span style={{ color: "red" }}>&#9650;</span> // ▲ Up Arrow for ASC
+                          ) : (
+                            <span style={{ color: "blue" }}>&#9660;</span> // ▼ Down Arrow for DESC or initial state
+                          )}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </th>
+              ) : undefined
+            )}
           </tr>
         </thead>
 

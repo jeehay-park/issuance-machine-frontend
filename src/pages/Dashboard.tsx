@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useRecoilValue } from "recoil";
 import { authAtom } from "../recoil/atoms/auth";
-import { useAuth } from "../components/contexts/AuthContext";
+// import { useAuth } from "../components/contexts/AuthContext";
 import {
   DashboardContainer,
   Round,
@@ -14,7 +14,8 @@ import { dashboardResponse } from "../mockData/mockData";
 
 const Dashboard: React.FC = () => {
   const auth = useRecoilValue(authAtom);
-  const { user, setUser } = useAuth();
+  const [sortOption, setSortOption] = useState({ key: 2, order: "ASC" });
+  // const { user, setUser } = useAuth();
   const headers = dashboardResponse.body.headerInfos.map((item) => item.name);
   const keyName = dashboardResponse.body.headerInfos.map(
     (item) => item.keyName
@@ -24,7 +25,8 @@ const Dashboard: React.FC = () => {
   const handleShowId = (event: React.MouseEvent) => {
     event.preventDefault();
     if (auth) {
-      setUser(auth?.salt);
+      // setUser(auth?.salt);
+      console.log("auth...");
     }
   };
 
@@ -219,6 +221,7 @@ const Dashboard: React.FC = () => {
                 keyName={keyName}
                 checkbox={false}
                 height="300px"
+                sortOption={sortOption}
               />
             </div>
           </div>

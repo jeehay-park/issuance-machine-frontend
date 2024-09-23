@@ -24,9 +24,11 @@ const Issuance: React.FC = () => {
   const [searchJobName, setSearchJobName] = useState<string>(""); // Search state for Job Name
   const [filterStatus, setFilterStatus] = useState<string>("전체"); // Filter state for 발급 상태
   const [searchProgram, setSearchProgram] = useState<string>(""); // Search state for Program
+  const [sortOption, setSortOption] = useState({ key: 2, order: "ASC" });
 
   const headers = workResponse.body.headerInfos.map((item) => item.name);
   const keyName = workResponse.body.headerInfos.map((item) => item.keyName);
+  const headerInfos = workResponse.body.headerInfos;
   const data = workResponse.body.items;
 
   const handleSearch = (searchText: string, selectedOption: string) => {
@@ -51,6 +53,22 @@ const Issuance: React.FC = () => {
     if (activeTab === tabName) {
       setActiveTab(updatedTabs[0]);
     }
+  };
+
+  const handleSort = (headerKey: number) => {
+    let newOrder;
+
+    // Toggle sort order for the current column
+    if (sortOption?.key === headerKey) {
+      newOrder = sortOption.order === "ASC" ? "DESC" : "ASC";
+    } else {
+      newOrder = "ASC"; // Default to ASC when a new column is sorted
+    }
+
+    setSortOption({
+      key: headerKey,
+      order: newOrder,
+    });
   };
 
   // Function to render content based on the active tab
@@ -101,6 +119,9 @@ const Issuance: React.FC = () => {
             keyName={keyName}
             checkbox={true}
             handleAddTab={handleAddTab}
+            headerInfos={headerInfos}
+            sortOption={sortOption}
+            handleSort={handleSort}
           />
         </>
       );

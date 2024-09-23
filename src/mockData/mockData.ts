@@ -368,3 +368,167 @@ export const dashboardResponse = {
     ],
   },
 };
+
+
+export const codeInfoResponse = {
+  header: {
+    trId: "020012",
+    rtnCode: "000000",
+    rtnMessage: "성공입니다.",
+  },
+  body: {
+    totCnt: 5,
+    headerInfos: [
+      {
+        idx: 0,
+        keyName: "codename",
+        name: "코드명",
+        isSort: true,
+        isFilter: true,
+        isDisplay: true,
+      },
+      {
+        idx: 1,
+        keyName: "group",
+        name: "그룹",
+        isSort: true,
+        isFilter: true,
+        isDisplay: true,
+      },
+      {
+        idx: 2,
+        keyName: "description",
+        name: "설명",
+        isSort: true,
+        isFilter: true,
+        isDisplay: true,
+      },
+      {
+        idx: 3,
+        keyName: "status",
+        name: "상태",
+        isSort: false,
+        isFilter: false,
+        isDisplay: true,
+      },
+      {
+        idx: 4,
+        keyName: "enum",
+        name: "코드ENUM",
+        isSort: true,
+        isFilter: true,
+        isDisplay: true,
+      },
+      
+      
+    ],
+    items: [
+      {
+        codename: "SESSION_RESULT",
+        group: "M",
+        description: "세션결과 코드",
+        status: "활성",
+        enum: "코드 enum"
+      },
+      {
+        codename: "HANDLER_STATUS",
+        group: "H",
+        description: "핸들러 상태 코드",
+        status: "활성",
+        enum: "코드 enum"
+      },
+      {
+        codename: "BURNING_DETAIL_STATUS",
+        group: "",
+        description: "굽기 상세 상태 코드",
+        status: "활성",
+        enum: "코드 enum"
+      },
+      {
+        codename: "SESSION_STATUS",
+        group: "",
+        description: "세션 상태 코드",
+        status: "활성",
+        enum: "코드 enum"
+      },
+      // {
+      //   codename: "WORK_STATUS",
+      //   group: "W",
+      //   description: "작업 상태 코드",
+      //   status: "활성",
+      //   enum: "코드 enum"
+      // },
+      // {
+      //   codename: "SESSION_RESULT",
+      //   group: "M",
+      //   description: "세션결과 코드",
+      //   status: "활성",
+      //   enum: "코드 enum"
+      // },
+      // {
+      //   codename: "HANDLER_STATUS",
+      //   group: "H",
+      //   description: "핸들러 상태 코드",
+      //   status: "활성",
+      //   enum: "코드 enum"
+      // },
+      // {
+      //   codename: "BURNING_DETAIL_STATUS",
+      //   group: "",
+      //   description: "굽기 상세 상태 코드",
+      //   status: "활성",
+      //   enum: "코드 enum"
+      // },
+      // {
+      //   codename: "SESSION_STATUS",
+      //   group: "",
+      //   description: "세션 상태 코드",
+      //   status: "활성",
+      //   enum: "코드 enum"
+      // },
+      // {
+      //   codename: "WORK_STATUS",
+      //   group: "W",
+      //   description: "작업 상태 코드",
+      //   status: "활성",
+      //   enum: "코드 enum"
+      // },
+      // {
+      //   codename: "SESSION_RESULT",
+      //   group: "M",
+      //   description: "세션결과 코드",
+      //   status: "활성",
+      //   enum: "코드 enum"
+      // },
+      // {
+      //   codename: "HANDLER_STATUS",
+      //   group: "H",
+      //   description: "핸들러 상태 코드",
+      //   status: "활성",
+      //   enum: "코드 enum"
+      // },
+      // {
+      //   codename: "BURNING_DETAIL_STATUS",
+      //   group: "",
+      //   description: "굽기 상세 상태 코드",
+      //   status: "활성",
+      //   enum: "코드 enum"
+      // },
+      // {
+      //   codename: "SESSION_STATUS",
+      //   group: "",
+      //   description: "세션 상태 코드",
+      //   status: "활성",
+      //   enum: "코드 enum"
+      // },
+      // {
+      //   codename: "WORK_STATUS",
+      //   group: "W",
+      //   description: "작업 상태 코드",
+      //   status: "활성",
+      //   enum: "코드 enum"
+      // },
+     
+    ],
+  },
+};

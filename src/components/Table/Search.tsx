@@ -4,12 +4,15 @@ import { faCaretDown } from "@fortawesome/free-solid-svg-icons";
 
 // Define types for props if needed
 interface SearchProps {
-  options: string[];
+  label?: string;
+  options?: string[];
   onSearch: (searchText: string, selectedOption: string) => void;
 }
 
-const Search: React.FC<SearchProps> = ({ options, onSearch }) => {
-  const [selectedOption, setSelectedOption] = useState<string>(options[0]);
+const Search: React.FC<SearchProps> = ({ options, label, onSearch }) => {
+  const [selectedOption, setSelectedOption] = useState<string>(
+    options ? options[0] : label ? label : "none"
+  );
   const [searchText, setSearchText] = useState<string>("");
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
 
@@ -19,7 +22,13 @@ const Search: React.FC<SearchProps> = ({ options, onSearch }) => {
   };
 
   const handleSearch = () => {
-    onSearch(searchText, selectedOption);
+    if (options) {
+      onSearch(searchText, selectedOption);
+    }
+
+    if (label) {
+      onSearch(searchText, label);
+    }
   };
 
   return (
@@ -32,33 +41,46 @@ const Search: React.FC<SearchProps> = ({ options, onSearch }) => {
         width: "70%",
         justifyContent: "space-around",
         // margin: "10px auto"
-        padding: "2px"
+        padding: "2px",
       }}
     >
       <div style={{ position: "relative", width: "20%" }}>
-        <div
-          onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-          style={{
-            padding: "8px",
-            border: "none",
-            background: "white",
-            textAlign: "left",
-            height: "38px", // Ensures the same height as the input field
-            display: "flex", // Aligns content properly
-            alignItems: "center",
-            // marginLeft: "3px",
-            color : "#666"
-          }}
-        >
-          {selectedOption}
-          <FontAwesomeIcon
+        {options ? (
+          <div
+            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
             style={{
-              color: "var(--grey)",
-              paddingLeft: "4rem",
+              padding: "8px",
+              border: "none",
+              background: "white",
+              textAlign: "left",
+              height: "38px", // Ensures the same height as the input field
+              display: "flex", // Aligns content properly
+              alignItems: "center",
+              // marginLeft: "3px",
+              color: "#666",
             }}
-            icon={faCaretDown}
-          />
-        </div>
+          >
+            {selectedOption}
+            <FontAwesomeIcon
+              style={{
+                color: "var(--grey)",
+                paddingLeft: "4rem",
+              }}
+              icon={faCaretDown}
+            />
+          </div>
+        ) : (
+          <div
+            style={{
+              textAlign: "center",
+              color: "white",
+              // cursor: "pointer",
+            }}
+            // onClick={handleSearch}
+          >
+            {selectedOption}
+          </div>
+        )}
 
         {isDropdownOpen && (
           <div
@@ -75,7 +97,7 @@ const Search: React.FC<SearchProps> = ({ options, onSearch }) => {
               fontSize: "0.9rem",
             }}
           >
-            {options.map((option) => (
+            {options?.map((option) => (
               <div
                 key={option}
                 onClick={() => handleOptionChange(option)}
@@ -84,6 +106,8 @@ const Search: React.FC<SearchProps> = ({ options, onSearch }) => {
                 {option}
               </div>
             ))}
+
+            {label && <div>{label}</div>}
           </div>
         )}
       </div>
@@ -92,6 +116,7 @@ const Search: React.FC<SearchProps> = ({ options, onSearch }) => {
           type="text"
           value={searchText}
           onChange={(e) => setSearchText(e.target.value)}
+          onKeyDown={handleSearch}
           placeholder="Search..."
           style={{
             padding: "8px",
@@ -101,6 +126,7 @@ const Search: React.FC<SearchProps> = ({ options, onSearch }) => {
           }}
         />
       </div>
+
       <div
         style={{
           width: "15%",

@@ -7,20 +7,23 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { AuthProvider } from "./components/contexts/AuthContext";
 import Layout from "./components/Layout/Layout";
 import Issuance from "./pages/Issuance";
+import CodeInfo from "./pages/CodeInfo";
 
 function App() {
   return (
     <>
       <Router>
-        <AuthProvider>
+
           <Routes>
             <Route path="/" element={<Login />} />
             <Route element={<Layout />}>
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/issuance" element={<Issuance />} />
+              <Route path="/codeinfo" element={<CodeInfo />} />
             </Route>
+           
           </Routes>
-        </AuthProvider>
+       
       </Router>
     </>
   );
