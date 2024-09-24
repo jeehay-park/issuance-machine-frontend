@@ -28,6 +28,23 @@ export const Button = styled.button`
   }
 `;
 
-export const SubTitle = styled.div`
-  padding: 20px;
+export const Title = styled.h1`
+  font-size: 2rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 0.5rem;
 `;
+
+export const Subtitle = styled.h2`
+  font-size: 1.5rem;
+  font-weight: 300;
+  color: #555;
+  margin-bottom: 1rem;
+`;
+
+export const TitleContainer = styled.div`
+  text-align: left;
+  padding: 1rem;
+`;
+
+

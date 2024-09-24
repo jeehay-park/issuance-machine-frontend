@@ -11,7 +11,7 @@ import { useState } from "react";
 import { useSetRecoilState } from "recoil";
 import { authAtom } from "../../recoil/atoms/auth";
 import { useNavigate } from "react-router-dom";
-import { login } from "../../recoil/atoms/apis/authApi";
+import { login } from "../../recoil/atoms/auth";
 
 interface FormData {
   userId: string | null;
@@ -40,16 +40,17 @@ const Login: React.FC = () => {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    const result = await login({
-      ...formData,
-    });
+    // const result = await login({
+    //   ...formData,
+    // });
 
-    if (result?.header?.rtnCode === "000000") {
-      setAuthState(result.body);
-      navigate("/dashboard");
-    } else {
-      console.error("Error:", result);
-    }
+    // if (result?.header?.rtnCode === "000000") {
+    //   setAuthState(result.body);
+    //   navigate("/dashboard");
+    // } else {
+    //   console.error("Error:", result);
+    // }
+    navigate("/dashboard");
   };
 
   return (

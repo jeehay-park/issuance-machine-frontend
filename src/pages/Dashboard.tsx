@@ -21,6 +21,7 @@ const Dashboard: React.FC = () => {
     (item) => item.keyName
   );
   const data = dashboardResponse.body.items;
+  const headerInfos = dashboardResponse.body.headerInfos;
 
   const handleShowId = (event: React.MouseEvent) => {
     event.preventDefault();
@@ -208,7 +209,6 @@ const Dashboard: React.FC = () => {
               gridArea: "table",
               height: "90%",
               overflow: "hidden",
-
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
@@ -222,6 +222,7 @@ const Dashboard: React.FC = () => {
                 checkbox={false}
                 height="300px"
                 sortOption={sortOption}
+                headerInfos={headerInfos}
               />
             </div>
           </div>

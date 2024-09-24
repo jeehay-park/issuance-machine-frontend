@@ -17,6 +17,7 @@ import DynamicTable from "../components/Table/DynamicTable";
 import { workResponse } from "../mockData/mockData";
 import Search from "../components/Table/Search";
 import closeIcon from "../components/assets/closeIcon.png";
+import Pagination from "../components/Table/Pagination";
 
 const Issuance: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>("작업화면"); // Default active tab
@@ -30,6 +31,8 @@ const Issuance: React.FC = () => {
   const keyName = workResponse.body.headerInfos.map((item) => item.keyName);
   const headerInfos = workResponse.body.headerInfos;
   const data = workResponse.body.items;
+
+  const [currentPage, setCurrentPage] = useState(1);
 
   const handleSearch = (searchText: string, selectedOption: string) => {
     console.log(`Searching for "${searchText}" in "${selectedOption}"`);
@@ -135,6 +138,10 @@ const Issuance: React.FC = () => {
     }
   };
 
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
   return (
     <div>
       <TabMenu>
@@ -162,6 +169,15 @@ const Issuance: React.FC = () => {
       <Content>
         {renderContent()} {/* Render content based on the selected tab */}
       </Content>
+
+      <div style={{ padding: "20px 10px" }}>
+        <Pagination
+          currentPage={currentPage}
+          totCnt={2}
+          itemsPerPage={2}
+          handlePageChange={handlePageChange}
+        />
+      </div>
     </div>
   );
 };

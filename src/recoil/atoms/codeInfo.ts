@@ -1,28 +1,24 @@
 import { atom } from "recoil";
 import axios from "axios";
 
-interface AuthData {
-  salt: string;
-  // Add other properties if needed
-}
-
-export const authAtom = atom<AuthData | null>({
-  key: "authAtom",
+export const CodeInfoAtom = atom<{ [key: string]: any } | null>({
+  key: "codeInfoAtom",
   default: null,
 });
 
-export const login = async (body: { [key: string]: any }) => {
+export const codeInfoList = async (body: { [key: string]: any }) => {
   try {
-    const url = "http://localhost:5000/challenge";
-    const data = {
+    const url = 'https://kms.ictk.com/kms/admin/public/login/challenge';
+    const req = {
       header: {
-        trId: "020001",
+        trId: "12345",
       },
       body,
     };
-    const { data: response } = await axios.post(url, data); // Using POST since you're sending data
 
-    if (response?.header?.rtnCode !== "000000") {
+    const { data: response } = await axios.post(url, req);
+
+    if (response?.header.rtnCode !== "000000") {
       throw { customError: true, payload: response };
     }
 
@@ -35,7 +31,7 @@ export const login = async (body: { [key: string]: any }) => {
     } else {
       return {
         error: {
-          url: "로그인",
+          url: "코드 정보",
           code: err.code ?? "UNKNOWN_ERROR",
           message: err.message ?? "An unknown error occurred",
         },
