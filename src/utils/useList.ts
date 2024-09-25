@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { FetchListParams } from "./types";
 
-interface SortOption {
+type SortOption = {
   key: number;
   order: string;
-}
+};
 
-export const useSort = (
+export const useList = (
   itemsPerPage: number,
   params: FetchListParams,
   setParams: (
@@ -14,7 +14,6 @@ export const useSort = (
   ) => void,
   fetchList: Function
 ) => {
-
   const [sortOption, setSortOption] = useState<SortOption>({
     key: params.sortIdx,
     order: params.order,
@@ -29,7 +28,6 @@ export const useSort = (
       ...params,
       startNum: (page - 1) * itemsPerPage,
     };
-
     fetchList({
       ...newParams,
     });
@@ -71,5 +69,16 @@ export const useSort = (
     }));
   };
 
-  return { sortOption, handleSort, currentPage, handlePageChange };
+  const handleRefresh = () => {
+    fetchList(params);
+    console.log("refresh the page!");
+  };
+
+  return {
+    sortOption,
+    handleSort,
+    currentPage,
+    handlePageChange,
+    handleRefresh,
+  };
 };

@@ -370,6 +370,145 @@ export const dashboardResponse = {
 };
 
 
+export const serialNumberResponse = {
+  header: {
+    trId: "020012",
+    rtnCode: "000000",
+    rtnMessage: "성공입니다.",
+  },
+  body: {
+    totCnt: 10,
+    headerInfos: [
+      {
+        idx: 0,
+        keyName: "productName",
+        name: "제품명",
+        isSort: true,
+        isFilter: true,
+        isDisplay: true,
+      },
+      {
+        idx: 1,
+        keyName: "testCode",
+        name: "테스트 코드",
+        isSort: true,
+        isFilter: true,
+        isDisplay: true,
+      },
+      {
+        idx: 2,
+        keyName: "location",
+        name: "Location",
+        isSort: true,
+        isFilter: true,
+        isDisplay: true,
+      },
+      {
+        idx: 3,
+        keyName: "count",
+        name: "Count",
+        isSort: false,
+        isFilter: false,
+        isDisplay: true,
+      },
+      {
+        idx: 4,
+        keyName: "todaycount",
+        name: "Today_Count",
+        isSort: true,
+        isFilter: true,
+        isDisplay: true,
+      },
+     
+    ],
+    items: [
+      {
+        productName: "G1_REV2_HAIER_uDFN_I2C_1",
+        testCode: "G1_REV2_HAIER_uDFN_I2C",
+        location: "2",
+        count: "108813",
+        todayCount: "3048",
+        
+      },
+      {
+        productName: "G2_REV2_HAIER_uDFN_I2C_1",
+        testCode: "G1_REV2_HAIER_uDFN_I2C",
+        location: "2",
+        count: "2353023",
+        todayCount: "518",
+        
+      },
+      {
+        productName: "G3_REV2_HAIER_uDFN_I2C_1",
+        testCode: "G1_REV2_HAIER_uDFN_I2C",
+        location: "2",
+        count: "3939",
+        todayCount: "170",
+        
+      },
+      {
+        productName: "G4_REV2_HAIER_uDFN_I2C_1",
+        testCode: "G1_REV2_HAIER_uDFN_I2C",
+        location: "2",
+        count: "770114",
+        todayCount: "442",
+        
+      },
+      {
+        productName: "G5_REV2_HAIER_uDFN_I2C_1",
+        testCode: "G1_REV2_HAIER_uDFN_I2C",
+        location: "2",
+        count: "632339",
+        todayCount: "15",
+        
+      },
+      {
+        productName: "G6_REV2_HAIER_uDFN_I2C_1",
+        testCode: "G1_REV2_HAIER_uDFN_I2C",
+        location: "2",
+        count: "2779699",
+        todayCount: "1",
+        
+      },
+      {
+        productName: "G7_REV2_HAIER_uDFN_I2C_1",
+        testCode: "G1_REV2_HAIER_uDFN_I2C",
+        location: "2",
+        count: "0",
+        todayCount: "0",
+        
+      },
+      {
+        productName: "G8_REV2_HAIER_uDFN_I2C_1",
+        testCode: "G1_REV2_HAIER_uDFN_I2C",
+        location: "2",
+        count: "6856",
+        todayCount: "0",
+        
+      },
+      {
+        productName: "G9_REV2_HAIER_uDFN_I2C_1",
+        testCode: "G1_REV2_HAIER_uDFN_I2C",
+        location: "2",
+        count: "0",
+        todayCount: "0",
+        
+      },
+      {
+        productName: "G10_REV2_HAIER_uDFN_I2C_1",
+        testCode: "G1_REV2_HAIER_uDFN_I2C",
+        location: "2",
+        count: "411832",
+        todayCount: "7883",
+        
+      },
+
+      
+    ],
+  },
+};
+
+
 export const codeInfoResponse = {
   header: {
     trId: "020012",

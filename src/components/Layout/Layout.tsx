@@ -40,11 +40,11 @@ const Layout: React.FC = () => {
     { name: "작업 화면", path: "/issuance", icon: issuance, alt: "issuance" },
     {
       name: "프로그램 정보",
-      path: "/dashboard",
+      path: "/program",
       icon: program,
       alt: "program",
     },
-    { name: "시리얼 넘버 규칙", path: "/dashboard", icon: sn, alt: "sn" },
+    { name: "시리얼 넘버 규칙", path: "/serialnumber", icon: sn, alt: "sn" },
     {
       name: "발급 설정 정보",
       path: "/dashboard",

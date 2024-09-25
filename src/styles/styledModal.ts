@@ -10,33 +10,36 @@ export const ModalBackground = styled.div<{ isVisible: boolean }>`
   background-color: rgba(0, 0, 0, 0.5);
   justify-content: center;
   align-items: center;
-  /* border : 1px solid green; */
+  z-index: 1;
 `;
 
-export const ModalContainer = styled.div<{ width: string; height: string }>`
+export const ModalContainer = styled.div<{ width?: string; height?: string }>`
   position: relative;
   background-color: white;
-  /* padding: 20px; */
   border-radius: 8px;
   width: ${({ width }) => (width ? width : "400px")};
   height: ${({ height }) => (height ? height : "400px")};
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-  /* border: 1px solid red; */
 `;
 
-export const ModalHeader = styled.div`
-  background-color: var(--paleGrey);
+export const ModalHeader = styled.div<{backgroundColor?: string}>`
+  background-color: ${({backgroundColor}) => (backgroundColor ? backgroundColor : "var(--paleGrey)")};
   height: 40px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0 5px;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+
 `;
 
 export const ModalHeaderTitle = styled.div`
   display: flex;
   justify-content: center;
   width: 100%;
+  
 `;
 
 export const CloseButton = styled.button`
@@ -57,6 +60,7 @@ export const ModalPadding = styled.div`
   background-color: var(--paleGrey);
   height: 40px;
   line-height: 40px;
+  border-radius: 8px;
 `;
 
 export const ModalContent = styled.div`
@@ -65,5 +69,4 @@ export const ModalContent = styled.div`
   justify-content: center;
   align-items: center;
   height: calc(100% - 40px);
-  border: 1px solid green;
 `;

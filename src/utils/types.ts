@@ -15,3 +15,11 @@ export type filterArrProps = {
     filterArrAndOr?: string;
     filterArr?: filterArrProps[];
   };
+
+  export type dynamicObject = {
+    [key : string] : any
+  }
+
+  export type rowType = {
+    [key : string] : any
+  }

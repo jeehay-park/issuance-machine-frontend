@@ -1,48 +1,134 @@
 import React, { useState } from "react";
 import DynamicTable from "../components/Table/DynamicTable";
 import Search from "../components/Table/Search";
-import { Button, Card, TitleContainer, Title} from "../styles/styledTableLayout";
+import {
+  Button,
+  Card,
+  TitleContainer,
+  Title,
+} from "../styles/styledTableLayout";
 import { codeInfoResponse } from "../mockData/mockData";
+import { useList } from "../utils/useList";
+import { serialNumberResponse } from "../mockData/mockData";
+import { CodeInfoAtom } from "../recoil/atoms/codeInfo";
+import { useSetRecoilState, useRecoilValue } from "recoil";
+import { fetchCodeInfoList } from "../recoil/atoms/codeInfo";
+import { FetchListParams } from "../utils/types";
+import Pagination from "../components/Table/Pagination";
+import { selectedRowAtom } from "../recoil/atoms/selected";
 
-const SerialNumber: React.FC = () => {   
-    const [currentPage, setCurrentPage] = useState(1);
-    const [sortOption, setSortOption] = useState({
-        key: 1, order: "DESC"
-    })
+const SerialNumber: React.FC = () => {
+  const setCodeInfoState = useSetRecoilState(CodeInfoAtom);
+  const recoilData = useRecoilValue(CodeInfoAtom);
+  const selectedRow = useRecoilValue(selectedRowAtom);
 
-    const headers = codeInfoResponse.body.headerInfos.map((item) => item.name);
-    const keyName = codeInfoResponse.body.headerInfos.map((item) => item.keyName);
-    const headerInfos = codeInfoResponse.body.headerInfos;
-    const data = codeInfoResponse.body.items;
-  
-    const handleSearch = (searchText: string, selectedOption: string) => {
-        console.log(`Searching for "${searchText}" in "${selectedOption}"`);
-      };
-    
-      const handleSort = (headerKey: number) => {
-        let newOrder;
-    
-        if (sortOption?.key === headerKey) {
-          newOrder = sortOption.order === "ASC" ? "DESC" : "ASC";
-        } else {
-          newOrder = "ASC"; // Default to ASC when a new column is sorted
-        }
-    
-        setSortOption({
-          key: headerKey,
-          order: newOrder,
-        });
-      };
-    
-      const handlePageChange = (page: number) => {
-        setCurrentPage(page);
-      };
+  const headers = serialNumberResponse.body.headerInfos.map(
+    (item) => item.name
+  );
+  const keyName = serialNumberResponse.body.headerInfos.map(
+    (item) => item.keyName
+  );
+  const headerInfos = serialNumberResponse.body.headerInfos;
+  const data = serialNumberResponse.body.items;
 
+  const fetchListData = async ({
+    isHeaderInfo,
+    rowCnt,
+    startNum,
+    sortIdx,
+    order,
+    filter,
+    filterArrAndOr,
+    filterArr,
+  }: FetchListParams) => {
+    const result = await fetchCodeInfoList({
+      isHeaderInfo,
+      rowCnt,
+      startNum,
+      sortIdx,
+      order,
+      filter,
+      filterArrAndOr,
+      filterArr,
+    });
 
+    if (result) {
+      setCodeInfoState(result);
+    }
+  };
 
-    return(<>
-    
-    </>)
-}
+  const [params, setParams] = useState<FetchListParams>({
+    isHeaderInfo: true,
+    rowCnt: 2,
+    startNum: 0,
+    sortIdx: 1,
+    order: "DESC",
+  });
+
+  const itemsPerPage = 2;
+  const {
+    sortOption,
+    handleSort,
+    currentPage,
+    handlePageChange,
+    handleRefresh,
+  } = useList(itemsPerPage, params, setParams, fetchListData);
+
+  const handleSearch = (searchText: string, selectedOption: string) => {
+    console.log(`Searching for "${searchText}" in "${selectedOption}"`);
+  };
+
+  return (
+    <>
+      <Card>
+        <TitleContainer>
+          <Title>시리얼 넘버 규칙</Title>
+        </TitleContainer>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            marginBottom: "10px",
+          }}
+        >
+          <Search label="SN 규칙명" onSearch={handleSearch} />
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              padding: "2px",
+              alignItems: "center",
+              gap: "5px",
+            }}
+          >
+            <Button>추가</Button>
+            <Button disabled={selectedRow === null}>변경</Button>
+            <Button disabled={selectedRow === null}>삭제</Button>
+          </div>
+        </div>
+
+        <DynamicTable
+          headers={headers}
+          data={data}
+          keyName={keyName}
+          checkbox={true}
+          headerInfos={headerInfos}
+          sortOption={sortOption}
+          handleSort={handleSort}
+          height="400px"
+        />
+
+        <div style={{ padding: "10px 10px" }}>
+          <Pagination
+            currentPage={currentPage}
+            totCnt={10}
+            itemsPerPage={2}
+            handlePageChange={handlePageChange}
+          />
+        </div>
+      </Card>
+    </>
+  );
+};
 
 export default SerialNumber;

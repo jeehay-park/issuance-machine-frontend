@@ -6,8 +6,10 @@ import Dashboard from "./pages/Dashboard";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { AuthProvider } from "./components/contexts/AuthContext";
 import Layout from "./components/Layout/Layout";
-import Issuance from "./pages/Issuance";
+import IssuanceWorkScreen from "./pages/IssuanceWorkScreen";
 import CodeInfo from "./pages/CodeInfo";
+import SerialNumber from "./pages/SerialNumber";
+import Program from "./pages/Program";
 
 const App: React.FC = () => {
   const sidebarContents = {
@@ -33,12 +35,17 @@ const App: React.FC = () => {
             />
             <Route
               path={sidebarContents.issuance.path}
-              element={<Issuance />}
+              element={<IssuanceWorkScreen />}
             />
             <Route
               path={sidebarContents.codeinfo.path}
               element={<CodeInfo />}
             />
+            <Route
+              path={sidebarContents.serialnumber.path}
+              element={<SerialNumber />}
+            />
+            <Route path={sidebarContents.program.path} element={<Program />} />
           </Route>
         </Routes>
       </Router>

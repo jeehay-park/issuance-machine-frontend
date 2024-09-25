@@ -18,6 +18,9 @@ import { workResponse } from "../mockData/mockData";
 import Search from "../components/Table/Search";
 import closeIcon from "../components/assets/closeIcon.png";
 import Pagination from "../components/Table/Pagination";
+import { useRecoilValue } from "recoil";
+import { selectedRowAtom } from "../recoil/atoms/selected";
+import AddWorkModal from "./IssuanceWorkScreen/AddWorkModal";
 
 const Issuance: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>("작업화면"); // Default active tab
@@ -33,6 +36,7 @@ const Issuance: React.FC = () => {
   const data = workResponse.body.items;
 
   const [currentPage, setCurrentPage] = useState(1);
+  const selectedRow = useRecoilValue(selectedRowAtom);
 
   const handleSearch = (searchText: string, selectedOption: string) => {
     console.log(`Searching for "${searchText}" in "${selectedOption}"`);
@@ -111,8 +115,11 @@ const Issuance: React.FC = () => {
                 gap: "5px",
               }}
             >
-              <Button disabled>Button 1</Button>
-              <Button>Button 2</Button>
+              <Button disabled={selectedRow === null}>작업 복제</Button>
+              <AddWorkModal handleRefresh={() => console.log("fdsd")}>
+              <Button>작업 추가</Button>
+              </AddWorkModal>
+              
             </div>
           </div>
 
@@ -170,7 +177,7 @@ const Issuance: React.FC = () => {
         {renderContent()} {/* Render content based on the selected tab */}
       </Content>
 
-      <div style={{ padding: "20px 10px" }}>
+      <div style={{ padding: "10px 10px" }}>
         <Pagination
           currentPage={currentPage}
           totCnt={2}

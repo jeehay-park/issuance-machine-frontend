@@ -1,26 +1,27 @@
-import React, { useState, useEffect } from "react";
-import { codeInfoResponse } from "../mockData/mockData";
+import React, { useState } from "react";
 import DynamicTable from "../components/Table/DynamicTable";
 import Search from "../components/Table/Search";
-import {
-  Button,
-  Card,
-  TitleContainer,
-  Title,
-  Subtitle,
-} from "../styles/styledTableLayout";
-import Pagination from "../components/Table/Pagination";
+import { Button, Card, TitleContainer, Title} from "../styles/styledTableLayout";
+import { codeInfoResponse } from "../mockData/mockData";
 import { useList } from "../utils/useList";
-import { fetchCodeInfoList } from "../recoil/atoms/codeInfo";
-import { useSetRecoilState, useRecoilValue } from "recoil";
+import { serialNumberResponse } from "../mockData/mockData";
 import { CodeInfoAtom } from "../recoil/atoms/codeInfo";
+import { useSetRecoilState, useRecoilValue } from "recoil";
+import { fetchCodeInfoList } from "../recoil/atoms/codeInfo";
 import { FetchListParams } from "../utils/types";
-import DeleteCodeInfoModal from "./CodeInfoModal/DeleteCodeInfoModal";
+import Pagination from "../components/Table/Pagination";
+import { selectedRowAtom } from "../recoil/atoms/selected";
 
-const CodeInfo: React.FC = () => {
-  const setCodeInfoState = useSetRecoilState(CodeInfoAtom);
-  const recoilData = useRecoilValue(CodeInfoAtom);
+const Program: React.FC = () => {   
+    const setCodeInfoState = useSetRecoilState(CodeInfoAtom);
+    const recoilData = useRecoilValue(CodeInfoAtom);
+    const selectedRow = useRecoilValue(selectedRowAtom);
 
+    const headers = serialNumberResponse.body.headerInfos.map((item) => item.name);
+    const keyName = serialNumberResponse.body.headerInfos.map((item) => item.keyName);
+    const headerInfos = serialNumberResponse.body.headerInfos;
+    const data = serialNumberResponse.body.items;
+    
   const fetchListData = async ({
     isHeaderInfo,
     rowCnt,
@@ -62,33 +63,16 @@ const CodeInfo: React.FC = () => {
     setParams,
     fetchListData
   );
+  
+    const handleSearch = (searchText: string, selectedOption: string) => {
+        console.log(`Searching for "${searchText}" in "${selectedOption}"`);
+      };
 
-  const headers = codeInfoResponse.body.headerInfos.map((item) => item.name);
-  const keyName = codeInfoResponse.body.headerInfos.map((item) => item.keyName);
-  const headerInfos = codeInfoResponse.body.headerInfos;
-  const data = codeInfoResponse.body.items;
-
-  const handleSearch = (searchText: string, selectedOption: string) => {
-    console.log(`Searching for "${searchText}" in "${selectedOption}"`);
-  };
-
-  useEffect(() => {
-    fetchListData({
-      isHeaderInfo: true,
-      rowCnt: 5,
-      startNum: 0,
-      sortIdx: 1,
-      order: "DESC",
-    });
-  }, []);
-
-  console.log("recoilData : ", recoilData);
-
-  return (
-    <>
-      <Card>
+    
+    return(<>
+     <Card>
         <TitleContainer>
-          <Title>코드 정보</Title>
+          <Title>프로그램 정보</Title>
         </TitleContainer>
         <div
           style={{
@@ -97,7 +81,7 @@ const CodeInfo: React.FC = () => {
             marginBottom: "10px",
           }}
         >
-          <Search label="코드명" onSearch={handleSearch} />
+          <Search label="프로그램명" onSearch={handleSearch} />
           <div
             style={{
               display: "flex",
@@ -107,11 +91,9 @@ const CodeInfo: React.FC = () => {
               gap: "5px",
             }}
           >
-            <Button disabled>추가</Button>
-            <DeleteCodeInfoModal handleRefresh={handleRefresh}>
-            <Button>삭제</Button>
-            </DeleteCodeInfoModal>
-            
+            <Button>추가</Button>
+            <Button disabled={selectedRow === null}>변경</Button>
+            <Button disabled={selectedRow === null}>삭제</Button>
           </div>
         </div>
 
@@ -135,8 +117,8 @@ const CodeInfo: React.FC = () => {
           />
         </div>
       </Card>
-    </>
-  );
-};
+    
+    </>)
+}
 
-export default CodeInfo;
+export default Program;

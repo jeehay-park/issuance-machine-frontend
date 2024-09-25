@@ -1,4 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
+import { selectedRowAtom } from "../../recoil/atoms/selected";
+import { useSetRecoilState, useRecoilValue } from "recoil";
+import { dynamicObject, rowType } from "../../utils/types";
 
 type SortOption = {
   key: number; // Assuming 'key' is the index of the header
@@ -28,6 +31,20 @@ const DynamicTable: React.FC<TableProps> = ({
   sortOption,
   handleSort,
 }) => {
+  const [checkedRow, setCheckedRow] = useState<dynamicObject | null>(null);
+  const setSelectedRowState = useSetRecoilState(selectedRowAtom);
+  const selectedRow = useRecoilValue(selectedRowAtom);
+  const handleRowClick = (row: rowType) => {
+    console.log("row : ", row);
+    if (checkedRow === row) {
+      setCheckedRow(null);
+      setSelectedRowState(null);
+    } else {
+      setCheckedRow(row);
+      setSelectedRowState(row);
+    }
+  };
+
   return (
     <div style={{ height: height || "400px", overflowY: "auto" }}>
       <table style={{ width: "100%", borderCollapse: "collapse" }}>
@@ -61,7 +78,6 @@ const DynamicTable: React.FC<TableProps> = ({
                     backgroundColor: "#f1f1f1",
                     borderBottom: "2px solid #ddd",
                     padding: "8px",
-
                     fontSize: "15px",
                   }}
                 >
@@ -112,9 +128,9 @@ const DynamicTable: React.FC<TableProps> = ({
                       textAlign: "center",
                       color: "#777",
                     }}
-                    onClick={() => console.log(row)}
+                    onClick={() => handleRowClick(row)}
                   >
-                    <input type="checkbox" />
+                    <input type="checkbox" checked={checkedRow === row} />
                   </td>
                 )}
                 {keyName?.map((keyNameItem, colIndex) => (
