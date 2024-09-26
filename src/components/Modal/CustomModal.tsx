@@ -20,7 +20,7 @@ const CustomModal: React.FC<{ children: ReactNode }> = ({ children }) => {
     <>
       <div onClick={openModal}>{children}</div>
       <ModalBackground isVisible={isModalOpen}>
-        <ModalContainer width="" height="">
+        <ModalContainer> 
           <ModalPadding>
             <ModalHeader>
               <ModalHeaderTitle>
