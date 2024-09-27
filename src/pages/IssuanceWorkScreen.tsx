@@ -21,6 +21,7 @@ import Pagination from "../components/Table/Pagination";
 import { useRecoilValue } from "recoil";
 import { selectedRowAtom } from "../recoil/atoms/selected";
 import AddWorkModal from "./IssuanceWorkScreen/AddWorkModal";
+import CopyWorkModal from "./IssuanceWorkScreen/CopyWorkModal";
 
 const Issuance: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>("작업화면"); // Default active tab
@@ -115,11 +116,14 @@ const Issuance: React.FC = () => {
                 gap: "5px",
               }}
             >
-              <Button disabled={selectedRow === null}>작업 복제</Button>
-              <AddWorkModal handleRefresh={() => console.log("fdsd")}>
-              <Button>작업 추가</Button>
-              </AddWorkModal>
+              <Button disabled={selectedRow === null}>삭제</Button>
+              <CopyWorkModal handleRefresh={() => console.log("fdsd")}>
+              <Button disabled={selectedRow === null}>복제</Button>
+              </CopyWorkModal>
               
+              <AddWorkModal handleRefresh={() => console.log("fdsd")}>
+              <Button>추가</Button>
+              </AddWorkModal>
             </div>
           </div>
 

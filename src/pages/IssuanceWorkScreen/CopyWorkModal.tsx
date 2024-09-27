@@ -20,6 +20,7 @@ import {
   FormRow,
   FormLabel,
   FormInput,
+  FormTextArea,
   RadioInput,
   RadioLabel,
   FormSelect,
@@ -31,17 +32,35 @@ import { MdClose, MdCheck } from "react-icons/md";
 
 // Define the shape of form data and error messages
 interface FormData {
-  name: string;
-  email: string;
+  parser?: string;
+  tag_name: string;
+  customer: string;
+  order_no: string;
+  device_name: string;
+  prog_id: string;
+  mcn_id: string;
+  snr_id: string;
+  is_lock: string;
+  target_size: string;
+  due_date: string;
 }
 
 interface FormErrors {
-  name: string;
-  email: string;
+  parser?: string;
+  tag_name: string;
+  customer: string;
+  order_no: string;
+  device_name: string;
+  prog_id: string;
+  mcn_id: string;
+  snr_id: string;
+  is_lock: string;
+  target_size: string;
+  due_date: string;
 }
 
-// 작업 추가
-const AddWorkModal: React.FC<{
+// 작업 복제
+const CopyWorkModal: React.FC<{
   children: ReactNode;
   handleRefresh: () => void;
 }> = ({ children, handleRefresh }) => {
@@ -49,7 +68,10 @@ const AddWorkModal: React.FC<{
   const [isModalOpen, setModalOpen] = useState(false);
   const [responseMessage, setResponseMessage] = useState<string | null>(null);
 
+  console.log(selectedRow);
   const openModal = () => {
+    setFormData(defaultData);
+    setErrors(defaultData);
     setResponseMessage(null);
     setModalOpen(true);
   };
@@ -60,36 +82,65 @@ const AddWorkModal: React.FC<{
     setModalOpen(false);
   };
 
-  const [formData, setFormData] = useState({ name: "", email: "" });
-  const [errors, setErrors] = useState({ name: "", email: "" });
+  const defaultData = {
+    parser: "",
+    tag_name: "",
+    customer: "",
+    order_no: "",
+    device_name: "",
+    prog_id: "",
+    mcn_id: "",
+    snr_id: "",
+    is_lock: "",
+    target_size: "",
+    due_date: "",
+  };
+
+  const [formData, setFormData] = useState<FormData>(defaultData);
+  const [errors, setErrors] = useState<FormErrors>(defaultData);
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
 
   // Handle input changes
   const handleChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e:
+      | ChangeEvent<HTMLInputElement | HTMLSelectElement>
+      | ChangeEvent<HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({ ...prevData, [name]: value }));
 
-    // Clear error for the current field
-    setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
+    if (name === "parser") {
+      const arr = value.split("	");
+
+      setFormData((prevData) => ({
+        ...prevData,
+
+        due_date: arr[0],
+        device_name: arr[1],
+        customer: arr[2],
+
+        [name]: value,
+      }));
+    } else {
+      setFormData((prevData) => ({ ...prevData, [name]: value }));
+      setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
+    }
   };
 
   // Validate form inputs
   const validate = (): boolean => {
-    let tempErrors: FormErrors = { name: "", email: "" };
+    let tempErrors: FormErrors = defaultData;
     let isValid = true;
 
-    if (!formData.name) {
-      tempErrors.name = "Name is required";
+    if (!formData.tag_name) {
+      tempErrors.tag_name = "Name is required";
       isValid = false;
     }
 
-    if (!formData.email) {
-      tempErrors.email = "Email is required";
+    if (!formData.customer) {
+      tempErrors.customer = "Email is required";
       isValid = false;
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      tempErrors.email = "Email is invalid";
+    } else if (!/\S+@\S+\.\S+/.test(formData.customer)) {
+      tempErrors.customer = "Email is invalid";
       isValid = false;
     }
 
@@ -99,15 +150,16 @@ const AddWorkModal: React.FC<{
   };
 
   // Handle form submission
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleSubmit = () => {
+    // e.preventDefault();
     if (validate()) {
       console.log("Form submitted:", formData);
-      setFormData({ name: "", email: "" });
-      setErrors({ name: "", email: "" });
+      setFormData(defaultData);
+      setErrors(defaultData);
       setIsSubmitted(false); // Reset submission state
     }
     console.log("handle submit");
+    console.log(formData);
   };
 
   return (
@@ -118,7 +170,7 @@ const AddWorkModal: React.FC<{
           <ModalPadding>
             <ModalHeader backgroundColor="var(--layoutBlue)">
               <ModalHeaderTitle>
-                <h3 style={{ color: "white" }}>작업 추가</h3>
+                <h3 style={{ color: "white" }}>작업 복제</h3>
               </ModalHeaderTitle>
               <CloseButton onClick={closeModal}>&times;</CloseButton>
             </ModalHeader>
@@ -143,69 +195,68 @@ const AddWorkModal: React.FC<{
               <FormContainer>
                 <form onSubmit={handleSubmit}>
                   <FormRow>
-                    <FormLabel htmlFor="name">파서창</FormLabel>
+                    <FormLabel htmlFor="parser">파서창</FormLabel>
+                    <FormTextArea
+                      id="parser"
+                      name="parser"
+                      value={formData.parser}
+                      onChange={handleChange}
+                      // required
+                    />
+                  </FormRow>
+
+                  <FormRow>
+                    <FormLabel htmlFor="tag_name">태그 이름</FormLabel>
                     <FormInput
                       type="text"
-                      id="name"
-                      name="name"
-                      value={formData.name}
+                      id="tag_name"
+                      name="tag_name"
+                      value={formData.tag_name}
                       onChange={handleChange}
                       // required
                     />
                   </FormRow>
-                  {isSubmitted && errors?.name && (
-                    <FormError>{errors?.name}</FormError>
-                  )}{" "}
-                  {/* Render error if exists */}
+                  {isSubmitted && errors?.tag_name && (
+                    <FormError>{errors?.tag_name}</FormError>
+                  )}
                   <FormRow>
-                    <FormLabel htmlFor="email">태그 이름</FormLabel>
+                    <FormLabel htmlFor="customer">고객사</FormLabel>
                     <FormInput
-                      type="email"
-                      id="email"
-                      name="email"
-                      value={formData.email}
+                      type="text"
+                      id="customer"
+                      name="customer"
+                      value={formData.customer}
                       onChange={handleChange}
                       // required
                     />
                   </FormRow>
                   <FormRow>
-                    <FormLabel htmlFor="email">고객사</FormLabel>
+                    <FormLabel htmlFor="order_no">발주번호</FormLabel>
                     <FormInput
-                      type="email"
-                      id="email"
-                      name="email"
-                      value={formData.email}
+                      type="text"
+                      id="order_no"
+                      name="order_no"
+                      value={formData.order_no}
                       onChange={handleChange}
                       // required
                     />
                   </FormRow>
                   <FormRow>
-                    <FormLabel htmlFor="email">발주번호</FormLabel>
+                    <FormLabel htmlFor="device_name">디바이스 이름</FormLabel>
                     <FormInput
-                      type="email"
-                      id="email"
-                      name="email"
-                      value={formData.email}
+                      type="text"
+                      id="device_name"
+                      name="device_name"
+                      value={formData.device_name}
                       onChange={handleChange}
                       // required
                     />
                   </FormRow>
                   <FormRow>
-                    <FormLabel htmlFor="email">디바이스 이름</FormLabel>
-                    <FormInput
-                      type="email"
-                      id="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      // required
-                    />
-                  </FormRow>
-                  <FormRow>
-                    <FormLabel htmlFor="category">프로그램 선택</FormLabel>
+                    <FormLabel htmlFor="prog_id">프로그램 선택</FormLabel>
                     <FormSelect
-                      id="category"
-                      name="category"
+                      id="prog_id"
+                      name="prog_id"
                       onChange={handleChange}
                     >
                       <option value="option1">Option 1</option>
@@ -214,10 +265,10 @@ const AddWorkModal: React.FC<{
                     </FormSelect>
                   </FormRow>
                   <FormRow>
-                    <FormLabel htmlFor="category">장비 선택</FormLabel>
+                    <FormLabel htmlFor="mcn_id">장비 선택</FormLabel>
                     <FormSelect
-                      id="category"
-                      name="category"
+                      id="mcn_id"
+                      name="mcn_id"
                       onChange={handleChange}
                     >
                       <option value="option1">Option 1</option>
@@ -226,10 +277,10 @@ const AddWorkModal: React.FC<{
                     </FormSelect>
                   </FormRow>
                   <FormRow>
-                    <FormLabel htmlFor="category">규칙 선택</FormLabel>
+                    <FormLabel htmlFor="snr_id">규칙 선택</FormLabel>
                     <FormSelect
-                      id="category"
-                      name="category"
+                      id="snr_id"
+                      name="snr_id"
                       onChange={handleChange}
                     >
                       <option value="option1">Option 1</option>
@@ -238,10 +289,10 @@ const AddWorkModal: React.FC<{
                     </FormSelect>
                   </FormRow>
                   <FormRow>
-                    <FormLabel htmlFor="category">발급칩 LOCK</FormLabel>
+                    <FormLabel htmlFor="is_lock">발급칩 LOCK</FormLabel>
                     <FormSelect
-                      id="category"
-                      name="category"
+                      id="is_lock"
+                      name="is_lock"
                       onChange={handleChange}
                     >
                       <option value="option1">Option 1</option>
@@ -250,23 +301,23 @@ const AddWorkModal: React.FC<{
                     </FormSelect>
                   </FormRow>
                   <FormRow>
-                    <FormLabel htmlFor="email">목표 수량</FormLabel>
+                    <FormLabel htmlFor="target_size">목표 수량</FormLabel>
                     <FormInput
-                      type="email"
-                      id="email"
-                      name="email"
-                      value={formData.email}
+                      type="text"
+                      id="target_size"
+                      name="target_size"
+                      value={formData.target_size}
                       onChange={handleChange}
                       // required
                     />
                   </FormRow>
                   <FormRow>
-                    <FormLabel htmlFor="email">DUE</FormLabel>
+                    <FormLabel htmlFor="due_date">DUE</FormLabel>
                     <FormInput
-                      type="email"
-                      id="email"
-                      name="email"
-                      value={formData.email}
+                      type="text"
+                      id="due_date"
+                      name="due_date"
+                      value={formData.due_date}
                       onChange={handleChange}
                       // required
                     />
@@ -302,6 +353,7 @@ const AddWorkModal: React.FC<{
                     alignItems: "center",
                     gap: "5px",
                   }}
+                  onClick={handleSubmit}
                 >
                   <MdCheck
                     size={20}
@@ -319,4 +371,4 @@ const AddWorkModal: React.FC<{
   );
 };
 
-export default AddWorkModal;
+export default CopyWorkModal;

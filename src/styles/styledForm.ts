@@ -43,6 +43,22 @@ export const FormInput = styled.input`
 
 `;
 
+export const FormTextArea = styled.textarea`
+  flex: 1; /* Allow input to take remaining space */
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 12px;
+
+  &:focus {
+      /* border-color: #4caf50; */
+      border-color: var(--paleGrey);
+      outline: none;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+    }
+
+`;
+
 export const RadioInput = styled.input`
   /* Hide the native radio button */
   display: none;
@@ -61,8 +77,8 @@ export const RadioLabel = styled.label`
     left: 0;
     top: 50%;
     transform: translateY(-50%);
-    width: 14px;
-    height: 14px;
+    width: 12px;
+    height: 12px;
     border: 1px solid #ccc; /* Default border color */
     border-radius: 50%; /* Circle shape */
     background: white; /* Background for unselected state */
@@ -71,8 +87,9 @@ export const RadioLabel = styled.label`
 
   /* Show the custom radio button's clicked color */
   ${RadioInput}:checked + &::before {
-    background-color: red; /* Change to your desired color */
-    border-color: red; /* Change border color when selected */
+    /* background-color: var(--blue);  */
+    border: 2px solid var(--blue);
+     
   }
 `;
 

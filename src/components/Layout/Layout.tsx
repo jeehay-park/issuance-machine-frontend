@@ -47,9 +47,29 @@ const Layout: React.FC = () => {
     { name: "시리얼 넘버 규칙", path: "/serialnumber", icon: sn, alt: "sn" },
     {
       name: "발급 설정 정보",
-      path: "/dashboard",
+      path: "/setting",
       icon: setting,
       alt: "setting",
+      subMenu: [
+        {
+          name: "프로파일 Config",
+          path: "/profile",
+          icon: dashboard,
+          alt: "dashboard",
+        },
+        {
+          name: "키발급코드 Config",
+          path: "/keyissue",
+          icon: dashboard,
+          alt: "dashboard",
+        },
+        {
+          name: "스크립트 Config",
+          path: "/script",
+          icon: dashboard,
+          alt: "dashboard",
+        },
+      ],
     },
     {
       name: "발급 기계 정보",
@@ -68,40 +88,104 @@ const Layout: React.FC = () => {
     <MenuBox>
       {sidebarContents?.map(
         (
-          item: { name: string; path: string; icon: string; alt: string },
+          item: {
+            name: string;
+            path: string;
+            icon: string;
+            alt: string;
+            subMenu?: Object[];
+          },
           index
-        ) => (
-          <Link
-            to={item.path}
-            style={{
-              color: "white",
-              textDecoration: "none",
-              fontSize: "15px",
-              fontWeight: "bold",
-            }}
-          >
-            <div
-              key={index}
-              style={{
-                display: "flex",
-                alignItems: "center", // Centers items vertically
-                padding: "20px 15px",
-              }}
-              onClick={() => console.log("clicked!")}
-            >
-              <img
-                src={item.icon}
-                alt={item.alt}
-                width={"25px"}
-                style={{ borderRadius: "5px", marginLeft: "10px" }}
-              />
+        ) =>
+          item.path === "/setting" ? (
+            <>
+              <Link
+                to={item.path}
+                style={{
+                  color: "white",
+                  textDecoration: "none",
+                  fontSize: "15px",
+                  fontWeight: "bold",
+                }}
+              >
+                <div
+                  key={index}
+                  style={{
+                    display: "flex",
+                    alignItems: "center", // Centers items vertically
+                    padding: "20px 15px",
+                  }}
+                  onClick={() => console.log("clicked!")}
+                >
+                  <img
+                    src={item.icon}
+                    alt={item.alt}
+                    width={"25px"}
+                    style={{ borderRadius: "5px", marginLeft: "10px" }}
+                  />
 
-              {isSidebarExpanded && (
-                <span style={{ marginLeft: "20px" }}>{item.name}</span>
-              )}
-            </div>
-          </Link>
-        )
+                  {isSidebarExpanded && (
+                    <span style={{ marginLeft: "20px" }}>{item.name}</span>
+                  )}
+                </div>
+              </Link>
+
+              <Link
+                to={item.path}
+                style={{
+                  color: "white",
+                  textDecoration: "none",
+                  fontSize: "15px",
+                  fontWeight: "bold",
+                }}
+              >
+                <div
+                  key={index}
+                  style={{
+                    display: "flex",
+                    alignItems: "center", // Centers items vertically
+                    padding: "10px 15px 10px 30px",
+                  }}
+                  onClick={() => console.log("clicked!")}
+                >
+                  {isSidebarExpanded && (
+                    <span style={{ marginLeft: "20px" }}>프로파일 Config</span>
+                  )}
+                </div>
+              </Link>
+            </>
+          ) : (
+            <Link
+              to={item.path}
+              style={{
+                color: "white",
+                textDecoration: "none",
+                fontSize: "15px",
+                fontWeight: "bold",
+              }}
+            >
+              <div
+                key={index}
+                style={{
+                  display: "flex",
+                  alignItems: "center", // Centers items vertically
+                  padding: "20px 15px",
+                }}
+                onClick={() => console.log("clicked!")}
+              >
+                <img
+                  src={item.icon}
+                  alt={item.alt}
+                  width={"25px"}
+                  style={{ borderRadius: "5px", marginLeft: "10px" }}
+                />
+
+                {isSidebarExpanded && (
+                  <span style={{ marginLeft: "20px" }}>{item.name}</span>
+                )}
+              </div>
+            </Link>
+          )
       )}
     </MenuBox>
   );
