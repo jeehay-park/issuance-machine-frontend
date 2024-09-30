@@ -8,7 +8,7 @@ export const CodeInfoAtom = atom<{ [key: string]: any } | null>({
 
 export const fetchCodeInfoList = async (body: { [key: string]: any }) => {
   try {
-    const url = "https://kms.ictk.com/kms/admin/public/login/challenge";
+    const url = 'https://jsonplaceholder.typicode.com/todos/1';
     const req = {
       header: {
         trId: "12345",
@@ -43,7 +43,7 @@ export const fetchCodeInfoList = async (body: { [key: string]: any }) => {
 
 export const addCodeInfo = async (body: { [key: string]: any }) => {
   try {
-    const url = "https://kms.ictk.com/kms/admin/public/login/challenge";
+    const url = 'https://jsonplaceholder.typicode.com/todos/1';
     const req = {
       header: {
         trId: "12345",
@@ -78,7 +78,7 @@ export const addCodeInfo = async (body: { [key: string]: any }) => {
 
 export const editCodeInfo = async (body: { [key: string]: any }) => {
   try {
-    const url = "https://kms.ictk.com/kms/admin/public/login/challenge";
+    const url = 'https://jsonplaceholder.typicode.com/todos/1';
     const req = {
       header: {
         trId: "12345",
@@ -113,7 +113,7 @@ export const editCodeInfo = async (body: { [key: string]: any }) => {
 
 export const deleteCodeInfo = async (body: { [key: string]: any }) => {
   try {
-    const url = "https://kms.ictk.com/kms/admin/public/login/challenge";
+    const url = 'https://jsonplaceholder.typicode.com/todos/1';
     const req = {
       header: {
         trId: "12345",

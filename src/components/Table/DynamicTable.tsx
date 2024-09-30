@@ -9,13 +9,13 @@ type SortOption = {
 };
 
 type TableProps = {
-  headers: string[]; // Array of header titles
-  keyName: string[];
-  data: Array<{ [key: string]: any }>; // Array of objects for the rows
+  headers: string[] | null; // Array of header titles
+  keyName: string[] | null;
+  data: Array<{ [key: string]: any }> | null; // Array of objects for the rows
   checkbox: Boolean;
   handleAddTab?: (item: string) => void;
   height?: string;
-  headerInfos?: Array<{ [key: string]: any }>;
+  headerInfos?: Array<{ [key: string]: any }> | null;
   sortOption?: SortOption; // Optional sorting information
   handleSort?: (headerKey: number) => void;
 };
@@ -117,7 +117,7 @@ const DynamicTable: React.FC<TableProps> = ({
         </thead>
 
         <tbody>
-          {data.length > 0 ? (
+          {data && data?.length > 0 ? (
             data.map((row, rowIndex) => (
               <tr key={rowIndex}>
                 {checkbox && (
@@ -168,7 +168,7 @@ const DynamicTable: React.FC<TableProps> = ({
           ) : (
             <tr>
               <td
-                colSpan={headers.length}
+                colSpan={headers?.length}
                 style={{ padding: "8px", textAlign: "center" }}
               >
                 No data available

@@ -5,7 +5,7 @@ export const workResponse = {
     rtnMessage: "성공입니다.",
   },
   body: {
-    totCnt: 2,
+    totCnt: 7,
     headerInfos: [
       {
         idx: 0,
@@ -671,3 +671,109 @@ export const codeInfoResponse = {
     ],
   },
 };
+
+export const settingResponse = {
+  header: {
+    trId: "020012",
+    rtnCode: "000000",
+    rtnMessage: "성공입니다.",
+  },
+  body: {
+    totCnt: 7,
+    headerInfos: [
+      {
+        idx: 0,
+        keyName: "fileName",
+        name: "파일명",
+        isSort: true,
+        isFilter: true,
+        isDisplay: true,
+      },
+      {
+        idx: 1,
+        keyName: "type",
+        name: "종류",
+        isSort: true,
+        isFilter: true,
+        isDisplay: true,
+      },
+      {
+        idx: 2,
+        keyName: "version",
+        name: "버전",
+        isSort: true,
+        isFilter: true,
+        isDisplay: true,
+      },
+      {
+        idx: 3,
+        keyName: "hash",
+        name: "해시",
+        isSort: false,
+        isFilter: false,
+        isDisplay: true,
+      },
+      {
+        idx: 4,
+        keyName: "fileDetails",
+        name: "파일보기",
+        isSort: true,
+        isFilter: true,
+        isDisplay: true,
+      },
+      {
+        idx: 5,
+        keyName: "download",
+        name: "다운로드",
+        isSort: false,
+        isFilter: true,
+        isDisplay: true,
+      },
+     
+    ],
+    items: [
+      {
+        fileName: "[IMB-300]G5_USIM_I9X00_ATR6.3ms_3.3v_v0.2.3_NO_LOCK_20240730.json",
+        type: "script",
+        version: "",
+        hash: "mHwhhO3nEqCTjhjYK4L7oE02RBknAqPyVBRw90a4PUM=",
+        fileDetails: "",
+        download: "",
+      },
+      {
+        fileName: "[IMB-300]G5_eSIM_I98X0_v0.1.A_20240418.json",
+        type: "script",
+        version: "",
+        hash: "ArcYBH3XAZHMIr3JNRXIWsVrCtBq2lfsAF9zTYeosxI=",
+        fileDetails: "",
+        download: "",
+      },
+      {
+        fileName: "g3u_rev3_TV3UG4_re.json",
+        type: "script",
+        version: "",
+        hash: "/qY96ZHk+b0hQFxNz5Gd08eljaMpCvUsvemsZijv+cI=",
+        fileDetails: "",
+        download: "",
+      },
+      {
+        fileName: "g3k_rev3_TKUQ1_re.json",
+        type: "script",
+        version: "",
+        hash: "n5pS6DYObUYpx39yY+b1bXtZPoX2keHt3QR/rqORYS0=",
+        fileDetails: "",
+        download: "",
+      },
+      {
+        fileName: "g3u_rev3_V3UD1_TV3UD1_TV3UG1_re.json",
+        type: "script",
+        version: "",
+        hash: "F200z+PhQBjVo91dy1jeBu69MTZ/kwH4vV1n9f3A5Y0=",
+        fileDetails: "",
+        download: "",
+      },
+    ],
+  },
+};
+
+

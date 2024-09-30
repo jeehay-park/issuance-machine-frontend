@@ -14,6 +14,7 @@ export type filterArrProps = {
     filter?: string;
     filterArrAndOr?: string;
     filterArr?: filterArrProps[];
+    configType?: string
   };
 
   export type dynamicObject = {

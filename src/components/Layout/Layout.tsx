@@ -22,6 +22,14 @@ import id from "../assets/id.gif";
 import chevronRight from "../assets/chevronRight.gif";
 import chevronLeft from "../assets/chevronLeft.gif";
 
+type MenuItem = {
+  name: string;
+  path: string;
+  icon: string;
+  alt: string;
+  subMenu?: { name: string; path: string; icon: string; alt: string }[];
+};
+
 const Layout: React.FC = () => {
   const [isSidebarExpanded, setSidebarExpanded] = useState(true);
   const [isDropdownVisible, setDropdownVisible] = useState(false);
@@ -35,7 +43,7 @@ const Layout: React.FC = () => {
     setDropdownVisible(!isDropdownVisible);
   };
 
-  const sidebarContents = [
+  const sidebarContents: MenuItem[] = [
     { name: "대시보드", path: "/dashboard", icon: dashboard, alt: "dashboard" },
     { name: "작업 화면", path: "/issuance", icon: issuance, alt: "issuance" },
     {
@@ -86,77 +94,11 @@ const Layout: React.FC = () => {
 
   const text = (
     <MenuBox>
-      {sidebarContents?.map(
-        (
-          item: {
-            name: string;
-            path: string;
-            icon: string;
-            alt: string;
-            subMenu?: Object[];
-          },
-          index
-        ) =>
-          item.path === "/setting" ? (
-            <>
-              <Link
-                to={item.path}
-                style={{
-                  color: "white",
-                  textDecoration: "none",
-                  fontSize: "15px",
-                  fontWeight: "bold",
-                }}
-              >
-                <div
-                  key={index}
-                  style={{
-                    display: "flex",
-                    alignItems: "center", // Centers items vertically
-                    padding: "20px 15px",
-                  }}
-                  onClick={() => console.log("clicked!")}
-                >
-                  <img
-                    src={item.icon}
-                    alt={item.alt}
-                    width={"25px"}
-                    style={{ borderRadius: "5px", marginLeft: "10px" }}
-                  />
-
-                  {isSidebarExpanded && (
-                    <span style={{ marginLeft: "20px" }}>{item.name}</span>
-                  )}
-                </div>
-              </Link>
-
-              <Link
-                to={item.path}
-                style={{
-                  color: "white",
-                  textDecoration: "none",
-                  fontSize: "15px",
-                  fontWeight: "bold",
-                }}
-              >
-                <div
-                  key={index}
-                  style={{
-                    display: "flex",
-                    alignItems: "center", // Centers items vertically
-                    padding: "10px 15px 10px 30px",
-                  }}
-                  onClick={() => console.log("clicked!")}
-                >
-                  {isSidebarExpanded && (
-                    <span style={{ marginLeft: "20px" }}>프로파일 Config</span>
-                  )}
-                </div>
-              </Link>
-            </>
-          ) : (
+      {sidebarContents?.map((item, index) =>
+        item.path === "/setting" ? (
+          <>
             <Link
-              to={item.path}
+              to={item.subMenu && item.subMenu[0].path || "/profile"}
               style={{
                 color: "white",
                 textDecoration: "none",
@@ -169,7 +111,7 @@ const Layout: React.FC = () => {
                 style={{
                   display: "flex",
                   alignItems: "center", // Centers items vertically
-                  padding: "20px 15px",
+                  padding: "15px 15px",
                 }}
                 onClick={() => console.log("clicked!")}
               >
@@ -185,7 +127,69 @@ const Layout: React.FC = () => {
                 )}
               </div>
             </Link>
-          )
+
+         
+              {item.subMenu &&
+                item.subMenu.map((subItem, subIndex) => (
+                  <Link
+                  to={subItem.path}
+                  style={{
+                    color: "white",
+                    textDecoration: "none",
+                    fontSize: "15px",
+                    fontWeight: "bold",
+                  }}
+                  >
+                  <div
+                    key={subIndex}
+                    style={{
+                      display: "flex",
+                      alignItems: "center", // Centers items vertically
+                      padding: "10px 15px 10px 30px",
+                    }}
+                    onClick={() => console.log("clicked!")}
+                  >
+                    {isSidebarExpanded && (
+                      <span style={{ marginLeft: "20px" }}>{subItem.name}</span>
+                    )}
+                  </div>
+                  </Link>
+                  
+                ))}
+         
+          </>
+        ) : (
+          <Link
+            to={item.path}
+            style={{
+              color: "white",
+              textDecoration: "none",
+              fontSize: "15px",
+              fontWeight: "bold",
+            }}
+          >
+            <div
+              key={index}
+              style={{
+                display: "flex",
+                alignItems: "center", // Centers items vertically
+                padding: "15px 15px",
+              }}
+              onClick={() => console.log("clicked!")}
+            >
+              <img
+                src={item.icon}
+                alt={item.alt}
+                width={"25px"}
+                style={{ borderRadius: "5px", marginLeft: "10px" }}
+              />
+
+              {isSidebarExpanded && (
+                <span style={{ marginLeft: "20px" }}>{item.name}</span>
+              )}
+            </div>
+          </Link>
+        )
       )}
     </MenuBox>
   );
