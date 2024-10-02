@@ -9,9 +9,12 @@ import {
 } from "../styles/styledTableLayout";
 import { useList } from "../utils/useList";
 
-import { profileAtom } from "../recoil/atoms/setting";
+import { profileAtom, profileInfoAtom } from "../recoil/atoms/setting";
 import { useSetRecoilState, useRecoilValue } from "recoil";
-import { fetchProfileList } from "../recoil/atoms/setting";
+import {
+  fetchProfileList,
+  fetchProfileInfoList,
+} from "../recoil/atoms/setting";
 import { FetchListParams } from "../utils/types";
 import Pagination from "../components/Table/Pagination";
 import { selectedRowAtom } from "../recoil/atoms/selected";
@@ -20,6 +23,7 @@ import Error from "./Error";
 
 const SettingProfileConfig: React.FC = () => {
   const setProfileState = useSetRecoilState(profileAtom);
+  const setProfileInfoState = useSetRecoilState(profileInfoAtom);
   const recoilData = useRecoilValue(profileAtom);
   const selectedRow = useRecoilValue(selectedRowAtom);
 
@@ -27,7 +31,7 @@ const SettingProfileConfig: React.FC = () => {
   const [keyName, setKeyname] = useState<string[] | null>(null);
   const [headerInfos, setHeaderInfos] = useState<dynamicObject[] | null>(null);
   const [data, setData] = useState<dynamicObject[] | null>(null);
-
+  const [totCnt, setTotCnt] = useState<number | null>(null);
   const [error, setError] = useState<dynamicObject | null>(null);
 
   const fetchListData = async ({
@@ -49,7 +53,7 @@ const SettingProfileConfig: React.FC = () => {
       filter,
       filterArrAndOr,
       filterArr,
-      configType: "PROFILE"
+      configType: "PROFILE",
     });
 
     if (result?.body) {
@@ -60,13 +64,27 @@ const SettingProfileConfig: React.FC = () => {
     }
   };
 
+  const fetchDetails = async () => {
+    const result = await fetchProfileInfoList({
+      configType: "profle",
+      profId: "profId",
+      keyisId: "keyisId",
+      scrtId: "scrtId",
+    });
+
+    if (result?.body) {
+      console.log(result);
+      setProfileInfoState(result.body);
+    }
+  };
+
   const [params, setParams] = useState<FetchListParams>({
     isHeaderInfo: true,
     rowCnt: 2,
     startNum: 0,
     sortIdx: 1,
     order: "DESC",
-    configType: "PROFILE"
+    configType: "PROFILE",
   });
 
   const itemsPerPage = 2;
@@ -94,13 +112,14 @@ const SettingProfileConfig: React.FC = () => {
       const keyName = recoilData?.body?.headerInfos.map(
         (item: { [key: string]: any }) => item.keyName
       );
-      const headerInfos = recoilData?.body?.headerInfos;
-      const data = recoilData?.body?.configList;
+
+      const { headerInfos, configList, totCnt } = recoilData?.body;
 
       setHeaders(headers);
       setKeyname(keyName);
       setHeaderInfos(headerInfos);
-      setData(data);
+      setData(configList);
+      setTotCnt(totCnt);
     }
   }, [recoilData]);
 
@@ -126,7 +145,7 @@ const SettingProfileConfig: React.FC = () => {
     <>
       <Card>
         <TitleContainer>
-          <Title>발급 설정 프로파일 Config</Title>
+          <Title>발급 설정 &gt; 프로파일 Config</Title>
         </TitleContainer>
         <div
           style={{
@@ -162,14 +181,17 @@ const SettingProfileConfig: React.FC = () => {
           height="400px"
         />
 
-        <div style={{ padding: "10px 10px" }}>
-          <Pagination
-            currentPage={currentPage}
-            totCnt={10}
-            itemsPerPage={2}
-            handlePageChange={handlePageChange}
-          />
-        </div>
+        <p onClick={fetchDetails}>파일보기</p>
+        {totCnt && totCnt > 0 && (
+          <div style={{ padding: "10px 10px" }}>
+            <Pagination
+              currentPage={currentPage}
+              totCnt={totCnt}
+              itemsPerPage={itemsPerPage}
+              handlePageChange={handlePageChange}
+            />
+          </div>
+        )}
       </Card>
     </>
   );

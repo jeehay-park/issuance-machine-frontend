@@ -12,6 +12,7 @@ import SerialNumber from "./pages/SerialNumber";
 import Program from "./pages/Program";
 import SettingProfileConfig from "./pages/SettingProfileConfig";
 import SettingKeyIssueCodeConfig from "./pages/SettingKeyIssueCodeConfig";
+import SettingScriptConfig from "./pages/SettingScriptConfig";
 import NotFound from "./pages/NotFound";
 
 const App: React.FC = () => {
@@ -54,6 +55,7 @@ const App: React.FC = () => {
             <Route path={sidebarContents.program.path} element={<Program />} />
             <Route path={sidebarContents.profile.path} element={<SettingProfileConfig />} />
             <Route path={sidebarContents.keyIssue.path} element={<SettingKeyIssueCodeConfig />} />
+            <Route path={sidebarContents.script.path} element={<SettingScriptConfig />} />
            
           </Route>
           <Route path="*" element={<NotFound />} />

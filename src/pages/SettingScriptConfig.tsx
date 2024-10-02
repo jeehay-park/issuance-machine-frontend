@@ -9,26 +9,26 @@ import {
 } from "../styles/styledTableLayout";
 import { useList } from "../utils/useList";
 
-import { keyIssueAtom } from "../recoil/atoms/setting";
+import { scriptAtom } from "../recoil/atoms/setting";
 import { useSetRecoilState, useRecoilValue } from "recoil";
-import { fetchKeyIssueList } from "../recoil/atoms/setting";
+import { fetchScriptList } from "../recoil/atoms/setting";
 import { FetchListParams } from "../utils/types";
 import Pagination from "../components/Table/Pagination";
 import { selectedRowAtom } from "../recoil/atoms/selected";
 import { dynamicObject } from "../utils/types";
 import Error from "./Error";
 
-const SettingKeyIssueCodeConfig: React.FC = () => {
-  const setKeyIssueState = useSetRecoilState(keyIssueAtom);
-  const recoilData = useRecoilValue(keyIssueAtom);
+const SettingScriptConfig: React.FC = () => {
+  const setScriptAtom = useSetRecoilState(scriptAtom);
+  const recoilData = useRecoilValue(scriptAtom);
   const selectedRow = useRecoilValue(selectedRowAtom);
 
   const [headers, setHeaders] = useState<string[] | null>(null);
   const [keyName, setKeyname] = useState<string[] | null>(null);
   const [headerInfos, setHeaderInfos] = useState<dynamicObject[] | null>(null);
   const [data, setData] = useState<dynamicObject[] | null>(null);
-  const [error, setError] = useState<dynamicObject | null>(null);
   const [totCnt, setTotCnt] = useState<number | null>(null);
+  const [error, setError] = useState<dynamicObject | null>(null);
 
   const fetchListData = async ({
     isHeaderInfo,
@@ -40,7 +40,7 @@ const SettingKeyIssueCodeConfig: React.FC = () => {
     filterArrAndOr,
     filterArr,
   }: FetchListParams) => {
-    const result = await fetchKeyIssueList({
+    const result = await fetchScriptList({
       isHeaderInfo,
       rowCnt,
       startNum,
@@ -49,12 +49,12 @@ const SettingKeyIssueCodeConfig: React.FC = () => {
       filter,
       filterArrAndOr,
       filterArr,
-      configType: "KEYISSUE",
+      configType: "SCRIPT",
     });
 
     if (result?.body) {
       console.log("result : ", result);
-      setKeyIssueState(result);
+      setScriptAtom(result);
     } else {
       setError(result);
     }
@@ -66,7 +66,7 @@ const SettingKeyIssueCodeConfig: React.FC = () => {
     startNum: 0,
     sortIdx: 1,
     order: "DESC",
-    configType: "KEYISSUE",
+    configType: "SCRIPT",
   });
 
   const itemsPerPage = 2;
@@ -127,7 +127,7 @@ const SettingKeyIssueCodeConfig: React.FC = () => {
     <>
       <Card>
         <TitleContainer>
-          <Title>발급 설정 &gt; 키발급코드 Config</Title>
+          <Title>발급 설정 &gt; 스크립트 Config</Title>
         </TitleContainer>
         <div
           style={{
@@ -136,7 +136,7 @@ const SettingKeyIssueCodeConfig: React.FC = () => {
             marginBottom: "10px",
           }}
         >
-          <Search label="키발급코드명" onSearch={handleSearch} />
+          <Search label="스크립트명" onSearch={handleSearch} />
           <div
             style={{
               display: "flex",
@@ -178,4 +178,4 @@ const SettingKeyIssueCodeConfig: React.FC = () => {
   );
 };
 
-export default SettingKeyIssueCodeConfig;
+export default SettingScriptConfig;
