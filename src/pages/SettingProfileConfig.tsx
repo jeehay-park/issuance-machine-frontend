@@ -7,7 +7,7 @@ import {
   TitleContainer,
   Title,
 } from "../styles/styledTableLayout";
-import { useList } from "../utils/useList";
+import { useList } from "../customHooks/useList";
 
 import { profileAtom, profileInfoAtom } from "../recoil/atoms/setting";
 import { useSetRecoilState, useRecoilValue } from "recoil";

@@ -1,6 +1,3 @@
-import { atom } from "recoil";
+import { customCreateAtom } from "../../utils/customCreateAtom";
 
-export const selectedRowAtom = atom<{ [key: string]: any } | null>({
-  key: "selectedRowAtom",
-  default: null,
-});
+export const selectedRowAtom = customCreateAtom("selectedRowAtom");

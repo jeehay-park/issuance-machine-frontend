@@ -12,7 +12,7 @@ import {
 } from "../../styles/styledModal";
 import { selectedRowAtom } from "../../recoil/atoms/selected";
 import { useRecoilValue } from "recoil";
-import { deleteCodeInfo } from "../../recoil/atoms/codeInfo";
+import { deleteCode } from "../../recoil/atoms/codeInfo";
 import confetti from "canvas-confetti";
 import success from "../../components/assets/green-tick.png";
 import {

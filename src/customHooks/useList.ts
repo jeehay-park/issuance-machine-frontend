@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FetchListParams } from "./types";
+import { FetchListParams } from "../utils/types";
 
 type SortOption = {
   key: number;

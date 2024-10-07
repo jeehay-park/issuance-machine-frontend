@@ -1,146 +1,34 @@
-import { atom } from "recoil";
-import axios from "axios";
+import { customCreateAtom } from "../../utils/customCreateAtom";
+import { customApiRequest } from "../../utils/customApiRequest";
 
-export const CodeInfoAtom = atom<{ [key: string]: any } | null>({
-  key: "codeInfoAtom",
-  default: null,
-});
-
+// 코드정보 - 코드(단일) 정보 조회를 위한 API
+export const codeInfoAtom = customCreateAtom("codeInfo");
 export const fetchCodeInfoList = async (body: { [key: string]: any }) => {
-  try {
-    const url = 'https://jsonplaceholder.typicode.com/todos/1';
-    const req = {
-      header: {
-        trId: "12345",
-      },
-      body,
-    };
-
-    const { data: response } = await axios.post(url, req);
-
-    // if (response?.header.rtnCode !== "000000") {
-    //   throw { customError: true, payload: response };
-    // }
-
-    return response;
-  } catch (err: any) {
-    if (err.customError) {
-      return err.payload;
-    } else if (err.response?.data) {
-      return err.response.data;
-    } else {
-      return {
-        error: {
-          url: "코드 정보",
-          code: err.code ?? "UNKNOWN_ERROR",
-          message: err.message ?? "An unknown error occurred",
-        },
-      };
-    }
-  }
+  const url = "/code/info";
+  const trId = process.env.REACT_APP_TRID_CONFIG_INFO!;
+  return customApiRequest(url, trId, body);
 };
 
-
-export const addCodeInfo = async (body: { [key: string]: any }) => {
-  try {
-    const url = 'https://jsonplaceholder.typicode.com/todos/1';
-    const req = {
-      header: {
-        trId: "12345",
-      },
-      body,
-    };
-
-    const { data: response } = await axios.post(url, req);
-
-    // if (response?.header.rtnCode !== "000000") {
-    //   throw { customError: true, payload: response };
-    // }
-
-    return response;
-  } catch (err: any) {
-    if (err.customError) {
-      return err.payload;
-    } else if (err.response?.data) {
-      return err.response.data;
-    } else {
-      return {
-        error: {
-          url: "코드 정보",
-          code: err.code ?? "UNKNOWN_ERROR",
-          message: err.message ?? "An unknown error occurred",
-        },
-      };
-    }
-  }
+// 코드정보 - 코드 생성을 위한 API
+export const createCodeAtom = customCreateAtom("createCode");
+export const createCode = async (body: { [key: string]: any }) => {
+  const url = "/code/create";
+  const trId = process.env.REACT_APP_TRID_CONFIG_CREATE!;
+  return customApiRequest(url, trId, body);
 };
 
-
-export const editCodeInfo = async (body: { [key: string]: any }) => {
-  try {
-    const url = 'https://jsonplaceholder.typicode.com/todos/1';
-    const req = {
-      header: {
-        trId: "12345",
-      },
-      body,
-    };
-
-    const { data: response } = await axios.post(url, req);
-
-    // if (response?.header.rtnCode !== "000000") {
-    //   throw { customError: true, payload: response };
-    // }
-
-    return response;
-  } catch (err: any) {
-    if (err.customError) {
-      return err.payload;
-    } else if (err.response?.data) {
-      return err.response.data;
-    } else {
-      return {
-        error: {
-          url: "코드 정보",
-          code: err.code ?? "UNKNOWN_ERROR",
-          message: err.message ?? "An unknown error occurred",
-        },
-      };
-    }
-  }
+// 코드정보 - 코드 변경을 위한 API
+export const updateCodeAtom = customCreateAtom("updateCode");
+export const updateCode = async (body: { [key: string]: any }) => {
+  const url = "/code/update";
+  const trId = process.env.REACT_APP_TRID_CODE_UPDATE!;
+  return customApiRequest(url, trId, body);
 };
 
-
-export const deleteCodeInfo = async (body: { [key: string]: any }) => {
-  try {
-    const url = 'https://jsonplaceholder.typicode.com/todos/1';
-    const req = {
-      header: {
-        trId: "12345",
-      },
-      body,
-    };
-
-    const { data: response } = await axios.post(url, req);
-
-    // if (response?.header.rtnCode !== "000000") {
-    //   throw { customError: true, payload: response };
-    // }
-
-    return response;
-  } catch (err: any) {
-    if (err.customError) {
-      return err.payload;
-    } else if (err.response?.data) {
-      return err.response.data;
-    } else {
-      return {
-        error: {
-          url: "코드 정보",
-          code: err.code ?? "UNKNOWN_ERROR",
-          message: err.message ?? "An unknown error occurred",
-        },
-      };
-    }
-  }
+// 코드정보 - 코드 삭제를 위한 API
+export const deleteCodeAtom = customCreateAtom("deleteCode");
+export const deleteCode = async (body: { [key: string]: any }) => {
+  const url = "/code/delete";
+  const trId = process.env.REACT_APP_TRID_CODE_DELETE!;
+  return customApiRequest(url, trId, body);
 };

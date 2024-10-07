@@ -10,7 +10,7 @@ import {
 } from "../../styles/styledModal";
 import { selectedRowAtom } from "../../recoil/atoms/selected";
 import { useRecoilValue } from "recoil";
-import { deleteCodeInfo } from "../../recoil/atoms/codeInfo";
+import { deleteCode } from "../../recoil/atoms/codeInfo";
 import confetti from "canvas-confetti";
 import success from "../../components/assets/green-tick.png";
 
@@ -37,7 +37,7 @@ const DeleteCodeInfoModal: React.FC<{
   const handleSubmit = (event: MouseEvent) => {
     event.preventDefault();
 
-    deleteCodeInfo({ deleteCodeInfo: "delete" })
+    deleteCode({ deleteCodeInfo: "delete" })
       .then((result) => {
         if (result) {
           console.log("result arrived!");
@@ -48,10 +48,9 @@ const DeleteCodeInfoModal: React.FC<{
             origin: { y: 0.6 },
           });
 
-          if(handleRefresh) {
+          if (handleRefresh) {
             handleRefresh();
           }
-         
         }
       })
       .catch((error) => {

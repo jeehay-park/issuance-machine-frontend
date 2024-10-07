@@ -51,7 +51,7 @@ const getItemStyle = (
 const getListStyle = (isDraggingOver: boolean): React.CSSProperties => ({
   background: isDraggingOver ? "lightblue" : "lightgrey",
   padding: grid,
-//   width: 250,
+  //   width: 250,
   cursor: "pointer",
   color: "black",
 });

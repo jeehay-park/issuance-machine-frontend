@@ -3,9 +3,9 @@ import DynamicTable from "../components/Table/DynamicTable";
 import Search from "../components/Table/Search";
 import { Button, Card, TitleContainer, Title} from "../styles/styledTableLayout";
 import { codeInfoResponse } from "../mockData/mockData";
-import { useList } from "../utils/useList";
+import { useList } from "../customHooks/useList";
 import { serialNumberResponse } from "../mockData/mockData";
-import { CodeInfoAtom } from "../recoil/atoms/codeInfo";
+import { codeInfoAtom } from "../recoil/atoms/codeInfo";
 import { useSetRecoilState, useRecoilValue } from "recoil";
 import { fetchCodeInfoList } from "../recoil/atoms/codeInfo";
 import { FetchListParams } from "../utils/types";
@@ -13,8 +13,8 @@ import Pagination from "../components/Table/Pagination";
 import { selectedRowAtom } from "../recoil/atoms/selected";
 
 const Program: React.FC = () => {   
-    const setCodeInfoState = useSetRecoilState(CodeInfoAtom);
-    const recoilData = useRecoilValue(CodeInfoAtom);
+    const setCodeInfoState = useSetRecoilState(codeInfoAtom);
+    const recoilData = useRecoilValue(codeInfoAtom);
     const selectedRow = useRecoilValue(selectedRowAtom);
 
     const headers = serialNumberResponse.body.headerInfos.map((item) => item.name);

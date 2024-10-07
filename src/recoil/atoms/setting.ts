@@ -1,164 +1,50 @@
-import { atom } from "recoil";
-import axios from "axios";
+import { customCreateAtom } from "../../utils/customCreateAtom";
+import { customApiRequest } from "../../utils/customApiRequest";
 
-export const profileAtom = atom<{ [key: string]: any } | null>({
-  key: "profile",
-  default: null,
-});
-
-export const fetchProfileList = async (body: { [key: string]: any }) => {
-  try {
-    const url = 'http://localhost:3001/ictk/issue/admin/config/list';
-    const req = {
-      header: {
-        trId: "500400",
-      },
-      body,
-    };
-
-    const { data: response } = await axios.post(url, req);
-
-    if (response?.header.rtnCode !== "000000") {
-      throw { customError: true, payload: response };
-    }
-
-    return response;
-  } catch (err: any) {
-    if (err.customError) {
-      return err.payload;
-    } else if (err.response?.data) {
-      return err.response.data;
-    } else {
-      return {
-        error: {
-          url: "프로파일 정보",
-          code: err.code ?? "UNKNOWN_ERROR",
-          message: err.message ?? "An unknown error occurred",
-        },
-      };
-    }
-  }
+// 발급설정 - 프로파일 목록 조회를 위한 API
+export const profileAtom = customCreateAtom("profile");
+export const fetchProfileList = (body: { [key: string]: any }) => {
+  const trId = process.env.REACT_APP_TRID_CONFIG_LIST!; // No more warning: TypeScript trusts your assertion.
+  const url = "/config/list";
+  return customApiRequest(url, trId, body);
 };
 
-
-
-export const keyIssueAtom = atom<{ [key: string]: any } | null>({
-  key: "keyIssue",
-  default: null,
-});
-
-export const fetchKeyIssueList = async (body: { [key: string]: any }) => {
-  try {
-    const url = 'http://localhost:3001/ictk/issue/admin/config/list';
-    const req = {
-      header: {
-        trId: "500400",
-      },
-      body,
-    };
-
-    const { data: response } = await axios.post(url, req);
-
-    if (response?.header.rtnCode !== "000000") {
-      throw { customError: true, payload: response };
-    }
-
-    return response;
-  } catch (err: any) {
-    if (err.customError) {
-      return err.payload;
-    } else if (err.response?.data) {
-      return err.response.data;
-    } else {
-      return {
-        error: {
-          url: "키발급코드 정보",
-          code: err.code ?? "UNKNOWN_ERROR",
-          message: err.message ?? "An unknown error occurred",
-        },
-      };
-    }
-  }
+// 발급설정 - 키발급코드 목록 조회를 위한 API
+export const keyIssueAtom = customCreateAtom("keyIssue");
+export const fetchKeyIssueList = (body: { [key: string]: any }) => {
+  const trId = process.env.REACT_APP_TRID_CONFIG_LIST!; 
+  const url = "/config/list";
+  return customApiRequest(url, trId, body);
 };
 
-
-
-export const scriptAtom = atom<{ [key: string]: any } | null>({
-  key: "script",
-  default: null,
-});
-
-export const fetchScriptList = async (body: { [key: string]: any }) => {
-  try {
-    const url = 'http://localhost:3001/ictk/issue/admin/config/list';
-    const req = {
-      header: {
-        trId: "500400",
-      },
-      body,
-    };
-
-    const { data: response } = await axios.post(url, req);
-
-    if (response?.header.rtnCode !== "000000") {
-      throw { customError: true, payload: response };
-    }
-
-    return response;
-  } catch (err: any) {
-    if (err.customError) {
-      return err.payload;
-    } else if (err.response?.data) {
-      return err.response.data;
-    } else {
-      return {
-        error: {
-          url: "스크립트 정보",
-          code: err.code ?? "UNKNOWN_ERROR",
-          message: err.message ?? "An unknown error occurred",
-        },
-      };
-    }
-  }
+// 발급설정 - 스크립트 목록 조회를 위한 API
+export const scriptAtom = customCreateAtom("script");
+export const fetchScriptList = (body: { [key: string]: any }) => {
+  const trId = process.env.REACT_APP_TRID_CONFIG_LIST!; 
+  const url = "/config/list";
+  return customApiRequest(url, trId, body);
 };
 
-
-
-export const profileInfoAtom = atom<{ [key: string]: any } | null>({
-  key: "profileInfo",
-  default: null,
-});
-
+// 발급설정 - 프로파일 정보 조회를 위한 API
+export const profileInfoAtom = customCreateAtom("profileInfo");
 export const fetchProfileInfoList = async (body: { [key: string]: any }) => {
-  try {
-    const url = 'http://localhost:3001/ictk/issue/admin/config/info';
-    const req = {
-      header: {
-        trId: "500400",
-      },
-      body,
-    };
+  const trId = process.env.REACT_APP_TRID_CONFIG_INFO!;
+  const url = "/config/info";
+  return customApiRequest(url, trId, body);
+};
 
-    const { data: response } = await axios.post(url, req);
+// 발급설정 - 키발급코드 정보 조회를 위한 API
+export const keyIssueInfoAtom = customCreateAtom("keyIssueInfo");
+export const fetchKeyIssueInfo = async (body: { [key: string]: any }) => {
+  const trId = process.env.REACT_APP_TRID_CONFIG_INFO!; 
+  const url = "/config/info";
+  return customApiRequest(url, trId, body);
+};
 
-    if (response?.header.rtnCode !== "000000") {
-      throw { customError: true, payload: response };
-    }
-
-    return response;
-  } catch (err: any) {
-    if (err.customError) {
-      return err.payload;
-    } else if (err.response?.data) {
-      return err.response.data;
-    } else {
-      return {
-        error: {
-          url: "프로파일 파일 정보",
-          code: err.code ?? "UNKNOWN_ERROR",
-          message: err.message ?? "An unknown error occurred",
-        },
-      };
-    }
-  }
+// 발급설정 - 스크립트 정보 조회를 위한 API
+export const scriptInfoAtom = customCreateAtom("scriptInfo");
+export const fetchScriptInfo = async (body: { [key: string]: any }) => {
+  const trId = process.env.REACT_APP_TRID_CONFIG_INFO!; 
+  const url = "/config/info";
+  return customApiRequest(url, trId, body);
 };

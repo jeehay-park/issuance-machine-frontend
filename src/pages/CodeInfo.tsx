@@ -10,16 +10,16 @@ import {
   Subtitle,
 } from "../styles/styledTableLayout";
 import Pagination from "../components/Table/Pagination";
-import { useList } from "../utils/useList";
+import { useList } from "../customHooks/useList";
 import { fetchCodeInfoList } from "../recoil/atoms/codeInfo";
 import { useSetRecoilState, useRecoilValue } from "recoil";
-import { CodeInfoAtom } from "../recoil/atoms/codeInfo";
+import { codeInfoAtom } from "../recoil/atoms/codeInfo";
 import { FetchListParams } from "../utils/types";
 import DeleteCodeInfoModal from "./CodeInfoModal/DeleteCodeInfoModal";
 
 const CodeInfo: React.FC = () => {
-  const setCodeInfoState = useSetRecoilState(CodeInfoAtom);
-  const recoilData = useRecoilValue(CodeInfoAtom);
+  const setCodeInfoState = useSetRecoilState(codeInfoAtom);
+  const recoilData = useRecoilValue(codeInfoAtom);
 
   const fetchListData = async ({
     isHeaderInfo,

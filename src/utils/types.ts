@@ -1,26 +1,35 @@
-
 export type filterArrProps = {
-    filterOp: string;
-    keyName: string;
-    keyValue: string;
-  };
-  
-  export type FetchListParams = {
-    isHeaderInfo: boolean;
-    rowCnt: number;
-    startNum: number;
-    sortIdx: number;
-    order: string;
-    filter?: string;
-    filterArrAndOr?: string;
-    filterArr?: filterArrProps[];
-    configType?: string
-  };
+  filterOp: string;
+  keyName: string;
+  keyValue: string;
+};
 
-  export type dynamicObject = {
-    [key : string] : any
-  }
+export type FetchListParams = {
+  isHeaderInfo: boolean;
+  rowCnt: number;
+  startNum: number;
+  sortIdx: number;
+  order: string;
+  filter?: string;
+  filterArrAndOr?: string;
+  filterArr?: filterArrProps[];
+  configType?: string;
+};
 
-  export type rowType = {
-    [key : string] : any
-  }
+export type dynamicObject = {
+  [key: string]: any;
+};
+
+export type rowType = {
+  [key: string]: any;
+};
+
+export interface WebSocketRequest {
+  header: {[key: string] : any} ,
+  body : {[key: string] : any} 
+}
+
+export interface WebSocketResponse {
+  header: {[key: string] : any} ,
+  body : {[key: string] : any} 
+}
