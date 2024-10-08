@@ -7,12 +7,11 @@ import {
   TitleContainer,
   Title,
 } from "../styles/styledTableLayout";
-import { codeInfoResponse } from "../mockData/mockData";
 import { useList } from "../customHooks/useList";
 import { serialNumberResponse } from "../mockData/mockData";
-import { codeInfoAtom } from "../recoil/atoms/codeInfo";
+import { codeInfoAtom } from "../recoil/atoms/code";
 import { useSetRecoilState, useRecoilValue } from "recoil";
-import { fetchCodeInfoList } from "../recoil/atoms/codeInfo";
+import { fetchCodeInfo } from "../recoil/atoms/code";
 import { FetchListParams } from "../utils/types";
 import Pagination from "../components/Table/Pagination";
 import { selectedRowAtom } from "../recoil/atoms/selected";
@@ -41,7 +40,7 @@ const SerialNumber: React.FC = () => {
     filterArrAndOr,
     filterArr,
   }: FetchListParams) => {
-    const result = await fetchCodeInfoList({
+    const result = await fetchCodeInfo({
       isHeaderInfo,
       rowCnt,
       startNum,

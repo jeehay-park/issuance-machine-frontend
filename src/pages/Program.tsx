@@ -1,27 +1,35 @@
 import React, { useState } from "react";
 import DynamicTable from "../components/Table/DynamicTable";
 import Search from "../components/Table/Search";
-import { Button, Card, TitleContainer, Title} from "../styles/styledTableLayout";
-import { codeInfoResponse } from "../mockData/mockData";
+import {
+  Button,
+  Card,
+  TitleContainer,
+  Title,
+} from "../styles/styledTableLayout";
 import { useList } from "../customHooks/useList";
 import { serialNumberResponse } from "../mockData/mockData";
-import { codeInfoAtom } from "../recoil/atoms/codeInfo";
+import { codeInfoAtom } from "../recoil/atoms/code";
 import { useSetRecoilState, useRecoilValue } from "recoil";
-import { fetchCodeInfoList } from "../recoil/atoms/codeInfo";
+import { fetchCodeInfo } from "../recoil/atoms/code";
 import { FetchListParams } from "../utils/types";
 import Pagination from "../components/Table/Pagination";
 import { selectedRowAtom } from "../recoil/atoms/selected";
 
-const Program: React.FC = () => {   
-    const setCodeInfoState = useSetRecoilState(codeInfoAtom);
-    const recoilData = useRecoilValue(codeInfoAtom);
-    const selectedRow = useRecoilValue(selectedRowAtom);
+const Program: React.FC = () => {
+  const setCodeInfoState = useSetRecoilState(codeInfoAtom);
+  const recoilData = useRecoilValue(codeInfoAtom);
+  const selectedRow = useRecoilValue(selectedRowAtom);
 
-    const headers = serialNumberResponse.body.headerInfos.map((item) => item.name);
-    const keyName = serialNumberResponse.body.headerInfos.map((item) => item.keyName);
-    const headerInfos = serialNumberResponse.body.headerInfos;
-    const data = serialNumberResponse.body.items;
-    
+  const headers = serialNumberResponse.body.headerInfos.map(
+    (item) => item.name
+  );
+  const keyName = serialNumberResponse.body.headerInfos.map(
+    (item) => item.keyName
+  );
+  const headerInfos = serialNumberResponse.body.headerInfos;
+  const data = serialNumberResponse.body.items;
+
   const fetchListData = async ({
     isHeaderInfo,
     rowCnt,
@@ -32,7 +40,7 @@ const Program: React.FC = () => {
     filterArrAndOr,
     filterArr,
   }: FetchListParams) => {
-    const result = await fetchCodeInfoList({
+    const result = await fetchCodeInfo({
       isHeaderInfo,
       rowCnt,
       startNum,
@@ -57,20 +65,21 @@ const Program: React.FC = () => {
   });
 
   const itemsPerPage = 2;
-  const { sortOption, handleSort, currentPage, handlePageChange, handleRefresh } = useList(
-    itemsPerPage,
-    params,
-    setParams,
-    fetchListData
-  );
-  
-    const handleSearch = (searchText: string, selectedOption: string) => {
-        console.log(`Searching for "${searchText}" in "${selectedOption}"`);
-      };
+  const {
+    sortOption,
+    handleSort,
+    currentPage,
+    handlePageChange,
+    handleRefresh,
+  } = useList(itemsPerPage, params, setParams, fetchListData);
 
-    
-    return(<>
-     <Card>
+  const handleSearch = (searchText: string, selectedOption: string) => {
+    console.log(`Searching for "${searchText}" in "${selectedOption}"`);
+  };
+
+  return (
+    <>
+      <Card>
         <TitleContainer>
           <Title>프로그램 정보</Title>
         </TitleContainer>
@@ -117,8 +126,8 @@ const Program: React.FC = () => {
           />
         </div>
       </Card>
-    
-    </>)
-}
+    </>
+  );
+};
 
 export default Program;

@@ -11,9 +11,9 @@ import {
 } from "../styles/styledTableLayout";
 import Pagination from "../components/Table/Pagination";
 import { useList } from "../customHooks/useList";
-import { fetchCodeInfoList } from "../recoil/atoms/codeInfo";
+import { fetchCodeInfo } from "../recoil/atoms/code";
 import { useSetRecoilState, useRecoilValue } from "recoil";
-import { codeInfoAtom } from "../recoil/atoms/codeInfo";
+import { codeInfoAtom } from "../recoil/atoms/code";
 import { FetchListParams } from "../utils/types";
 import DeleteCodeInfoModal from "./CodeInfoModal/DeleteCodeInfoModal";
 
@@ -31,7 +31,7 @@ const CodeInfo: React.FC = () => {
     filterArrAndOr,
     filterArr,
   }: FetchListParams) => {
-    const result = await fetchCodeInfoList({
+    const result = await fetchCodeInfo({
       isHeaderInfo,
       rowCnt,
       startNum,
@@ -56,12 +56,13 @@ const CodeInfo: React.FC = () => {
   });
 
   const itemsPerPage = 2;
-  const { sortOption, handleSort, currentPage, handlePageChange, handleRefresh } = useList(
-    itemsPerPage,
-    params,
-    setParams,
-    fetchListData
-  );
+  const {
+    sortOption,
+    handleSort,
+    currentPage,
+    handlePageChange,
+    handleRefresh,
+  } = useList(itemsPerPage, params, setParams, fetchListData);
 
   const headers = codeInfoResponse.body.headerInfos.map((item) => item.name);
   const keyName = codeInfoResponse.body.headerInfos.map((item) => item.keyName);
@@ -109,9 +110,8 @@ const CodeInfo: React.FC = () => {
           >
             <Button disabled>추가</Button>
             <DeleteCodeInfoModal handleRefresh={handleRefresh}>
-            <Button>삭제</Button>
+              <Button>삭제</Button>
             </DeleteCodeInfoModal>
-            
           </div>
         </div>
 

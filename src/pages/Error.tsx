@@ -32,7 +32,7 @@ const Error: React.FC<errorMessage> = ({ error }) => {
         }}
       >
         <h3 style={{ padding: "10px 10px" }}>
-          데이터를 불러오는 중 오류가 발생했습니다.
+          요청한 데이터를 가져오는 중 오류가 발생했습니다.
         </h3>
 
         {show && (
