@@ -67,6 +67,7 @@ const SettingKeyIssueCodeConfig: React.FC = () => {
     sortIdx: 1,
     order: "DESC",
     configType: "KEYISSUE",
+    filter: null,
   });
 
   const itemsPerPage = 2;
@@ -76,11 +77,8 @@ const SettingKeyIssueCodeConfig: React.FC = () => {
     currentPage,
     handlePageChange,
     handleRefresh,
+    handleSearch,
   } = useList(itemsPerPage, params, setParams, fetchListData);
-
-  const handleSearch = (searchText: string, selectedOption: string) => {
-    console.log(`Searching for "${searchText}" in "${selectedOption}"`);
-  };
 
   useEffect(() => {
     fetchListData(params);
@@ -95,12 +93,14 @@ const SettingKeyIssueCodeConfig: React.FC = () => {
         (item: { [key: string]: any }) => item.keyName
       );
 
-      const { headerInfos, configList, totCnt } = recoilData?.body;
+      console.log(recoilData.body);
+
+      const { headerInfos, itemsList, totCnt } = recoilData?.body;
 
       setHeaders(headers);
       setKeyname(keyName);
       setHeaderInfos(headerInfos);
-      setData(configList);
+      setData(itemsList);
       setTotCnt(totCnt);
     }
   }, [recoilData]);

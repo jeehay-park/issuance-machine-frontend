@@ -10,7 +10,7 @@ export type FetchListParams = {
   startNum: number;
   sortIdx: number;
   order: string;
-  filter?: string;
+  filter?: string | null;
   filterArrAndOr?: string;
   filterArr?: filterArrProps[];
   configType?: string;
@@ -25,11 +25,11 @@ export type rowType = {
 };
 
 export interface WebSocketRequest {
-  header: {[key: string] : any} ,
-  body : {[key: string] : any} 
+  header: { [key: string]: any };
+  body: { [key: string]: any };
 }
 
 export interface WebSocketResponse {
-  header: {[key: string] : any} ,
-  body : {[key: string] : any} 
+  header: { [key: string]: any };
+  body: { [key: string]: any };
 }

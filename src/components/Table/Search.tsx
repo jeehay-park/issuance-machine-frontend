@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, KeyboardEvent, MouseEvent } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCaretDown } from "@fortawesome/free-solid-svg-icons";
 
@@ -21,13 +21,31 @@ const Search: React.FC<SearchProps> = ({ options, label, onSearch }) => {
     setIsDropdownOpen(false);
   };
 
-  const handleSearch = () => {
-    if (options) {
-      onSearch(searchText, selectedOption);
+  const handleSearch = (
+    event: KeyboardEvent<HTMLInputElement> | React.MouseEvent
+  ) => {
+    console.log("search clicked");
+    console.log(searchText);
+
+    // Check if the event is a keyboard event
+    if ("key" in event && event.key === "Enter") {
+      // Call the search function based on options or label
+      if (options) {
+        onSearch(searchText, selectedOption);
+      } else if (label) {
+        onSearch(searchText, label);
+      }
     }
 
-    if (label) {
-      onSearch(searchText, label);
+    // Check if the event is a mouse event
+    if ("button" in event) {
+      event.preventDefault(); // Prevent default action only for Enter key
+      // Assuming you want to trigger search on button click as well
+      if (options) {
+        onSearch(searchText, selectedOption);
+      } else if (label) {
+        onSearch(searchText, label);
+      }
     }
   };
 

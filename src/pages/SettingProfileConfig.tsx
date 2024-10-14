@@ -8,7 +8,6 @@ import {
   Title,
 } from "../styles/styledTableLayout";
 import { useList } from "../customHooks/useList";
-
 import { profileAtom, profileInfoAtom } from "../recoil/atoms/setting";
 import { useSetRecoilState, useRecoilValue } from "recoil";
 import {
@@ -85,6 +84,7 @@ const SettingProfileConfig: React.FC = () => {
     sortIdx: 1,
     order: "DESC",
     configType: "PROFILE",
+    filter: null,
   });
 
   const itemsPerPage = 2;
@@ -94,11 +94,12 @@ const SettingProfileConfig: React.FC = () => {
     currentPage,
     handlePageChange,
     handleRefresh,
+    handleSearch,
   } = useList(itemsPerPage, params, setParams, fetchListData);
 
-  const handleSearch = (searchText: string, selectedOption: string) => {
-    console.log(`Searching for "${searchText}" in "${selectedOption}"`);
-  };
+  // const handleSearch = (searchText: string, selectedOption: string) => {
+  //   console.log(`Searching for "${searchText}" in "${selectedOption}"`);
+  // };
 
   useEffect(() => {
     fetchListData(params);
@@ -113,12 +114,12 @@ const SettingProfileConfig: React.FC = () => {
         (item: { [key: string]: any }) => item.keyName
       );
 
-      const { headerInfos, configList, totCnt } = recoilData?.body;
+      const { headerInfos, itemsList, totCnt } = recoilData?.body;
 
       setHeaders(headers);
       setKeyname(keyName);
       setHeaderInfos(headerInfos);
-      setData(configList);
+      setData(itemsList);
       setTotCnt(totCnt);
     }
   }, [recoilData]);

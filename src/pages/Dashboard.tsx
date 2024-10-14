@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRecoilValue } from "recoil";
 import { authAtom } from "../recoil/atoms/auth";
 // import { useAuth } from "../components/contexts/AuthContext";
@@ -11,9 +11,12 @@ import {
 } from "../styles/styledDashboard";
 import DynamicTable from "../components/Table/DynamicTable";
 import { dashboardResponse } from "../mockData/mockData";
+import { dynamicObject } from "../utils/types";
 
 const Dashboard: React.FC = () => {
   const auth = useRecoilValue(authAtom);
+  const [messages, setMessages] = useState<dynamicObject[]>([]);
+  const [ws, setWs] = useState<WebSocket | null>(null); // Add state for WebSocket connection
   const [sortOption, setSortOption] = useState({ key: 2, order: "ASC" });
   // const { user, setUser } = useAuth();
   const headers = dashboardResponse.body.headerInfos.map((item) => item.name);
@@ -37,6 +40,54 @@ const Dashboard: React.FC = () => {
     setSelectedTab(tab);
     // Add your data fetching logic here based on the `tab` value
     console.log("Fetching data for: ", tab);
+  };
+
+  useEffect(() => {
+    // Connect to the updated WebSocket endpoint
+    const ws = new WebSocket("ws://localhost:8080/ws/dashboard/500001");
+    setWs(ws); // Store the WebSocket connection
+
+    ws.onopen = () => {
+      console.log("Connected to WebSocket");
+      ws.send("fetch users"); // Example request to fetch data
+    };
+
+    ws.onmessage = (event) => {
+      console.log("Raw data:", event.data);
+      try {
+        const parsedData = JSON.parse(event.data);
+        console.log("Parsed data:", parsedData);
+
+        setMessages(parsedData);
+      } catch (error) {
+        console.error("Error parsing WebSocket data:", error);
+      }
+    };
+
+    return () => {
+      ws.close();
+    };
+  }, []);
+
+  // Function to send a request for users
+  const fetchUsers = () => {
+    if (ws) {
+      ws.send("fetch users"); // Send the request again
+      console.log("Request sent to fetch users");
+
+      // Clear any previous onmessage handler
+      ws.onmessage = (event) => {
+        console.log("Raw data using fetchUsers:", event.data);
+        try {
+          const parsedData = JSON.parse(event.data); // Ensure to parse the received data
+          console.log("Parsed data using fetchUsers:", parsedData);
+
+          setMessages(parsedData); // Update the state with the new messages
+        } catch (error) {
+          console.error("Error parsing WebSocket data:", error);
+        }
+      };
+    }
   };
 
   return (
@@ -225,6 +276,16 @@ const Dashboard: React.FC = () => {
                 headerInfos={headerInfos}
               />
             </div>
+          </div>
+          <h1 onClick={fetchUsers}>Fetch data using websocket!</h1>
+          <div style={{ display: "flex", padding: "2rem 2rem", gap: "2rem" }}>
+            {messages?.map((item) => (
+              <ul>
+                <li>{item.name}</li>
+                <li>{item.email}</li>
+                <li>{item.age}</li>
+              </ul>
+            ))}
           </div>
         </DashboardContainer>
       </div>

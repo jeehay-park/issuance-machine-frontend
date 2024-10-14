@@ -20,6 +20,7 @@ export const useList = (
   });
 
   const [currentPage, setCurrentPage] = useState(1);
+  const [keyName, setKeyname] = useState<string | null>(null);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -69,6 +70,27 @@ export const useList = (
     }));
   };
 
+  const handleSearch = (searchText: string, selectedOption: string) => {
+    console.log("handleSearch clicked!");
+    const newParams = {
+      ...params,
+      filter: searchText,
+    };
+
+    console.log(newParams);
+
+    fetchList({
+      ...newParams,
+    });
+
+    setParams((prevParams) => ({
+      ...prevParams,
+      filter: searchText,
+    }));
+
+    setKeyname(searchText);
+  };
+
   const handleRefresh = () => {
     fetchList(params);
     console.log("refresh the page!");
@@ -80,5 +102,6 @@ export const useList = (
     currentPage,
     handlePageChange,
     handleRefresh,
+    handleSearch,
   };
 };
