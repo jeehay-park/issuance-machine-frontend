@@ -19,6 +19,7 @@ import Pagination from "../components/Table/Pagination";
 import { selectedRowAtom } from "../recoil/atoms/selected";
 import { dynamicObject } from "../utils/types";
 import Error from "./Error";
+import AddProfileConfig from "./SettingProfileConfig/AddProfileConfig";
 
 const SettingProfileConfig: React.FC = () => {
   const setProfileState = useSetRecoilState(profileAtom);
@@ -165,7 +166,10 @@ const SettingProfileConfig: React.FC = () => {
               gap: "5px",
             }}
           >
-            <Button>추가</Button>
+            <AddProfileConfig handleRefresh={handleRefresh}>
+              <Button>추가</Button>
+            </AddProfileConfig>
+
             <Button disabled={selectedRow === null}>변경</Button>
             <Button disabled={selectedRow === null}>삭제</Button>
           </div>
