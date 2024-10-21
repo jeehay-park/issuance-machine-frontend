@@ -1,10 +1,10 @@
 import React, {
   useState,
-  useEffect,
-  useRef,
   ReactNode,
   FormEvent,
   ChangeEvent,
+  useEffect,
+  useRef,
 } from "react";
 import {
   ModalBackground,
@@ -18,7 +18,7 @@ import {
   ModalContent,
 } from "../../styles/styledModal";
 import { selectedRowAtom } from "../../recoil/atoms/selected";
-import { useRecoilValue } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import success from "../../components/assets/green-tick.png";
 import {
   FormContainer,
@@ -33,7 +33,7 @@ import {
 } from "../../styles/styledForm";
 import { dynamicObject } from "../../utils/types";
 import { MdClose, MdCheck } from "react-icons/md";
-import { createProfile } from "../../recoil/atoms/setting";
+import { deleteProfile } from "../../recoil/atoms/setting";
 
 // Define the shape of form data and error messages
 interface FormData {
@@ -47,7 +47,7 @@ interface FormData {
     description: string | null;
     profType?: string | null;
     version: string | null;
-    ctntData: string | null;
+    // ctntData: string | null;
     dataHash: string | null;
   };
 }
@@ -59,16 +59,17 @@ interface FormErrors {
     description: string | null;
     profType?: string | null;
     version: string | null;
-    ctntData: string | null;
+    // ctntData: string | null;
     dataHash: string | null;
   };
 }
 
-// Profile 설정 추가
-const AddProfileConfig: React.FC<{
+// Profile 설정 삭제
+const DeleteProfileConfig: React.FC<{
   children: ReactNode;
   handleRefresh: () => void;
 }> = ({ children, handleRefresh }) => {
+  const setSelectedRowState = useSetRecoilState(selectedRowAtom);
   const selectedRow = useRecoilValue(selectedRowAtom);
   const [isModalOpen, setModalOpen] = useState(false);
   const [responseMessage, setResponseMessage] = useState<string | null>(null);
@@ -83,37 +84,17 @@ const AddProfileConfig: React.FC<{
     }
   }, [formContainerRef, isModalOpen]);
 
+
   const openModal = () => {
     setResponseMessage(null);
     setModalOpen(true);
     setFormHeight(0); // Reset height when opening modal
+    
   };
 
   const closeModal = () => {
     setModalOpen(false);
-    setFormData({
-      configType: "PROFILE",
-      profileConfig: {
-        profId: null,
-        profName: null,
-        description: null,
-        profType: null,
-        version: null,
-        ctntData: null,
-        dataHash: null,
-      },
-    });
-    setErrors({
-      profileConfig: {
-        profId: null,
-        profName: null,
-        description: null,
-        profType: null,
-        version: null,
-        ctntData: null,
-        dataHash: null,
-      },
-    });
+    handleRefresh();
     setFormHeight(0); // Reset the height when closing the modal
   };
 
@@ -130,10 +111,11 @@ const AddProfileConfig: React.FC<{
       description: null,
       profType: null,
       version: null,
-      ctntData: null,
+      //   ctntData: null,
       dataHash: null,
     },
   });
+
   const [errors, setErrors] = useState<FormErrors>({
     profileConfig: {
       profId: null,
@@ -141,70 +123,27 @@ const AddProfileConfig: React.FC<{
       description: null,
       profType: null,
       version: null,
-      ctntData: null,
+      //   ctntData: null,
       dataHash: null,
     },
   });
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
 
-  // Handle input changes
-  const handleChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      profileConfig: {
-        ...prevData.profileConfig, // Spread the existing profileConfig
-        [name]: value, // Update the specific field
-      },
-    }));
-
-    // Clear error for the current field
-    setErrors((prevErrors) => ({
-      ...prevErrors,
-      profileConfig: {
-        ...prevErrors.profileConfig,
-        [name]: null, // Clear the specific error
-      },
-    }));
-  };
-
-  // Validate form inputs
-  const validate = (): boolean => {
-    let tempErrors: FormErrors = {
-      profileConfig: {
-        profId: null,
-        profName: null,
-        description: null,
-        profType: null,
-        version: null,
-        ctntData: null,
-        dataHash: null,
-      },
-    };
-    let isValid = true;
-
-    if (!formData.profileConfig.profName) {
-      tempErrors.profileConfig.profName = "profileConfig is required";
-      isValid = false;
-    }
-
-    setErrors(tempErrors);
-    return isValid;
-  };
-
   // Handle form submission
   const handleSubmit = async (event: React.MouseEvent<HTMLDivElement>) => {
-    if (validate()) {
+    if (selectedRow) {
       try {
-        const result = await createProfile(formData);
+        const result = await deleteProfile({
+          configType: "PROFILE",
+          profId: selectedRow.prof_id,
+        });
 
         console.log(result);
 
         if (result) {
           setResponseMessage(result.header.rtnMessage);
           handleRefresh(); // Refresh data after creation
+          setSelectedRowState(null);
         } else {
           setResponseMessage("Failed to create profile.");
         }
@@ -214,6 +153,7 @@ const AddProfileConfig: React.FC<{
     }
   };
 
+  
   return (
     <>
       <div onClick={openModal}>{children}</div>
@@ -222,7 +162,7 @@ const AddProfileConfig: React.FC<{
           <ModalPadding>
             <ModalHeader backgroundColor="var(--layoutBlue)">
               <ModalHeaderTitle>
-                <h3 style={{ color: "white" }}>프로파일 추가</h3>
+                <h3 style={{ color: "white" }}>프로파일 삭제</h3>
               </ModalHeaderTitle>
               <CloseButton onClick={closeModal}>&times;</CloseButton>
             </ModalHeader>
@@ -245,70 +185,9 @@ const AddProfileConfig: React.FC<{
                 </p>
               </div>
             ) : (
-              <FormContainer ref={formContainerRef}>
-                <form>
-                  <FormRow>
-                    <FormLabel htmlFor="profName">이름</FormLabel>
-                    <FormInput
-                      type="text"
-                      id="profName"
-                      name="profName"
-                      onChange={handleChange}
-                      // required
-                    />
-                  </FormRow>
-                  {isSubmitted && errors?.profileConfig.profName && (
-                    <FormError>{errors?.profileConfig.profName}</FormError>
-                  )}{" "}
-                  <FormRow>
-                    <FormLabel htmlFor="description">상세 설명</FormLabel>
-                    <FormInput
-                      type="text"
-                      id="description"
-                      name="description"
-                      onChange={handleChange}
-                      // required
-                    />
-                  </FormRow>
-                  <FormRow>
-                    <FormLabel htmlFor="profType">타입</FormLabel>
-                    <FormInput
-                      type="text"
-                      id="profType"
-                      name="profType"
-                      onChange={handleChange}
-                      // required
-                    />
-                  </FormRow>
-                  <FormRow>
-                    <FormLabel htmlFor="version">버전</FormLabel>
-                    <FormInput
-                      type="text"
-                      id="version"
-                      name="version"
-                      onChange={handleChange}
-                    />
-                  </FormRow>
-                  <FormRow>
-                    <FormLabel htmlFor="ctntData">컨텐츠 데이터</FormLabel>
-                    <FormInput
-                      type="text"
-                      id="ctntData"
-                      name="ctntData"
-                      onChange={handleChange}
-                    />
-                  </FormRow>
-                  <FormRow>
-                    <FormLabel htmlFor="dataHash">데이터 해시</FormLabel>
-                    <FormInput
-                      type="text"
-                      id="dataHash"
-                      name="dataHash"
-                      onChange={handleChange}
-                    />
-                  </FormRow>
-                </form>
-              </FormContainer>
+              <div ref={formContainerRef} style={{ padding: "100px 10px" }}>
+                <p>프로파일 정보를 삭제하시겠습니까?</p>
+              </div>
             )}
           </ModalContent>
 
@@ -356,4 +235,4 @@ const AddProfileConfig: React.FC<{
   );
 };
 
-export default AddProfileConfig;
+export default DeleteProfileConfig;

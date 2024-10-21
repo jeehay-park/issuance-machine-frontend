@@ -1,10 +1,10 @@
 import React, {
   useState,
-  useEffect,
-  useRef,
   ReactNode,
   FormEvent,
   ChangeEvent,
+  useEffect,
+  useRef,
 } from "react";
 import {
   ModalBackground,
@@ -18,7 +18,7 @@ import {
   ModalContent,
 } from "../../styles/styledModal";
 import { selectedRowAtom } from "../../recoil/atoms/selected";
-import { useRecoilValue } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import success from "../../components/assets/green-tick.png";
 import {
   FormContainer,
@@ -47,7 +47,7 @@ interface FormData {
     description: string | null;
     profType?: string | null;
     version: string | null;
-    ctntData: string | null;
+    // ctntData: string | null;
     dataHash: string | null;
   };
 }
@@ -59,20 +59,20 @@ interface FormErrors {
     description: string | null;
     profType?: string | null;
     version: string | null;
-    ctntData: string | null;
+    // ctntData: string | null;
     dataHash: string | null;
   };
 }
 
-// Profile 설정 추가
-const AddProfileConfig: React.FC<{
+// Profile 설정 변경
+const EditProfileConfig: React.FC<{
   children: ReactNode;
   handleRefresh: () => void;
 }> = ({ children, handleRefresh }) => {
+  const setSelectedRowState = useSetRecoilState(selectedRowAtom);
   const selectedRow = useRecoilValue(selectedRowAtom);
   const [isModalOpen, setModalOpen] = useState(false);
   const [responseMessage, setResponseMessage] = useState<string | null>(null);
-
   const [formHeight, setFormHeight] = useState(0);
 
   const formContainerRef = useRef<HTMLDivElement>(null);
@@ -87,6 +87,19 @@ const AddProfileConfig: React.FC<{
     setResponseMessage(null);
     setModalOpen(true);
     setFormHeight(0); // Reset height when opening modal
+    if (selectedRow) {
+      setFormData({
+        configType: "PROFILE",
+        profileConfig: {
+          profId: selectedRow.prof_id,
+          profName: selectedRow.prof_name,
+          description: selectedRow.description,
+          profType: selectedRow.prof_type,
+          version: selectedRow.version,
+          dataHash: selectedRow.data_hash,
+        },
+      });
+    }
   };
 
   const closeModal = () => {
@@ -99,7 +112,7 @@ const AddProfileConfig: React.FC<{
         description: null,
         profType: null,
         version: null,
-        ctntData: null,
+        // ctntData: null,
         dataHash: null,
       },
     });
@@ -110,10 +123,11 @@ const AddProfileConfig: React.FC<{
         description: null,
         profType: null,
         version: null,
-        ctntData: null,
+        // ctntData: null,
         dataHash: null,
       },
     });
+    handleRefresh();
     setFormHeight(0); // Reset the height when closing the modal
   };
 
@@ -130,10 +144,11 @@ const AddProfileConfig: React.FC<{
       description: null,
       profType: null,
       version: null,
-      ctntData: null,
+      //   ctntData: null,
       dataHash: null,
     },
   });
+
   const [errors, setErrors] = useState<FormErrors>({
     profileConfig: {
       profId: null,
@@ -141,7 +156,7 @@ const AddProfileConfig: React.FC<{
       description: null,
       profType: null,
       version: null,
-      ctntData: null,
+      //   ctntData: null,
       dataHash: null,
     },
   });
@@ -179,7 +194,7 @@ const AddProfileConfig: React.FC<{
         description: null,
         profType: null,
         version: null,
-        ctntData: null,
+        // ctntData: null,
         dataHash: null,
       },
     };
@@ -196,6 +211,8 @@ const AddProfileConfig: React.FC<{
 
   // Handle form submission
   const handleSubmit = async (event: React.MouseEvent<HTMLDivElement>) => {
+    console.log(formData);
+
     if (validate()) {
       try {
         const result = await createProfile(formData);
@@ -205,6 +222,7 @@ const AddProfileConfig: React.FC<{
         if (result) {
           setResponseMessage(result.header.rtnMessage);
           handleRefresh(); // Refresh data after creation
+          setSelectedRowState(null);
         } else {
           setResponseMessage("Failed to create profile.");
         }
@@ -222,7 +240,7 @@ const AddProfileConfig: React.FC<{
           <ModalPadding>
             <ModalHeader backgroundColor="var(--layoutBlue)">
               <ModalHeaderTitle>
-                <h3 style={{ color: "white" }}>프로파일 추가</h3>
+                <h3 style={{ color: "white" }}>프로파일 변경</h3>
               </ModalHeaderTitle>
               <CloseButton onClick={closeModal}>&times;</CloseButton>
             </ModalHeader>
@@ -254,7 +272,8 @@ const AddProfileConfig: React.FC<{
                       id="profName"
                       name="profName"
                       onChange={handleChange}
-                      // required
+                      value={formData.profileConfig?.profName ?? ""}
+                      //   placeholder={formData.profileConfig?.profName ?? ""}
                     />
                   </FormRow>
                   {isSubmitted && errors?.profileConfig.profName && (
@@ -267,6 +286,7 @@ const AddProfileConfig: React.FC<{
                       id="description"
                       name="description"
                       onChange={handleChange}
+                      value={formData.profileConfig?.description ?? ""}
                       // required
                     />
                   </FormRow>
@@ -277,7 +297,7 @@ const AddProfileConfig: React.FC<{
                       id="profType"
                       name="profType"
                       onChange={handleChange}
-                      // required
+                      value={formData.profileConfig?.profType ?? ""}
                     />
                   </FormRow>
                   <FormRow>
@@ -287,9 +307,10 @@ const AddProfileConfig: React.FC<{
                       id="version"
                       name="version"
                       onChange={handleChange}
+                      value={formData.profileConfig?.version ?? ""}
                     />
                   </FormRow>
-                  <FormRow>
+                  {/* <FormRow>
                     <FormLabel htmlFor="ctntData">컨텐츠 데이터</FormLabel>
                     <FormInput
                       type="text"
@@ -297,7 +318,7 @@ const AddProfileConfig: React.FC<{
                       name="ctntData"
                       onChange={handleChange}
                     />
-                  </FormRow>
+                  </FormRow> */}
                   <FormRow>
                     <FormLabel htmlFor="dataHash">데이터 해시</FormLabel>
                     <FormInput
@@ -305,6 +326,7 @@ const AddProfileConfig: React.FC<{
                       id="dataHash"
                       name="dataHash"
                       onChange={handleChange}
+                      value={formData.profileConfig?.dataHash ?? ""}
                     />
                   </FormRow>
                 </form>
@@ -356,4 +378,4 @@ const AddProfileConfig: React.FC<{
   );
 };
 
-export default AddProfileConfig;
+export default EditProfileConfig;

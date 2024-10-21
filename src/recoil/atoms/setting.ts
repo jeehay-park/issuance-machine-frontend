@@ -53,7 +53,7 @@ export const fetchScriptInfo = async (body: { [key: string]: any }) => {
 export const createProfileAtom = customCreateAtom("createProfile");
 export const createProfile = async (body: { [key: string]: any }) => {
   const trId = process.env.REACT_APP_TRID_CONFIG_CREATE!;
-  const url = "/config/create";
+  const url = "/config/save";
   return customApiRequest(url, trId, body);
 };
 
@@ -61,7 +61,7 @@ export const createProfile = async (body: { [key: string]: any }) => {
 export const createKeyIssueAtom = customCreateAtom("createKeyIssue");
 export const createKeyIssue = async (body: { [key: string]: any }) => {
   const trId = process.env.REACT_APP_TRID_CONFIG_CREATE!;
-  const url = "/config/create";
+  const url = "/config/save";
   return customApiRequest(url, trId, body);
 };
 
@@ -69,7 +69,7 @@ export const createKeyIssue = async (body: { [key: string]: any }) => {
 export const createScriptAtom = customCreateAtom("createScript");
 export const createScript = async (body: { [key: string]: any }) => {
   const trId = process.env.REACT_APP_TRID_CONFIG_CREATE!;
-  const url = "/config/create";
+  const url = "/config/save";
   return customApiRequest(url, trId, body);
 };
 
@@ -77,7 +77,7 @@ export const createScript = async (body: { [key: string]: any }) => {
 export const updateProfileAtom = customCreateAtom("updateProfile");
 export const updateProfile = async (body: { [key: string]: any }) => {
   const trId = process.env.REACT_APP_TRID_CONFIG_UPDATE!;
-  const url = "/config/update";
+  const url = "/config/save";
   return customApiRequest(url, trId, body);
 };
 
@@ -85,7 +85,7 @@ export const updateProfile = async (body: { [key: string]: any }) => {
 export const updateKeyIssueAtom = customCreateAtom("updateKeyIssue");
 export const updateKeyIssue = async (body: { [key: string]: any }) => {
   const trId = process.env.REACT_APP_TRID_CONFIG_UPDATE!;
-  const url = "/config/update";
+  const url = "/config/save";
   return customApiRequest(url, trId, body);
 };
 
@@ -93,7 +93,7 @@ export const updateKeyIssue = async (body: { [key: string]: any }) => {
 export const updateScriptAtom = customCreateAtom("updateScript");
 export const updateScript = async (body: { [key: string]: any }) => {
   const trId = process.env.REACT_APP_TRID_CONFIG_UPDATE!;
-  const url = "/config/update";
+  const url = "/config/save";
   return customApiRequest(url, trId, body);
 };
 

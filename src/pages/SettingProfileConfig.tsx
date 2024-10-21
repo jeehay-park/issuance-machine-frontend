@@ -20,6 +20,8 @@ import { selectedRowAtom } from "../recoil/atoms/selected";
 import { dynamicObject } from "../utils/types";
 import Error from "./Error";
 import AddProfileConfig from "./SettingProfileConfig/AddProfileConfig";
+import EditProfileConfig from "./SettingProfileConfig/EditProfileConfig";
+import DeleteProfileConfig from "./SettingProfileConfig/DeleteProfileConfig";
 
 const SettingProfileConfig: React.FC = () => {
   const setProfileState = useSetRecoilState(profileAtom);
@@ -80,7 +82,7 @@ const SettingProfileConfig: React.FC = () => {
 
   const [params, setParams] = useState<FetchListParams>({
     isHeaderInfo: true,
-    rowCnt: 2,
+    rowCnt: 5,
     startNum: 0,
     sortIdx: 1,
     order: "DESC",
@@ -88,7 +90,7 @@ const SettingProfileConfig: React.FC = () => {
     filter: null,
   });
 
-  const itemsPerPage = 2;
+  const itemsPerPage = 5;
   const {
     sortOption,
     handleSort,
@@ -108,20 +110,21 @@ const SettingProfileConfig: React.FC = () => {
 
   useEffect(() => {
     if (recoilData) {
-      const headers = recoilData?.body?.headerInfos.map(
-        (item: { [key: string]: any }) => item.name
-      );
-      const keyName = recoilData?.body?.headerInfos.map(
-        (item: { [key: string]: any }) => item.keyName
-      );
+      const headers = recoilData?.body?.headerInfos
+        .filter((item: { [key: string]: any }) => item.display) // Only items with display as true
+        .map((item: { [key: string]: any }) => item.name); // Extract only the name
 
-      const { headerInfos, itemsList, totCnt } = recoilData?.body;
+      const keyName = recoilData?.body?.headerInfos
+        .filter((item: { [key: string]: any }) => item.display) // Only items with display as true
+        .map((item: { [key: string]: any }) => item.keyName); // Extract only the keyName
+
+      const { headerInfos, configList, totalCnt } = recoilData?.body;
 
       setHeaders(headers);
       setKeyname(keyName);
       setHeaderInfos(headerInfos);
-      setData(itemsList);
-      setTotCnt(totCnt);
+      setData(configList);
+      setTotCnt(totalCnt);
     }
   }, [recoilData]);
 
@@ -169,9 +172,12 @@ const SettingProfileConfig: React.FC = () => {
             <AddProfileConfig handleRefresh={handleRefresh}>
               <Button>추가</Button>
             </AddProfileConfig>
-
-            <Button disabled={selectedRow === null}>변경</Button>
-            <Button disabled={selectedRow === null}>삭제</Button>
+            <EditProfileConfig handleRefresh={handleRefresh}>
+              <Button disabled={selectedRow === null}>변경</Button>
+            </EditProfileConfig>
+            <DeleteProfileConfig handleRefresh={handleRefresh}>
+              <Button disabled={selectedRow === null}>삭제</Button>
+            </DeleteProfileConfig>
           </div>
         </div>
 
