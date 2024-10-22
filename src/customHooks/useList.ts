@@ -2,7 +2,7 @@ import { useState } from "react";
 import { FetchListParams } from "../utils/types";
 
 type SortOption = {
-  key: number;
+  key: string;
   order: string;
 };
 
@@ -15,7 +15,7 @@ export const useList = (
   fetchList: Function
 ) => {
   const [sortOption, setSortOption] = useState<SortOption>({
-    key: params.sortIdx,
+    key: params.sortKeyName,
     order: params.order,
   });
 
@@ -39,8 +39,10 @@ export const useList = (
     }));
   };
 
-  const handleSort = (headerKey: number) => {
+  const handleSort = (headerKey: string) => {
     let newOrder = "ASC";
+
+    console.log("handleSort : ", headerKey);
 
     if (sortOption.key === headerKey) {
       newOrder = sortOption.order === "ASC" ? "DESC" : "ASC";
@@ -55,8 +57,9 @@ export const useList = (
 
     const newParams = {
       ...params,
-      sortIdx: headerKey,
+      sortKeyName: headerKey,
       order: newOrder,
+      startNum: 0,
     };
 
     fetchList({
@@ -65,9 +68,11 @@ export const useList = (
 
     setParams((prevParams) => ({
       ...prevParams,
-      sortIdx: headerKey,
+      sortKeyName: headerKey,
       order: newOrder,
+      startNum: 0,
     }));
+    setCurrentPage(1);
   };
 
   const handleSearch = (searchText: string, selectedOption: string) => {
@@ -75,9 +80,8 @@ export const useList = (
     const newParams = {
       ...params,
       filter: searchText,
+      startNum: 0,
     };
-
-    console.log(newParams);
 
     fetchList({
       ...newParams,
@@ -86,13 +90,42 @@ export const useList = (
     setParams((prevParams) => ({
       ...prevParams,
       filter: searchText,
+      startNum: 0,
     }));
 
     setKeyname(searchText);
+    setCurrentPage(1);
   };
 
   const handleRefresh = () => {
-    fetchList(params);
+    const newParams = {
+      ...params,
+      isHeaderInfo: true,
+      rowCnt: 5,
+      startNum: 0,
+      sortKeyName: "updated_at", // 업데이트 시간
+      order: "DESC",
+      configType: "PROFILE",
+      filter: null,
+    };
+
+    setParams((prevParams) => ({
+      ...prevParams,
+      isHeaderInfo: true,
+      rowCnt: 5,
+      startNum: 0,
+      sortKeyName: "updated_at", // 업데이트 시간
+      order: "DESC",
+      configType: "PROFILE",
+      filter: null,
+    }));
+
+    fetchList(newParams);
+    setCurrentPage(1);
+    setSortOption({
+      key: "updated_at",
+      order: "DESC",
+    });
     console.log("refresh the page!");
   };
 

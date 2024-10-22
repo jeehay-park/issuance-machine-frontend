@@ -17,7 +17,10 @@ const Dashboard: React.FC = () => {
   const auth = useRecoilValue(authAtom);
   const [messages, setMessages] = useState<dynamicObject[]>([]);
   const [ws, setWs] = useState<WebSocket | null>(null); // Add state for WebSocket connection
-  const [sortOption, setSortOption] = useState({ key: 2, order: "ASC" });
+  const [sortOption, setSortOption] = useState({
+    key: "updated_at",
+    order: "ASC",
+  });
   // const { user, setUser } = useAuth();
   const headers = dashboardResponse.body.headerInfos.map((item) => item.name);
   const keyName = dashboardResponse.body.headerInfos.map(

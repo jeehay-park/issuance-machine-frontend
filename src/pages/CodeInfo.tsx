@@ -25,7 +25,7 @@ const CodeInfo: React.FC = () => {
     isHeaderInfo,
     rowCnt,
     startNum,
-    sortIdx,
+    sortKeyName,
     order,
     filter,
     filterArrAndOr,
@@ -35,7 +35,7 @@ const CodeInfo: React.FC = () => {
       isHeaderInfo,
       rowCnt,
       startNum,
-      sortIdx,
+      sortKeyName,
       order,
       filter,
       filterArrAndOr,
@@ -51,7 +51,7 @@ const CodeInfo: React.FC = () => {
     isHeaderInfo: true,
     rowCnt: 2,
     startNum: 0,
-    sortIdx: 1,
+    sortKeyName: "updated_at", // 업데이트 시간
     order: "DESC",
   });
 
@@ -74,13 +74,7 @@ const CodeInfo: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchListData({
-      isHeaderInfo: true,
-      rowCnt: 5,
-      startNum: 0,
-      sortIdx: 1,
-      order: "DESC",
-    });
+    fetchListData(params);
   }, []);
 
   console.log("recoilData : ", recoilData);

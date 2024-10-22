@@ -4,7 +4,7 @@ import { useSetRecoilState, useRecoilValue } from "recoil";
 import { dynamicObject, rowType } from "../../utils/types";
 
 type SortOption = {
-  key: number; // Assuming 'key' is the index of the header
+  key: string; // Assuming 'key' is the index of the header
   order: string; // Restricting order to only "ASC" or "DESC"
 };
 
@@ -17,7 +17,7 @@ type TableProps = {
   height?: string;
   headerInfos?: Array<{ [key: string]: any }> | null;
   sortOption?: SortOption; // Optional sorting information
-  handleSort?: (headerKey: number) => void;
+  handleSort?: (headerKey: string) => void;
 };
 
 const DynamicTable: React.FC<TableProps> = ({
@@ -94,13 +94,14 @@ const DynamicTable: React.FC<TableProps> = ({
                       {header.name}
                     </div>
                     <div>
-                      {header.isSort && (
+                      {header.sort && (
                         <span
                           onClick={() => {
-                            if (handleSort) handleSort(header.idx);
-                          }} // Sort based on the column clicked
+                            if (handleSort) 
+                              handleSort(header.keyName)
+                            }} // Sort based on the column clicked
                         >
-                          {header.idx === sortOption?.key &&
+                          {header.keyName === sortOption?.key &&
                           sortOption?.order === "ASC" ? (
                             <span style={{ color: "red" }}>&#9650;</span> // ▲ Up Arrow for ASC
                           ) : (

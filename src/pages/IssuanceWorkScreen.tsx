@@ -29,7 +29,7 @@ const Issuance: React.FC = () => {
   const [searchJobName, setSearchJobName] = useState<string>(""); // Search state for Job Name
   const [filterStatus, setFilterStatus] = useState<string>("전체"); // Filter state for 발급 상태
   const [searchProgram, setSearchProgram] = useState<string>(""); // Search state for Program
-  const [sortOption, setSortOption] = useState({ key: 2, order: "ASC" });
+  const [sortOption, setSortOption] = useState({ key: "updated_at", order: "ASC" });
 
   const headers = workResponse.body.headerInfos.map((item) => item.name);
   const keyName = workResponse.body.headerInfos.map((item) => item.keyName);
@@ -63,11 +63,11 @@ const Issuance: React.FC = () => {
     }
   };
 
-  const handleSort = (headerKey: number) => {
+  const handleSort = (headerKey: string) => {
     let newOrder;
 
     // Toggle sort order for the current column
-    if (sortOption?.key === headerKey) {
+    if (sortOption.key === headerKey) {
       newOrder = sortOption.order === "ASC" ? "DESC" : "ASC";
     } else {
       newOrder = "ASC"; // Default to ASC when a new column is sorted

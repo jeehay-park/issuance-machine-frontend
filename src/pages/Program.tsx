@@ -34,7 +34,7 @@ const Program: React.FC = () => {
     isHeaderInfo,
     rowCnt,
     startNum,
-    sortIdx,
+    sortKeyName,
     order,
     filter,
     filterArrAndOr,
@@ -44,7 +44,7 @@ const Program: React.FC = () => {
       isHeaderInfo,
       rowCnt,
       startNum,
-      sortIdx,
+      sortKeyName,
       order,
       filter,
       filterArrAndOr,
@@ -60,7 +60,7 @@ const Program: React.FC = () => {
     isHeaderInfo: true,
     rowCnt: 2,
     startNum: 0,
-    sortIdx: 1,
+    sortKeyName: "updated_at", // 업데이트 시간
     order: "DESC",
   });
 

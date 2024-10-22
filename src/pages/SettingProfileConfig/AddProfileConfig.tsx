@@ -199,12 +199,10 @@ const AddProfileConfig: React.FC<{
     if (validate()) {
       try {
         const result = await createProfile(formData);
-
-        console.log(result);
-
         if (result) {
+          handleRefresh(); 
           setResponseMessage(result.header.rtnMessage);
-          handleRefresh(); // Refresh data after creation
+          // Refresh data after creation
         } else {
           setResponseMessage("Failed to create profile.");
         }

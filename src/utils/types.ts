@@ -8,7 +8,7 @@ export type FetchListParams = {
   isHeaderInfo: boolean;
   rowCnt: number;
   startNum: number;
-  sortIdx: number;
+  sortKeyName: string;
   order: string;
   filter?: string | null;
   filterArrAndOr?: string;

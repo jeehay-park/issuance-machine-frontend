@@ -42,7 +42,7 @@ const Pagination: React.FC<PaginationProps> = ({
         setStartPage(tempArr[0]);
       }
     }
-  }, [currentPage]);
+  }, [currentPage, totCnt, itemsPerPage]);
 
   if (totCnt > 0) {
     return (

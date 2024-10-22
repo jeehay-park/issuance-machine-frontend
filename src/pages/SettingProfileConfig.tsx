@@ -40,7 +40,7 @@ const SettingProfileConfig: React.FC = () => {
     isHeaderInfo,
     rowCnt,
     startNum,
-    sortIdx,
+    sortKeyName,
     order,
     filter,
     filterArrAndOr,
@@ -50,7 +50,7 @@ const SettingProfileConfig: React.FC = () => {
       isHeaderInfo,
       rowCnt,
       startNum,
-      sortIdx,
+      sortKeyName,
       order,
       filter,
       filterArrAndOr,
@@ -59,7 +59,6 @@ const SettingProfileConfig: React.FC = () => {
     });
 
     if (result?.body) {
-      console.log("result : ", result);
       setProfileState(result);
     } else {
       setError(result);
@@ -75,7 +74,6 @@ const SettingProfileConfig: React.FC = () => {
     });
 
     if (result?.body) {
-      console.log(result);
       setProfileInfoState(result.body);
     }
   };
@@ -84,7 +82,7 @@ const SettingProfileConfig: React.FC = () => {
     isHeaderInfo: true,
     rowCnt: 5,
     startNum: 0,
-    sortIdx: 1,
+    sortKeyName: "updated_at", // 업데이트 시간
     order: "DESC",
     configType: "PROFILE",
     filter: null,
@@ -99,10 +97,6 @@ const SettingProfileConfig: React.FC = () => {
     handleRefresh,
     handleSearch,
   } = useList(itemsPerPage, params, setParams, fetchListData);
-
-  // const handleSearch = (searchText: string, selectedOption: string) => {
-  //   console.log(`Searching for "${searchText}" in "${selectedOption}"`);
-  // };
 
   useEffect(() => {
     fetchListData(params);
@@ -119,6 +113,8 @@ const SettingProfileConfig: React.FC = () => {
         .map((item: { [key: string]: any }) => item.keyName); // Extract only the keyName
 
       const { headerInfos, configList, totalCnt } = recoilData?.body;
+
+      console.log("total Count : ", totalCnt);
 
       setHeaders(headers);
       setKeyname(keyName);
