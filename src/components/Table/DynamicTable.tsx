@@ -97,9 +97,8 @@ const DynamicTable: React.FC<TableProps> = ({
                       {header.sort && (
                         <span
                           onClick={() => {
-                            if (handleSort) 
-                              handleSort(header.keyName)
-                            }} // Sort based on the column clicked
+                            if (handleSort) handleSort(header.keyName);
+                          }} // Sort based on the column clicked
                         >
                           {header.keyName === sortOption?.key &&
                           sortOption?.order === "ASC" ? (
@@ -158,7 +157,7 @@ const DynamicTable: React.FC<TableProps> = ({
                           color: "#777",
                         }}
                       >
-                        {row[keyNameItem] || "TRUE"}
+                        {row[keyNameItem]}
                         {/* Render data or fallback to '-' */}
                       </td>
                     )}

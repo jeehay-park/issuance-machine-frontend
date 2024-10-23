@@ -21,7 +21,7 @@ export const fetchSnruleInfo = (body: { [key: string]: any }) => {
 export const createSnruleAtom = customCreateAtom("createSnrule");
 export const createSnrule = (body: { [key: string]: any }) => {
   const trId = process.env.REACT_APP_TRID_SNRULE_CREATE!; // No more warning: TypeScript trusts your assertion.
-  const url = "/snrule/create";
+  const url = "/snrule/save";
   return customApiRequest(url, trId, body);
 };
 

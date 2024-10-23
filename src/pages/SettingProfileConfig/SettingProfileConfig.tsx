@@ -1,28 +1,35 @@
 import React, { useEffect, useState } from "react";
-import DynamicTable from "../components/Table/DynamicTable";
-import Search from "../components/Table/Search";
+import DynamicTable from "../../components/Table/DynamicTable";
+import Search from "../../components/Table/Search";
 import {
   Button,
   Card,
   TitleContainer,
   Title,
-} from "../styles/styledTableLayout";
-import { useList } from "../customHooks/useList";
-
-import { scriptAtom } from "../recoil/atoms/setting";
+} from "../../styles/styledTableLayout";
+import { useList } from "../../customHooks/useList";
+import { profileAtom, profileInfoAtom } from "../../recoil/atoms/setting";
 import { useSetRecoilState, useRecoilValue } from "recoil";
-import { fetchScriptList } from "../recoil/atoms/setting";
-import { FetchListParams } from "../utils/types";
-import Pagination from "../components/Table/Pagination";
-import { selectedRowAtom } from "../recoil/atoms/selected";
-import { dynamicObject } from "../utils/types";
-import Error from "./Error";
+import {
+  fetchProfileList,
+  fetchProfileInfoList,
+} from "../../recoil/atoms/setting";
+import { FetchListParams } from "../../utils/types";
+import Pagination from "../../components/Table/Pagination";
+import { selectedRowAtom } from "../../recoil/atoms/selected";
+import { dynamicObject } from "../../utils/types";
+import Error from "../Error";
+import AddProfileConfig from "./AddProfileConfig";
+import EditProfileConfig from "./EditProfileConfig";
+import DeleteProfileConfig from "./DeleteProfileConfig";
 
-const SettingScriptConfig: React.FC = () => {
-  const setScriptAtom = useSetRecoilState(scriptAtom);
-  const recoilData = useRecoilValue(scriptAtom);
+const SettingProfileConfig: React.FC = () => {
+  const setRecoilState = useSetRecoilState(profileAtom);
+  const setProfileInfoState = useSetRecoilState(profileInfoAtom);
+  const recoilData = useRecoilValue(profileAtom);
   const selectedRow = useRecoilValue(selectedRowAtom);
 
+  const itemsPerPage = 5;
   const [headers, setHeaders] = useState<string[] | null>(null);
   const [keyName, setKeyname] = useState<string[] | null>(null);
   const [headerInfos, setHeaderInfos] = useState<dynamicObject[] | null>(null);
@@ -40,7 +47,7 @@ const SettingScriptConfig: React.FC = () => {
     filterArrAndOr,
     filterArr,
   }: FetchListParams) => {
-    const result = await fetchScriptList({
+    const result = await fetchProfileList({
       isHeaderInfo,
       rowCnt,
       startNum,
@@ -49,28 +56,39 @@ const SettingScriptConfig: React.FC = () => {
       filter,
       filterArrAndOr,
       filterArr,
-      configType: "SCRIPT",
+      configType: "PROFILE",
     });
 
     if (result?.body) {
-      console.log("result : ", result);
-      setScriptAtom(result);
+      setRecoilState(result);
     } else {
       setError(result);
     }
   };
 
+  const fetchDetails = async () => {
+    const result = await fetchProfileInfoList({
+      configType: "profle",
+      profId: "profId",
+      keyisId: "keyisId",
+      scrtId: "scrtId",
+    });
+
+    if (result?.body) {
+      setProfileInfoState(result.body);
+    }
+  };
+
   const [params, setParams] = useState<FetchListParams>({
     isHeaderInfo: true,
-    rowCnt: 2,
+    rowCnt: 5,
     startNum: 0,
     sortKeyName: "updated_at", // 업데이트 시간
     order: "DESC",
-    configType: "SCRIPT",
+    configType: "PROFILE",
     filter: null,
   });
 
-  const itemsPerPage = 2;
   const {
     sortOption,
     handleSort,
@@ -86,20 +104,23 @@ const SettingScriptConfig: React.FC = () => {
 
   useEffect(() => {
     if (recoilData) {
-      const headers = recoilData?.body?.headerInfos.map(
-        (item: { [key: string]: any }) => item.name
-      );
-      const keyName = recoilData?.body?.headerInfos.map(
-        (item: { [key: string]: any }) => item.keyName
-      );
+      const headers = recoilData?.body?.headerInfos
+        .filter((item: { [key: string]: any }) => item.display) // Only items with display as true
+        .map((item: { [key: string]: any }) => item.name); // Extract only the name
 
-      const { headerInfos, itemsList, totCnt } = recoilData?.body;
+      const keyName = recoilData?.body?.headerInfos
+        .filter((item: { [key: string]: any }) => item.display) // Only items with display as true
+        .map((item: { [key: string]: any }) => item.keyName); // Extract only the keyName
+
+      const { headerInfos, configList, totalCnt } = recoilData?.body;
+
+      console.log("total Count : ", totalCnt);
 
       setHeaders(headers);
       setKeyname(keyName);
       setHeaderInfos(headerInfos);
-      setData(itemsList);
-      setTotCnt(totCnt);
+      setData(configList);
+      setTotCnt(totalCnt);
     }
   }, [recoilData]);
 
@@ -125,7 +146,7 @@ const SettingScriptConfig: React.FC = () => {
     <>
       <Card>
         <TitleContainer>
-          <Title>발급 설정 &gt; 스크립트 Config</Title>
+          <Title>발급 설정 &gt; 프로파일 Config</Title>
         </TitleContainer>
         <div
           style={{
@@ -134,7 +155,7 @@ const SettingScriptConfig: React.FC = () => {
             marginBottom: "10px",
           }}
         >
-          <Search label="스크립트명" onSearch={handleSearch} />
+          <Search label="프로파일명" onSearch={handleSearch} />
           <div
             style={{
               display: "flex",
@@ -144,9 +165,15 @@ const SettingScriptConfig: React.FC = () => {
               gap: "5px",
             }}
           >
-            <Button>추가</Button>
-            <Button disabled={selectedRow === null}>변경</Button>
-            <Button disabled={selectedRow === null}>삭제</Button>
+            <AddProfileConfig handleRefresh={handleRefresh}>
+              <Button>추가</Button>
+            </AddProfileConfig>
+            <EditProfileConfig handleRefresh={handleRefresh}>
+              <Button disabled={selectedRow === null}>변경</Button>
+            </EditProfileConfig>
+            <DeleteProfileConfig handleRefresh={handleRefresh}>
+              <Button disabled={selectedRow === null}>삭제</Button>
+            </DeleteProfileConfig>
           </div>
         </div>
 
@@ -161,6 +188,7 @@ const SettingScriptConfig: React.FC = () => {
           height="400px"
         />
 
+        <p onClick={fetchDetails}>파일보기</p>
         {totCnt && totCnt > 0 && (
           <div style={{ padding: "10px 10px" }}>
             <Pagination
@@ -176,4 +204,4 @@ const SettingScriptConfig: React.FC = () => {
   );
 };
 
-export default SettingScriptConfig;
+export default SettingProfileConfig;

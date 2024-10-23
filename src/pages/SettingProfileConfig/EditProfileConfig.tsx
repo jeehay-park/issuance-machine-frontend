@@ -34,6 +34,7 @@ import {
 import { dynamicObject } from "../../utils/types";
 import { MdClose, MdCheck } from "react-icons/md";
 import { createProfile } from "../../recoil/atoms/setting";
+import Card from "../../components/Layout/Card";
 
 // Define the shape of form data and error messages
 interface FormData {
@@ -74,12 +75,14 @@ const EditProfileConfig: React.FC<{
   const [isModalOpen, setModalOpen] = useState(false);
   const [responseMessage, setResponseMessage] = useState<string | null>(null);
   const [formHeight, setFormHeight] = useState(0);
+  const [formWidth, setFormWidth] = useState(0);
 
   const formContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (formContainerRef.current) {
       setFormHeight(formContainerRef.current.offsetHeight);
+      setFormWidth(formContainerRef.current.offsetWidth);
     }
   }, [formContainerRef, isModalOpen]);
 
@@ -249,18 +252,19 @@ const EditProfileConfig: React.FC<{
             {responseMessage ? (
               <div
                 style={{
-                  padding: "20px 20px",
                   display: "flex",
                   justifyContent: "center",
                   alignItems: "center",
+                  width: `${formWidth}px`,
                   height: `${formHeight}px`,
                 }}
               >
-                <img src={success} width={"40px"} />
-
-                <p style={{ padding: "5px 5px", fontWeight: "bold" }}>
-                  {responseMessage}
-                </p>
+                <Card>
+                  <img src={success} width={"40px"} />
+                  <p style={{ padding: "5px 5px", fontWeight: "bold" }}>
+                    {responseMessage}
+                  </p>
+                </Card>
               </div>
             ) : (
               <FormContainer ref={formContainerRef}>

@@ -20,20 +20,10 @@ import {
 import { selectedRowAtom } from "../../recoil/atoms/selected";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import success from "../../components/assets/green-tick.png";
-import {
-  FormContainer,
-  FormRow,
-  FormLabel,
-  FormInput,
-  RadioInput,
-  RadioLabel,
-  FormSelect,
-  FormButton,
-  FormError,
-} from "../../styles/styledForm";
-import { dynamicObject } from "../../utils/types";
+import warning from "../../components/assets/warning.png";
 import { MdClose, MdCheck } from "react-icons/md";
 import { deleteProfile } from "../../recoil/atoms/setting";
+import Card from "../../components/Layout/Card";
 
 // Define the shape of form data and error messages
 interface FormData {
@@ -75,21 +65,21 @@ const DeleteProfileConfig: React.FC<{
   const [responseMessage, setResponseMessage] = useState<string | null>(null);
 
   const [formHeight, setFormHeight] = useState(0);
+  const [formWidth, setFormWidth] = useState(0);
 
   const formContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (formContainerRef.current) {
       setFormHeight(formContainerRef.current.offsetHeight);
+      setFormWidth(formContainerRef.current.offsetWidth);
     }
   }, [formContainerRef, isModalOpen]);
-
 
   const openModal = () => {
     setResponseMessage(null);
     setModalOpen(true);
     setFormHeight(0); // Reset height when opening modal
-    
   };
 
   const closeModal = () => {
@@ -153,7 +143,6 @@ const DeleteProfileConfig: React.FC<{
     }
   };
 
-  
   return (
     <>
       <div onClick={openModal}>{children}</div>
@@ -171,22 +160,41 @@ const DeleteProfileConfig: React.FC<{
             {responseMessage ? (
               <div
                 style={{
-                  padding: "20px 20px",
                   display: "flex",
                   justifyContent: "center",
                   alignItems: "center",
+                  width: `${formWidth}px`,
                   height: `${formHeight}px`,
                 }}
               >
-                <img src={success} width={"40px"} />
-
-                <p style={{ padding: "5px 5px", fontWeight: "bold" }}>
-                  {responseMessage}
-                </p>
+                <Card>
+                  <img src={success} width={"40px"} />
+                  <p style={{ padding: "5px 5px", fontWeight: "bold" }}>
+                    {responseMessage}
+                  </p>
+                </Card>
               </div>
             ) : (
-              <div ref={formContainerRef} style={{ padding: "100px 10px" }}>
-                <p>프로파일 정보를 삭제하시겠습니까?</p>
+              <div
+                ref={formContainerRef}
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  width: "100%",
+                  height: "200px",
+                }}
+              >
+                <Card>
+                  <img
+                    src={warning}
+                    width={"30px"}
+                    style={{ marginRight: "10px" }}
+                  />
+                  <p style={{ fontWeight: "bold" }}>
+                    프로파일 정보를 삭제하시겠습니까?
+                  </p>
+                </Card>
               </div>
             )}
           </ModalContent>

@@ -1,22 +1,22 @@
 import React, { useEffect, useState } from "react";
-import DynamicTable from "../components/Table/DynamicTable";
-import Search from "../components/Table/Search";
+import DynamicTable from "../../components/Table/DynamicTable";
+import Search from "../../components/Table/Search";
 import {
   Button,
   Card,
   TitleContainer,
   Title,
-} from "../styles/styledTableLayout";
-import { useList } from "../customHooks/useList";
+} from "../../styles/styledTableLayout";
+import { useList } from "../../customHooks/useList";
 
-import { keyIssueAtom } from "../recoil/atoms/setting";
+import { keyIssueAtom } from "../../recoil/atoms/setting";
 import { useSetRecoilState, useRecoilValue } from "recoil";
-import { fetchKeyIssueList } from "../recoil/atoms/setting";
-import { FetchListParams } from "../utils/types";
-import Pagination from "../components/Table/Pagination";
-import { selectedRowAtom } from "../recoil/atoms/selected";
-import { dynamicObject } from "../utils/types";
-import Error from "./Error";
+import { fetchKeyIssueList } from "../../recoil/atoms/setting";
+import { FetchListParams } from "../../utils/types";
+import Pagination from "../../components/Table/Pagination";
+import { selectedRowAtom } from "../../recoil/atoms/selected";
+import { dynamicObject } from "../../utils/types";
+import Error from "../Error";
 
 const SettingKeyIssueCodeConfig: React.FC = () => {
   const setKeyIssueState = useSetRecoilState(keyIssueAtom);
