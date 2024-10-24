@@ -1,7 +1,6 @@
 import React, {
   useState,
   ReactNode,
-  FormEvent,
   ChangeEvent,
   useEffect,
   useRef,
@@ -25,22 +24,14 @@ import {
   FormRow,
   FormLabel,
   FormInput,
-  RadioInput,
-  RadioLabel,
-  FormSelect,
-  FormButton,
   FormError,
 } from "../../styles/styledForm";
-import { dynamicObject } from "../../utils/types";
 import { MdClose, MdCheck } from "react-icons/md";
 import { createProfile } from "../../recoil/atoms/setting";
 import Card from "../../components/Layout/Card";
 
 // Define the shape of form data and error messages
 interface FormData {
-  // name: string | null;
-  // workNo: string | null;
-  // programNo: string | null;
   configType: "PROFILE";
   profileConfig: {
     profId?: string | null;
@@ -48,7 +39,6 @@ interface FormData {
     description: string | null;
     profType?: string | null;
     version: string | null;
-    // ctntData: string | null;
     dataHash: string | null;
   };
 }
@@ -60,18 +50,17 @@ interface FormErrors {
     description: string | null;
     profType?: string | null;
     version: string | null;
-    // ctntData: string | null;
     dataHash: string | null;
   };
 }
 
-// Profile 설정 변경
+// Profile 삭제
 const EditProfileConfig: React.FC<{
   children: ReactNode;
   handleRefresh: () => void;
 }> = ({ children, handleRefresh }) => {
-  const setSelectedRowState = useSetRecoilState(selectedRowAtom);
   const selectedRow = useRecoilValue(selectedRowAtom);
+  const setSelectedRow = useSetRecoilState(selectedRowAtom);
   const [isModalOpen, setModalOpen] = useState(false);
   const [responseMessage, setResponseMessage] = useState<string | null>(null);
   const [formHeight, setFormHeight] = useState(0);
@@ -115,7 +104,6 @@ const EditProfileConfig: React.FC<{
         description: null,
         profType: null,
         version: null,
-        // ctntData: null,
         dataHash: null,
       },
     });
@@ -126,17 +114,12 @@ const EditProfileConfig: React.FC<{
         description: null,
         profType: null,
         version: null,
-        // ctntData: null,
         dataHash: null,
       },
     });
     handleRefresh();
     setFormHeight(0); // Reset the height when closing the modal
-  };
-
-  const handleCancel = (event: MouseEvent) => {
-    event.preventDefault();
-    setModalOpen(false);
+    setSelectedRow(null);
   };
 
   const [formData, setFormData] = useState<FormData>({
@@ -147,7 +130,6 @@ const EditProfileConfig: React.FC<{
       description: null,
       profType: null,
       version: null,
-      //   ctntData: null,
       dataHash: null,
     },
   });
@@ -159,10 +141,10 @@ const EditProfileConfig: React.FC<{
       description: null,
       profType: null,
       version: null,
-      //   ctntData: null,
       dataHash: null,
     },
   });
+
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
 
   // Handle input changes
@@ -197,7 +179,6 @@ const EditProfileConfig: React.FC<{
         description: null,
         profType: null,
         version: null,
-        // ctntData: null,
         dataHash: null,
       },
     };
@@ -224,8 +205,7 @@ const EditProfileConfig: React.FC<{
 
         if (result) {
           setResponseMessage(result.header.rtnMessage);
-          handleRefresh(); // Refresh data after creation
-          setSelectedRowState(null);
+          handleRefresh();
         } else {
           setResponseMessage("Failed to create profile.");
         }

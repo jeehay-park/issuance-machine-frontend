@@ -15,11 +15,11 @@ import { useRecoilValue, useSetRecoilState } from "recoil";
 import success from "../../components/assets/green-tick.png";
 import warning from "../../components/assets/warning.png";
 import { MdClose, MdCheck } from "react-icons/md";
-import { deleteProfile } from "../../recoil/atoms/setting";
+import { deleteSnrule } from "../../recoil/atoms/snrule";
 import Card from "../../components/Layout/Card";
 
-// Profile 설정 삭제
-const DeleteProfileConfig: React.FC<{
+// 시리얼 넘버 규칙 삭제
+const DeleteSerialNumber: React.FC<{
   children: ReactNode;
   handleRefresh: () => void;
 }> = ({ children, handleRefresh }) => {
@@ -53,25 +53,19 @@ const DeleteProfileConfig: React.FC<{
     setSelectedRow(null);
   };
 
-  const handleCancel = (event: MouseEvent) => {
-    event.preventDefault();
-    setModalOpen(false);
-  };
-
   // Handle form submission
   const handleSubmit = async (event: React.MouseEvent<HTMLDivElement>) => {
     if (selectedRow) {
       try {
-        const result = await deleteProfile({
-          configType: "PROFILE",
-          profId: selectedRow.prof_id,
+        const result = await deleteSnrule({
+          snrId: selectedRow.snr_id,
         });
 
         console.log(result);
 
         if (result) {
           setResponseMessage(result.header.rtnMessage);
-          handleRefresh(); // Refresh data after creation
+          handleRefresh();
         } else {
           setResponseMessage("Failed to create profile.");
         }
@@ -89,7 +83,7 @@ const DeleteProfileConfig: React.FC<{
           <ModalPadding>
             <ModalHeader backgroundColor="var(--layoutBlue)">
               <ModalHeaderTitle>
-                <h3 style={{ color: "white" }}>프로파일 삭제</h3>
+                <h3 style={{ color: "white" }}>시리얼 넘버 규칙 삭제</h3>
               </ModalHeaderTitle>
               <CloseButton onClick={closeModal}>&times;</CloseButton>
             </ModalHeader>
@@ -130,7 +124,7 @@ const DeleteProfileConfig: React.FC<{
                     style={{ marginRight: "10px" }}
                   />
                   <p style={{ fontWeight: "bold" }}>
-                    프로파일 정보를 삭제하시겠습니까?
+                    시리얼 넘버 규칙 정보를 삭제하시겠습니까?
                   </p>
                 </Card>
               </div>
@@ -180,4 +174,4 @@ const DeleteProfileConfig: React.FC<{
   );
 };
 
-export default DeleteProfileConfig;
+export default DeleteSerialNumber;

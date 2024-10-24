@@ -36,7 +36,7 @@ const DynamicTable: React.FC<TableProps> = ({
   const selectedRow = useRecoilValue(selectedRowAtom);
   const handleRowClick = (row: rowType) => {
     console.log("row : ", row);
-    if (checkedRow === row) {
+    if (selectedRow === row) {
       setCheckedRow(null);
       setSelectedRowState(null);
     } else {
@@ -47,7 +47,13 @@ const DynamicTable: React.FC<TableProps> = ({
 
   return (
     <div style={{ height: height || "400px", overflowY: "auto" }}>
-      <table style={{ width: "100%", borderCollapse: "collapse" }}>
+      <table
+        style={{
+          width: "100%",
+          borderCollapse: "collapse",
+          tableLayout: "fixed",
+        }}
+      >
         <thead>
           <tr>
             {checkbox ? (
@@ -62,6 +68,7 @@ const DynamicTable: React.FC<TableProps> = ({
                   fontFamily: "Noto Sans KR",
                   color: "#777",
                   fontSize: "15px",
+                  width: "60px",
                 }}
               >
                 선택
@@ -79,6 +86,7 @@ const DynamicTable: React.FC<TableProps> = ({
                     borderBottom: "2px solid #ddd",
                     padding: "8px",
                     fontSize: "15px",
+                    textAlign: "left",
                   }}
                 >
                   <div
@@ -116,7 +124,13 @@ const DynamicTable: React.FC<TableProps> = ({
           </tr>
         </thead>
 
-        <tbody>
+        <tbody
+          style={{
+            whiteSpace: "normal",
+            overflow: "visible",
+            wordWrap: "break-word",
+          }}
+        >
           {data && data?.length > 0 ? (
             data.map((row, rowIndex) => (
               <tr key={rowIndex}>
@@ -130,7 +144,12 @@ const DynamicTable: React.FC<TableProps> = ({
                     }}
                     onClick={() => handleRowClick(row)}
                   >
-                    <input type="checkbox" checked={checkedRow === row} />
+                    <input 
+                    type="checkbox" 
+                    checked={selectedRow === row} 
+                    
+                    
+                    />
                   </td>
                 )}
                 {keyName?.map((keyNameItem, colIndex) => (

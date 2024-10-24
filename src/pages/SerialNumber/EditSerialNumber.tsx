@@ -3,7 +3,6 @@ import React, {
   useEffect,
   useRef,
   ReactNode,
-  FormEvent,
   ChangeEvent,
 } from "react";
 import {
@@ -25,10 +24,6 @@ import {
   FormRow,
   FormLabel,
   FormInput,
-  RadioInput,
-  RadioLabel,
-  FormSelect,
-  FormButton,
   FormError,
 } from "../../styles/styledForm";
 import { MdClose, MdCheck } from "react-icons/md";
@@ -55,8 +50,8 @@ interface WarningType {
   countSumWarning: string | null;
 }
 
-// 시리얼 넘버 추가
-const AddSerialNumber: React.FC<{
+// 시리얼 넘버 변경
+const EditSerialNumber: React.FC<{
   children: ReactNode;
   handleRefresh: () => void;
 }> = ({ children, handleRefresh }) => {
@@ -106,7 +101,12 @@ const AddSerialNumber: React.FC<{
     setResponseMessage(null);
     setModalOpen(true);
     setFormHeight(0); // Reset height when opening modal
-    setFormData(initialValues);
+    setFormData({
+      snrName: selectedRow?.snr_name,
+      testCode: selectedRow?.test_code,
+      todayCount: selectedRow?.today_count,
+      countSum: selectedRow?.count_sum,
+    });
     setErrors(initialValues);
     setWarning({
       todayCountWarning: null,
@@ -207,7 +207,7 @@ const AddSerialNumber: React.FC<{
           <ModalPadding>
             <ModalHeader backgroundColor="var(--layoutBlue)">
               <ModalHeaderTitle>
-                <h3 style={{ color: "white" }}>시리얼 넘버 규칙 추가</h3>
+                <h3 style={{ color: "white" }}>시리얼 넘버 규칙 변경</h3>
               </ModalHeaderTitle>
               <CloseButton onClick={closeModal}>&times;</CloseButton>
             </ModalHeader>
@@ -216,7 +216,6 @@ const AddSerialNumber: React.FC<{
             {responseMessage ? (
               <div
                 style={{
-                  // padding: "20px 20px",
                   display: "flex",
                   justifyContent: "center",
                   alignItems: "center",
@@ -334,4 +333,4 @@ const AddSerialNumber: React.FC<{
   );
 };
 
-export default AddSerialNumber;
+export default EditSerialNumber;

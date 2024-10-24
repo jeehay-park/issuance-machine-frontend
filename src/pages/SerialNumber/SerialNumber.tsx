@@ -8,16 +8,15 @@ import {
   Title,
 } from "../../styles/styledTableLayout";
 import { useList } from "../../customHooks/useList";
-import { serialNumberResponse } from "../../mockData/mockData";
-import { codeInfoAtom } from "../../recoil/atoms/code";
 import { snruleListAtom, fetchSnruleList } from "../../recoil/atoms/snrule";
 import { useSetRecoilState, useRecoilValue } from "recoil";
-import { fetchCodeInfo } from "../../recoil/atoms/code";
 import { FetchListParams } from "../../utils/types";
 import Pagination from "../../components/Table/Pagination";
 import { selectedRowAtom } from "../../recoil/atoms/selected";
 import { dynamicObject } from "../../utils/types";
 import AddSerialNumber from "./AddSerialNumber";
+import EditSerialNumber from "./EditSerialNumber";
+import DeleteSerialNumber from "./DeleteSerialNumber";
 import Error from "../Error";
 
 const SerialNumber: React.FC = () => {
@@ -150,8 +149,12 @@ const SerialNumber: React.FC = () => {
               <Button>추가</Button>
             </AddSerialNumber>
 
-            <Button disabled={selectedRow === null}>변경</Button>
-            <Button disabled={selectedRow === null}>삭제</Button>
+            <EditSerialNumber handleRefresh={handleRefresh}>
+              <Button disabled={selectedRow === null}>변경</Button>
+            </EditSerialNumber>
+            <DeleteSerialNumber handleRefresh={handleRefresh}>
+              <Button disabled={selectedRow === null}>삭제</Button>
+            </DeleteSerialNumber>
           </div>
         </div>
 

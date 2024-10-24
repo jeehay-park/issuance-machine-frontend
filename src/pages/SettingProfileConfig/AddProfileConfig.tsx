@@ -3,7 +3,6 @@ import React, {
   useEffect,
   useRef,
   ReactNode,
-  FormEvent,
   ChangeEvent,
 } from "react";
 import {
@@ -18,29 +17,21 @@ import {
   ModalContent,
 } from "../../styles/styledModal";
 import { selectedRowAtom } from "../../recoil/atoms/selected";
-import { useRecoilValue } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import success from "../../components/assets/green-tick.png";
 import {
   FormContainer,
   FormRow,
   FormLabel,
   FormInput,
-  RadioInput,
-  RadioLabel,
-  FormSelect,
-  FormButton,
   FormError,
 } from "../../styles/styledForm";
-import { dynamicObject } from "../../utils/types";
 import { MdClose, MdCheck } from "react-icons/md";
 import { createProfile } from "../../recoil/atoms/setting";
 import Card from "../../components/Layout/Card";
 
 // Define the shape of form data and error messages
 interface FormData {
-  // name: string | null;
-  // workNo: string | null;
-  // programNo: string | null;
   configType: "PROFILE";
   profileConfig: {
     profId?: string | null;
@@ -71,9 +62,9 @@ const AddProfileConfig: React.FC<{
   handleRefresh: () => void;
 }> = ({ children, handleRefresh }) => {
   const selectedRow = useRecoilValue(selectedRowAtom);
+  const setSelectedRow = useSetRecoilState(selectedRowAtom);
   const [isModalOpen, setModalOpen] = useState(false);
   const [responseMessage, setResponseMessage] = useState<string | null>(null);
-
   const [formHeight, setFormHeight] = useState(0);
   const [formWidth, setFormWidth] = useState(0);
 
@@ -118,11 +109,7 @@ const AddProfileConfig: React.FC<{
       },
     });
     setFormHeight(0); // Reset the height when closing the modal
-  };
-
-  const handleCancel = (event: MouseEvent) => {
-    event.preventDefault();
-    setModalOpen(false);
+    setSelectedRow(null);
   };
 
   const [formData, setFormData] = useState<FormData>({
@@ -137,6 +124,7 @@ const AddProfileConfig: React.FC<{
       dataHash: null,
     },
   });
+
   const [errors, setErrors] = useState<FormErrors>({
     profileConfig: {
       profId: null,
@@ -148,6 +136,7 @@ const AddProfileConfig: React.FC<{
       dataHash: null,
     },
   });
+
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
 
   // Handle input changes
@@ -203,9 +192,8 @@ const AddProfileConfig: React.FC<{
       try {
         const result = await createProfile(formData);
         if (result) {
-          handleRefresh(); 
+          handleRefresh();
           setResponseMessage(result.header.rtnMessage);
-          // Refresh data after creation
         } else {
           setResponseMessage("Failed to create profile.");
         }
@@ -240,7 +228,7 @@ const AddProfileConfig: React.FC<{
                   height: `${formHeight}px`,
                 }}
               >
-                 <Card>
+                <Card>
                   <img src={success} width={"40px"} />
                   <p style={{ padding: "5px 5px", fontWeight: "bold" }}>
                     {responseMessage}
