@@ -1,5 +1,4 @@
 import React from "react";
-import logo from "./logo.svg";
 import "./App.css";
 import Login from "./components/Login/Login";
 import Dashboard from "./pages/Dashboard";
@@ -13,6 +12,10 @@ import SettingProfileConfig from "./pages/SettingProfileConfig/SettingProfileCon
 import SettingKeyIssueCodeConfig from "./pages/SettingKeyIssueCodeConfig/SettingKeyIssueCodeConfig";
 import SettingScriptConfig from "./pages/SettingScriptConfig/SettingScriptConfig";
 import NotFound from "./pages/NotFound";
+import SerialNumberDetails from "./pages/SerialNumber/SerialNumberDetails";
+import ProfileConfigDetails from "./pages/SettingProfileConfig/ProfileConfigDetails";
+import Machine from "./pages/Machine/Machine";
+import MachineDetails from "./pages/Machine/MachineDetails";
 
 const App: React.FC = () => {
   const sidebarContents = {
@@ -21,11 +24,23 @@ const App: React.FC = () => {
     issuance: { path: "/issuance", description: "작업 화면" },
     program: { path: "/program", description: "프로그램 정보" },
     serialnumber: { path: "/serialnumber", description: "시리얼 넘버 규칙" },
+    serialnumberDetails: {
+      path: "/serialnumber/details",
+      description: "시리얼 넘버 규칙 상세정보",
+    },
     setting: { path: "/setting", description: "발급 설정 정보" },
     profile: { path: "/profile", description: "프로파일 Config" },
+    profileDetails: {
+      path: "/profile/details",
+      description: "프로파일 Config 상세정보",
+    },
     keyIssue: { path: "/keyissue", description: "키발급코드 Config" },
     script: { path: "/script", description: "스크립트 Config" },
     machine: { path: "/machine", description: "발급 기계 정보" },
+    machineDetails: {
+      path: "/machine/details",
+      description: "발급 기계 상세 정보",
+    },
     codeinfo: { path: "/codeinfo", description: "코드 정보" },
   };
 
@@ -51,10 +66,18 @@ const App: React.FC = () => {
               path={sidebarContents.serialnumber.path}
               element={<SerialNumber />}
             />
+            <Route
+              path={sidebarContents.serialnumberDetails.path}
+              element={<SerialNumberDetails />}
+            />
             <Route path={sidebarContents.program.path} element={<Program />} />
             <Route
               path={sidebarContents.profile.path}
               element={<SettingProfileConfig />}
+            />
+            <Route
+              path={sidebarContents.profileDetails.path}
+              element={<ProfileConfigDetails />}
             />
             <Route
               path={sidebarContents.keyIssue.path}
@@ -63,6 +86,11 @@ const App: React.FC = () => {
             <Route
               path={sidebarContents.script.path}
               element={<SettingScriptConfig />}
+            />
+            <Route path={sidebarContents.machine.path} element={<Machine />} />
+            <Route
+              path={sidebarContents.machineDetails.path}
+              element={<MachineDetails />}
             />
           </Route>
           <Route path="*" element={<NotFound />} />

@@ -21,22 +21,22 @@ export const fetchMachineInfo = (body: { [key: string]: any }) => {
 export const createMachineAtom = customCreateAtom("createMachine");
 export const createMachine = (body: { [key: string]: any }) => {
   const trId = process.env.REACT_APP_TRID_MACHINE_CREATE!; // No more warning: TypeScript trusts your assertion.
-  const url = "/machine/create";
+  const url = "/machine/save";
   return customApiRequest(url, trId, body);
 };
 
 // 발급기계 - 발급기계 변경을 위한 API
 export const updateMachineAtom = customCreateAtom("updateMachine");
 export const updateMachine = (body: { [key: string]: any }) => {
-  const trId = process.env.REACT_APP_TRID_PROGRAM_UPDATE!; // No more warning: TypeScript trusts your assertion.
-  const url = "/machine/update";
+  const trId = process.env.REACT_APP_TRID_MACHINE_UPDATE!; // No more warning: TypeScript trusts your assertion.
+  const url = "/machine/save";
   return customApiRequest(url, trId, body);
 };
 
 // 발급기계 - 발급기계 삭제를 위한 API
 export const deleteMachineAtom = customCreateAtom("deleteMachine");
 export const deleteMachine = (body: { [key: string]: any }) => {
-  const trId = process.env.REACT_APP_TRID_PROGRAM_DELETE!; // No more warning: TypeScript trusts your assertion.
+  const trId = process.env.REACT_APP_TRID_MACHINE_DELETE!; // No more warning: TypeScript trusts your assertion.
   const url = "/machine/delete";
   return customApiRequest(url, trId, body);
 };

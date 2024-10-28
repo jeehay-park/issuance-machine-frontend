@@ -3,7 +3,6 @@ import React, {
   useEffect,
   useRef,
   ReactNode,
-  FormEvent,
   ChangeEvent,
 } from "react";
 import {
@@ -25,15 +24,10 @@ import {
   FormRow,
   FormLabel,
   FormInput,
-  RadioInput,
-  RadioLabel,
-  FormSelect,
-  FormButton,
   FormError,
 } from "../../styles/styledForm";
 import { MdClose, MdCheck } from "react-icons/md";
 import { createSnrule } from "../../recoil/atoms/snrule";
-import Card from "../../components/Layout/Card";
 
 // Define the shape of form data and error messages
 interface FormData {
@@ -86,9 +80,7 @@ const AddSerialNumber: React.FC<{
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
 
   const isCountable = (cnt: string | number) => {
-    const dt = typeof cnt;
-
-    if (dt === "number" && Number.isInteger(cnt)) {
+    if (Number.isInteger(Number(cnt))) {
       return true;
     } else {
       return false;
@@ -124,11 +116,6 @@ const AddSerialNumber: React.FC<{
       countSumWarning: null,
     });
     setSelectedRow(null);
-  };
-
-  const handleCancel = (event: MouseEvent) => {
-    event.preventDefault();
-    setModalOpen(false);
   };
 
   // Handle input changes
@@ -214,7 +201,7 @@ const AddSerialNumber: React.FC<{
           </ModalPadding>
           <ModalContent>
             {responseMessage ? (
-              <div
+              <FormContainer
                 style={{
                   // padding: "20px 20px",
                   display: "flex",
@@ -224,13 +211,22 @@ const AddSerialNumber: React.FC<{
                   height: `${formHeight}px`,
                 }}
               >
-                <Card>
+                <div
+                  style={{
+                    // padding: "20px 20px",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    width: `${formWidth}px`,
+                    height: `${formHeight}px`,
+                  }}
+                >
                   <img src={success} width={"40px"} />
                   <p style={{ padding: "5px 5px", fontWeight: "bold" }}>
                     {responseMessage}
                   </p>
-                </Card>
-              </div>
+                </div>
+              </FormContainer>
             ) : (
               <FormContainer ref={formContainerRef}>
                 <form>

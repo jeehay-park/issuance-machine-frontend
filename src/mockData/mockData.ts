@@ -42,7 +42,7 @@ export const workResponse = {
       {
         idx: 4,
         keyName: "program",
-        name: "프로그램",
+        name: "프로젝트",
         isSort: true,
         isFilter: true,
         isDisplay: true,

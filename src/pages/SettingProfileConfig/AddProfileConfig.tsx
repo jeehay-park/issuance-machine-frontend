@@ -28,7 +28,6 @@ import {
 } from "../../styles/styledForm";
 import { MdClose, MdCheck } from "react-icons/md";
 import { createProfile } from "../../recoil/atoms/setting";
-import Card from "../../components/Layout/Card";
 
 // Define the shape of form data and error messages
 interface FormData {
@@ -218,7 +217,7 @@ const AddProfileConfig: React.FC<{
           </ModalPadding>
           <ModalContent>
             {responseMessage ? (
-              <div
+              <FormContainer
                 style={{
                   // padding: "20px 20px",
                   display: "flex",
@@ -228,13 +227,22 @@ const AddProfileConfig: React.FC<{
                   height: `${formHeight}px`,
                 }}
               >
-                <Card>
+                <div
+                  style={{
+                    // padding: "20px 20px",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    width: `${formWidth}px`,
+                    height: `${formHeight}px`,
+                  }}
+                >
                   <img src={success} width={"40px"} />
                   <p style={{ padding: "5px 5px", fontWeight: "bold" }}>
                     {responseMessage}
                   </p>
-                </Card>
-              </div>
+                </div>
+              </FormContainer>
             ) : (
               <FormContainer ref={formContainerRef}>
                 <form>

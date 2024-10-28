@@ -81,7 +81,7 @@ const Layout: React.FC = () => {
     },
     {
       name: "발급 기계 정보",
-      path: "/dashboard",
+      path: "/machine",
       icon: machine,
       alt: "machine",
     },

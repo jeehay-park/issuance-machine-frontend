@@ -103,6 +103,7 @@ const SerialNumber: React.FC = () => {
     }
   }, [recoilData]);
 
+
   if (recoilData === null || error) {
     return (
       <>

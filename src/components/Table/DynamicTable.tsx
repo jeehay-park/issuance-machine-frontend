@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { selectedRowAtom } from "../../recoil/atoms/selected";
 import { useSetRecoilState, useRecoilValue } from "recoil";
 import { dynamicObject, rowType } from "../../utils/types";
+import { Link } from "react-router-dom";
 
 type SortOption = {
   key: string; // Assuming 'key' is the index of the header
@@ -144,12 +145,7 @@ const DynamicTable: React.FC<TableProps> = ({
                     }}
                     onClick={() => handleRowClick(row)}
                   >
-                    <input 
-                    type="checkbox" 
-                    checked={selectedRow === row} 
-                    
-                    
-                    />
+                    <input type="checkbox" checked={selectedRow === row} />
                   </td>
                 )}
                 {keyName?.map((keyNameItem, colIndex) => (
@@ -167,7 +163,56 @@ const DynamicTable: React.FC<TableProps> = ({
                       >
                         {row[keyNameItem]}
                       </td>
-                    ) : (
+                    ) : keyNameItem === "snr_id" ? (
+                      <td
+                        style={{
+                          textDecoration: "underline",
+                          borderBottom: "1px solid #ddd",
+                          padding: "8px",
+                          color: "#777",
+                        }}
+                      >
+                        <Link
+                          to={{ pathname: "/serialnumber/details" }}
+                          state={{ snr_id: row[keyNameItem] }}
+                        >
+                          {row[keyNameItem]}
+                        </Link>
+                      </td>
+                    ) : keyNameItem === "prof_id" ? (
+                      <td
+                        style={{
+                          textDecoration: "underline",
+                          borderBottom: "1px solid #ddd",
+                          padding: "8px",
+                          color: "#777",
+                        }}
+                      >
+                        <Link
+                          to={{ pathname: "/profile/details" }}
+                          state={{ prof_id: row[keyNameItem] }}
+                        >
+                          {row[keyNameItem]}
+                        </Link>
+                      </td>
+                    ) : keyNameItem === "mcn_id" ? (
+                      <td
+                        style={{
+                          textDecoration: "underline",
+                          borderBottom: "1px solid #ddd",
+                          padding: "8px",
+                          color: "#777",
+                        }}
+                      >
+                        <Link
+                          to={{ pathname: "/machine/details" }}
+                          state={{ mcn_id: row[keyNameItem] }}
+                        >
+                          {row[keyNameItem]}
+                        </Link>
+                      </td>
+                    ) :
+                    (
                       <td
                         key={colIndex}
                         style={{

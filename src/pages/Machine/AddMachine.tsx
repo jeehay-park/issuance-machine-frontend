@@ -3,6 +3,7 @@ import React, {
   useEffect,
   useRef,
   ReactNode,
+  FormEvent,
   ChangeEvent,
 } from "react";
 import {
@@ -24,42 +25,42 @@ import {
   FormRow,
   FormLabel,
   FormInput,
+  RadioInput,
+  RadioLabel,
+  FormSelect,
+  FormButton,
   FormError,
 } from "../../styles/styledForm";
 import { MdClose, MdCheck } from "react-icons/md";
-import { createSnrule } from "../../recoil/atoms/snrule";
+import { createMachine } from "../../recoil/atoms/machine";
 import Card from "../../components/Layout/Card";
 
 // Define the shape of form data and error messages
 interface FormData {
-  snrName: string | undefined;
-  testCode: string | undefined;
-  todayCount: string | number | undefined;
-  countSum: string | number | undefined;
+  mcnId: null;
+  mcnName: string | undefined;
+  etc: string | number | undefined;
 }
 
 interface FormErrors {
-  snrName: string | null;
-  testCode: string | null;
-  todayCount: string | number | undefined;
-  countSum: string | number | undefined;
+  mcnId: null;
+  mcnName: string | undefined;
+  etc: string | number | undefined;
 }
 
 interface WarningType {
-  todayCountWarning: string | null;
-  countSumWarning: string | null;
+  mcnNameWarning: string | null;
 }
 
-// 시리얼 넘버 변경
-const EditSerialNumber: React.FC<{
+// 디바이스 추가
+const AddMachine: React.FC<{
   children: ReactNode;
   handleRefresh: () => void;
 }> = ({ children, handleRefresh }) => {
   const initialValues = {
-    snrName: "",
-    testCode: "",
-    todayCount: "",
-    countSum: "",
+    mcnId: null,
+    mcnName: "",
+    etc: "",
   };
   const selectedRow = useRecoilValue(selectedRowAtom);
   const setSelectedRow = useSetRecoilState(selectedRowAtom);
@@ -72,24 +73,24 @@ const EditSerialNumber: React.FC<{
   const formContainerRef = useRef<HTMLDivElement>(null);
 
   const [warning, setWarning] = useState<WarningType>({
-    todayCountWarning: null,
-    countSumWarning: null,
+    mcnNameWarning: null,
   });
 
   const [formData, setFormData] = useState<FormData>(initialValues);
   const [errors, setErrors] = useState<FormErrors>(initialValues);
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
 
-  const isCountable = (cnt: string | number) => {
-    if (Number.isInteger(Number(cnt))) {
-      return true;
-    } else {
-      return false;
-    }
-  };
-
   useEffect(() => {
     if (formContainerRef.current) {
+      console.log("formContainerRef.current : ", formContainerRef.current);
+      console.log(
+        "formContainerRef.current.offsetHeight : ",
+        formContainerRef.current.offsetHeight
+      );
+      console.log(
+        "formContainerRef.current.offsetWidth : ",
+        formContainerRef.current.offsetWidth
+      );
       setFormHeight(formContainerRef.current.offsetHeight);
       setFormWidth(formContainerRef.current.offsetWidth);
     }
@@ -99,16 +100,10 @@ const EditSerialNumber: React.FC<{
     setResponseMessage(null);
     setModalOpen(true);
     setFormHeight(0); // Reset height when opening modal
-    setFormData({
-      snrName: selectedRow?.snr_name,
-      testCode: selectedRow?.test_code,
-      todayCount: selectedRow?.today_count,
-      countSum: selectedRow?.count_sum,
-    });
+    setFormData(initialValues);
     setErrors(initialValues);
     setWarning({
-      todayCountWarning: null,
-      countSumWarning: null,
+      mcnNameWarning: null,
     });
   };
 
@@ -118,8 +113,7 @@ const EditSerialNumber: React.FC<{
     setErrors(initialValues);
     setFormHeight(0); // Reset the height when closing the modal
     setWarning({
-      todayCountWarning: null,
-      countSumWarning: null,
+      mcnNameWarning: null,
     });
     setSelectedRow(null);
   };
@@ -129,35 +123,15 @@ const EditSerialNumber: React.FC<{
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
 
-    if (name === "todayCount" && value && !isCountable(value)) {
-      setWarning((prev) => ({
-        ...prev,
-        todayCountWarning: "유효한 숫자가 아님",
-      }));
-    } else if (name === "countSum" && value && !isCountable(value)) {
-      setWarning((prev) => ({
-        ...prev,
-        countSumWarning: "유효한 숫자가 아님",
-      }));
-    } else {
-      setFormData((prevData) => ({
-        ...prevData,
-        [name]: value,
-      }));
-
-      // Clear error for the current field
-      setErrors((prevErrors) => ({
-        ...prevErrors,
-        [name]: null,
-      }));
-
-      setWarning((prev) => ({
-        ...prev,
-        todayCountWarning: null,
-        countSumWarning: null,
-      }));
-    }
+    setWarning((prev) => ({
+      ...prev,
+      mcnNameWarning: null,
+    }));
   };
 
   // Validate form inputs
@@ -165,8 +139,8 @@ const EditSerialNumber: React.FC<{
     let tempErrors: FormErrors = initialValues;
     let isValid = true;
 
-    if (!formData.snrName) {
-      tempErrors.snrName = "snrName is required";
+    if (!formData.mcnName) {
+      tempErrors.mcnName = "mcnName is required";
       isValid = false;
     }
 
@@ -178,19 +152,21 @@ const EditSerialNumber: React.FC<{
   const handleSubmit = async (event: React.MouseEvent<HTMLDivElement>) => {
     if (validate()) {
       try {
-        const result = await createSnrule(formData);
+        const result = await createMachine(formData);
         if (result) {
           handleRefresh();
           setResponseMessage(result.header.rtnMessage);
           // Refresh data after creation
         } else {
-          setResponseMessage("Failed to create profile.");
+          setResponseMessage("Failed to create machine.");
         }
       } catch (error) {
-        setResponseMessage("An error occurred while creating the profile.");
+        setResponseMessage("An error occurred while creating the machine.");
       }
     }
   };
+
+  console.log("response width & height : ", formWidth, formHeight);
 
   return (
     <>
@@ -200,15 +176,16 @@ const EditSerialNumber: React.FC<{
           <ModalPadding>
             <ModalHeader backgroundColor="var(--layoutBlue)">
               <ModalHeaderTitle>
-                <h3 style={{ color: "white" }}>시리얼 넘버 규칙 변경</h3>
+                <h3 style={{ color: "white" }}>발급 기계 추가</h3>
               </ModalHeaderTitle>
               <CloseButton onClick={closeModal}>&times;</CloseButton>
             </ModalHeader>
           </ModalPadding>
           <ModalContent>
             {responseMessage ? (
-              <div
+              <FormContainer
                 style={{
+                  // padding: "20px 20px",
                   display: "flex",
                   justifyContent: "center",
                   alignItems: "center",
@@ -216,67 +193,48 @@ const EditSerialNumber: React.FC<{
                   height: `${formHeight}px`,
                 }}
               >
-                <Card>
+                <div
+                  style={{
+                    // padding: "20px 20px",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    width: `${formWidth}px`,
+                    height: `${formHeight}px`,
+                  }}
+                >
                   <img src={success} width={"40px"} />
                   <p style={{ padding: "5px 5px", fontWeight: "bold" }}>
                     {responseMessage}
                   </p>
-                </Card>
-              </div>
+                </div>
+              </FormContainer>
             ) : (
               <FormContainer ref={formContainerRef}>
                 <form>
                   <FormRow>
-                    <FormLabel htmlFor="snrName">SN 규칙 이름</FormLabel>
+                    <FormLabel htmlFor="mcnName">발급기 이름</FormLabel>
                     <FormInput
                       type="text"
-                      id="snrName"
-                      name="snrName"
+                      id="mcnName"
+                      name="mcnName"
                       onChange={handleChange}
-                      value={formData.snrName}
+                      value={formData.mcnName}
                       // required
                     />
                   </FormRow>
-                  {isSubmitted && errors?.snrName && (
-                    <FormError>{errors?.snrName}</FormError>
-                  )}
-
+                  {warning.mcnNameWarning && <p>{warning.mcnNameWarning}</p>}
                   <FormRow>
-                    <FormLabel htmlFor="testCode">테스트 코드</FormLabel>
+                    <FormLabel htmlFor="etc">기타 정보</FormLabel>
                     <FormInput
                       type="text"
-                      id="testCode"
-                      name="testCode"
+                      id="etc"
+                      name="etc"
                       onChange={handleChange}
-                      value={formData.testCode}
+                      value={formData.etc}
                       // required
                     />
                   </FormRow>
-                  <FormRow>
-                    <FormLabel htmlFor="todayCount">금일 건수</FormLabel>
-                    <FormInput
-                      type="text"
-                      id="todayCount"
-                      name="todayCount"
-                      onChange={handleChange}
-                      value={formData.todayCount}
-                      // required
-                    />
-                  </FormRow>
-                  {warning.todayCountWarning && (
-                    <p>{warning.todayCountWarning}</p>
-                  )}
-                  <FormRow>
-                    <FormLabel htmlFor="countSum">건수 합계</FormLabel>
-                    <FormInput
-                      type="text"
-                      id="countSum"
-                      name="countSum"
-                      onChange={handleChange}
-                      value={formData.countSum}
-                    />
-                  </FormRow>
-                  {warning.countSumWarning && <p>{warning.countSumWarning}</p>}
                 </form>
               </FormContainer>
             )}
@@ -326,4 +284,4 @@ const EditSerialNumber: React.FC<{
   );
 };
 
-export default EditSerialNumber;
+export default AddMachine;
