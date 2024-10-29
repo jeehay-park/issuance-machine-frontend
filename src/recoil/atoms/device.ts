@@ -5,7 +5,7 @@ import { customApiRequest } from "../../utils/customApiRequest";
 export const createDeviceAtom = customCreateAtom("createDevice");
 export const createDevice = (body: { [key: string]: any }) => {
   const trId = process.env.REACT_APP_TRID_DEVICE_CREATE!; // No more warning: TypeScript trusts your assertion.
-  const url = "/device/create";
+  const url = "/device/save";
   return customApiRequest(url, trId, body);
 };
 
@@ -13,7 +13,7 @@ export const createDevice = (body: { [key: string]: any }) => {
 export const updateDeviceAtom = customCreateAtom("updateDevice");
 export const updateDevice = (body: { [key: string]: any }) => {
   const trId = process.env.REACT_APP_TRID_DEVICE_UPDATE!; // No more warning: TypeScript trusts your assertion.
-  const url = "/device/update";
+  const url = "/device/save";
   return customApiRequest(url, trId, body);
 };
 

@@ -25,42 +25,46 @@ import {
   FormRow,
   FormLabel,
   FormInput,
-  RadioInput,
-  RadioLabel,
-  FormSelect,
-  FormButton,
-  FormError,
 } from "../../styles/styledForm";
 import { MdClose, MdCheck } from "react-icons/md";
-import { createMachine } from "../../recoil/atoms/machine";
-import Card from "../../components/Layout/Card";
+import { createDevice } from "../../recoil/atoms/device";
 
 // Define the shape of form data and error messages
 interface FormData {
-  mcnId: null;
-  mcnName: string | undefined;
-  etc: string | number | undefined;
+  dvcId: null;
+  dvcName: string;
+  dvcNum: number;
+  ip: string;
+  romVer: string;
 }
 
 interface FormErrors {
-  mcnId: null;
-  mcnName: string | undefined;
-  etc: string | number | undefined;
+  dvcId: null;
+  dvcName: string;
+  dvcNum: number;
+  ip: string;
+  romVer: string;
 }
 
 interface WarningType {
-  mcnNameWarning: string | null;
+  dvcNameWarning: string | null;
+  ipWarning: string | null;
+  romVerWarning: string | null;
 }
 
-// 발급 기계 추가
-const AddMachine: React.FC<{
+// 디바이스 추가
+const AddDevice: React.FC<{
   children: ReactNode;
   handleRefresh: () => void;
-}> = ({ children, handleRefresh }) => {
+  lastDeviceNumber: number;
+  mcnId: string;
+}> = ({ children, handleRefresh, lastDeviceNumber, mcnId }) => {
   const initialValues = {
-    mcnId: null,
-    mcnName: "",
-    etc: "",
+    dvcId: null,
+    dvcName: "",
+    dvcNum: lastDeviceNumber + 1,
+    ip: "",
+    romVer: "",
   };
   const selectedRow = useRecoilValue(selectedRowAtom);
   const setSelectedRow = useSetRecoilState(selectedRowAtom);
@@ -73,7 +77,9 @@ const AddMachine: React.FC<{
   const formContainerRef = useRef<HTMLDivElement>(null);
 
   const [warning, setWarning] = useState<WarningType>({
-    mcnNameWarning: null,
+    dvcNameWarning: null,
+    ipWarning: null,
+    romVerWarning: null,
   });
 
   const [formData, setFormData] = useState<FormData>(initialValues);
@@ -103,7 +109,9 @@ const AddMachine: React.FC<{
     setFormData(initialValues);
     setErrors(initialValues);
     setWarning({
-      mcnNameWarning: null,
+      dvcNameWarning: null,
+      ipWarning: null,
+      romVerWarning: null,
     });
   };
 
@@ -113,7 +121,9 @@ const AddMachine: React.FC<{
     setErrors(initialValues);
     setFormHeight(0); // Reset the height when closing the modal
     setWarning({
-      mcnNameWarning: null,
+      dvcNameWarning: null,
+      ipWarning: null,
+      romVerWarning: null,
     });
     setSelectedRow(null);
   };
@@ -139,8 +149,8 @@ const AddMachine: React.FC<{
     let tempErrors: FormErrors = initialValues;
     let isValid = true;
 
-    if (!formData.mcnName) {
-      tempErrors.mcnName = "mcnName is required";
+    if (!formData.dvcName) {
+      tempErrors.dvcName = "mcnName is required";
       isValid = false;
     }
 
@@ -152,7 +162,10 @@ const AddMachine: React.FC<{
   const handleSubmit = async (event: React.MouseEvent<HTMLDivElement>) => {
     if (validate()) {
       try {
-        const result = await createMachine(formData);
+        const result = await createDevice({
+          mcnId: mcnId,
+          deviceList: [{ ...formData }],
+        });
         if (result) {
           handleRefresh();
           setResponseMessage(result.header.rtnMessage);
@@ -176,7 +189,7 @@ const AddMachine: React.FC<{
           <ModalPadding>
             <ModalHeader backgroundColor="var(--layoutBlue)">
               <ModalHeaderTitle>
-                <h3 style={{ color: "white" }}>발급 기계 추가</h3>
+                <h3 style={{ color: "white" }}>디바이스 추가</h3>
               </ModalHeaderTitle>
               <CloseButton onClick={closeModal}>&times;</CloseButton>
             </ModalHeader>
@@ -213,25 +226,38 @@ const AddMachine: React.FC<{
               <FormContainer ref={formContainerRef}>
                 <form>
                   <FormRow>
-                    <FormLabel htmlFor="mcnName">발급기 이름</FormLabel>
+                    <FormLabel htmlFor="dvcName">디바이스 이름</FormLabel>
                     <FormInput
                       type="text"
-                      id="mcnName"
-                      name="mcnName"
+                      id="dvcName"
+                      name="dvcName"
                       onChange={handleChange}
-                      value={formData.mcnName}
+                      value={formData.dvcName}
                       // required
                     />
                   </FormRow>
-                  {warning.mcnNameWarning && <p>{warning.mcnNameWarning}</p>}
+                  {warning.dvcNameWarning && <p>{warning.dvcNameWarning}</p>}
                   <FormRow>
-                    <FormLabel htmlFor="etc">기타 정보</FormLabel>
+                    <FormLabel htmlFor="ip">디바이스 IP 주소</FormLabel>
                     <FormInput
                       type="text"
-                      id="etc"
-                      name="etc"
+                      id="ip"
+                      name="ip"
                       onChange={handleChange}
-                      value={formData.etc}
+                      value={formData.ip}
+                      // required
+                    />
+                  </FormRow>
+                  <FormRow>
+                    <FormLabel htmlFor="romVer">
+                      디바이스 롬(ROM) 버전
+                    </FormLabel>
+                    <FormInput
+                      type="text"
+                      id="romVer"
+                      name="romVer"
+                      onChange={handleChange}
+                      value={formData.romVer}
                       // required
                     />
                   </FormRow>
@@ -284,4 +310,4 @@ const AddMachine: React.FC<{
   );
 };
 
-export default AddMachine;
+export default AddDevice;

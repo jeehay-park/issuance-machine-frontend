@@ -211,8 +211,7 @@ const DynamicTable: React.FC<TableProps> = ({
                           {row[keyNameItem]}
                         </Link>
                       </td>
-                    ) :
-                    (
+                    ) : (
                       <td
                         key={colIndex}
                         style={{
