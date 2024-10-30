@@ -6,14 +6,22 @@ export const FormContainer = styled.div`
   width: 90%;
   max-width: 100%;
   margin: 20px auto;
-  padding: 20px;
+  padding: 20px 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   background-color: #f9f9f9;
+
 `;
 
 export const FormRow = styled.div`
   display: flex;
   align-items: center;
+  margin-bottom: 10px;
+`;
+
+export const FormColumn = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   margin-bottom: 10px;
 `;
 
@@ -40,7 +48,6 @@ export const FormInput = styled.input`
       box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
     }
   }
-
 `;
 
 export const FormTextArea = styled.textarea`
@@ -51,12 +58,11 @@ export const FormTextArea = styled.textarea`
   font-size: 12px;
 
   &:focus {
-      /* border-color: #4caf50; */
-      border-color: var(--paleGrey);
-      outline: none;
-      box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
-    }
-
+    /* border-color: #4caf50; */
+    border-color: var(--paleGrey);
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+  }
 `;
 
 export const RadioInput = styled.input`
@@ -82,14 +88,12 @@ export const RadioLabel = styled.label`
     border: 1px solid #ccc; /* Default border color */
     border-radius: 50%; /* Circle shape */
     background: white; /* Background for unselected state */
-   
   }
 
   /* Show the custom radio button's clicked color */
   ${RadioInput}:checked + &::before {
     /* background-color: var(--blue);  */
     border: 2px solid var(--blue);
-     
   }
 `;
 

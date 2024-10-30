@@ -82,7 +82,6 @@ const MachineDetails: React.FC = () => {
           >
             {DeviceData && (
               <AddDevice
-                lastDeviceNumber={DeviceData?.length}
                 mcnId={state.mcn_id}
                 handleRefresh={handleRefresh}
               >

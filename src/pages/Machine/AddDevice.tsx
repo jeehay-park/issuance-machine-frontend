@@ -23,11 +23,14 @@ import success from "../../components/assets/green-tick.png";
 import {
   FormContainer,
   FormRow,
+  FormColumn,
   FormLabel,
   FormInput,
 } from "../../styles/styledForm";
 import { MdClose, MdCheck } from "react-icons/md";
+import { FaPlus } from "react-icons/fa";
 import { createDevice } from "../../recoil/atoms/device";
+import plusIcon from "../../components/assets/plus.jpg";
 
 // Define the shape of form data and error messages
 interface FormData {
@@ -56,13 +59,12 @@ interface WarningType {
 const AddDevice: React.FC<{
   children: ReactNode;
   handleRefresh: () => void;
-  lastDeviceNumber: number;
   mcnId: string;
-}> = ({ children, handleRefresh, lastDeviceNumber, mcnId }) => {
+}> = ({ children, handleRefresh, mcnId }) => {
   const initialValues = {
     dvcId: null,
     dvcName: "",
-    dvcNum: lastDeviceNumber + 1,
+    dvcNum: 1,
     ip: "",
     romVer: "",
   };
@@ -185,7 +187,7 @@ const AddDevice: React.FC<{
     <>
       <div onClick={openModal}>{children}</div>
       <ModalBackground isVisible={isModalOpen}>
-        <ModalContainer width="600px">
+        <ModalContainer width="650px">
           <ModalPadding>
             <ModalHeader backgroundColor="var(--layoutBlue)">
               <ModalHeaderTitle>
@@ -225,42 +227,67 @@ const AddDevice: React.FC<{
             ) : (
               <FormContainer ref={formContainerRef}>
                 <form>
-                  <FormRow>
-                    <FormLabel htmlFor="dvcName">디바이스 이름</FormLabel>
-                    <FormInput
-                      type="text"
-                      id="dvcName"
-                      name="dvcName"
-                      onChange={handleChange}
-                      value={formData.dvcName}
-                      // required
-                    />
-                  </FormRow>
-                  {warning.dvcNameWarning && <p>{warning.dvcNameWarning}</p>}
-                  <FormRow>
-                    <FormLabel htmlFor="ip">디바이스 IP 주소</FormLabel>
-                    <FormInput
-                      type="text"
-                      id="ip"
-                      name="ip"
-                      onChange={handleChange}
-                      value={formData.ip}
-                      // required
-                    />
-                  </FormRow>
-                  <FormRow>
-                    <FormLabel htmlFor="romVer">
-                      디바이스 롬(ROM) 버전
-                    </FormLabel>
-                    <FormInput
-                      type="text"
-                      id="romVer"
-                      name="romVer"
-                      onChange={handleChange}
-                      value={formData.romVer}
-                      // required
-                    />
-                  </FormRow>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      gap: "10px",
+                    }}
+                  >
+                    <FormColumn>
+                      <FormLabel
+                        htmlFor="dvcName"
+                        style={{ textAlign: "center", width : "100%" }}
+                      >
+                        이름
+                      </FormLabel>
+                      <FormInput
+                        type="text"
+                        id="dvcName"
+                        name="dvcName"
+                        onChange={handleChange}
+                        value={formData.dvcName}
+                        // required
+                      />
+                    </FormColumn>
+                    <FormColumn>
+                      <FormLabel htmlFor="ip" style={{ textAlign: "center", width : "100%" }}>
+                        IP
+                      </FormLabel>
+                      <FormInput
+                        type="text"
+                        id="ip"
+                        name="ip"
+                        onChange={handleChange}
+                        value={formData.ip}
+                        // required
+                      />
+                    </FormColumn>
+                    {warning.dvcNameWarning && <p>{warning.dvcNameWarning}</p>}
+                    <FormColumn>
+                      <FormLabel
+                        htmlFor="romVer"
+                        style={{ textAlign: "center", width : "100%" }}
+                      >
+                        롬(ROM) 버전
+                      </FormLabel>
+                      <FormInput
+                        type="text"
+                        id="romVer"
+                        name="romVer"
+                        onChange={handleChange}
+                        value={formData.romVer}
+                        // required
+                      />
+                    </FormColumn>
+                    <FormColumn style={{marginRight : "20px", cursor : "pointer"}}>
+                      <FaPlus
+                        size={30}
+                        color="var(--blue)"
+                        style={{ fontWeight: "bolder" }}
+                      />
+                    </FormColumn>
+                  </div>
                 </form>
               </FormContainer>
             )}
