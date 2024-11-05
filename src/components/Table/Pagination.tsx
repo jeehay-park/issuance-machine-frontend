@@ -44,6 +44,8 @@ const Pagination: React.FC<PaginationProps> = ({
     }
   }, [currentPage, totCnt, itemsPerPage]);
 
+  console.log("totCnt", totCnt)
+
   if (totCnt > 0) {
     return (
       <>
@@ -84,7 +86,7 @@ const Pagination: React.FC<PaginationProps> = ({
       </>
     );
   } else {
-    return null;
+    return <></>;
   }
 };
 

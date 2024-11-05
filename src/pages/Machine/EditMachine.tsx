@@ -3,7 +3,6 @@ import React, {
   useEffect,
   useRef,
   ReactNode,
-  FormEvent,
   ChangeEvent,
 } from "react";
 import {
@@ -72,7 +71,6 @@ const EditMachine: React.FC<{
 
   const [formData, setFormData] = useState<FormData>(initialValues);
   const [errors, setErrors] = useState<FormErrors>(initialValues);
-  const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
 
   useEffect(() => {
     if (formContainerRef.current) {
@@ -145,7 +143,6 @@ const EditMachine: React.FC<{
         if (result) {
           handleRefresh();
           setResponseMessage(result.header.rtnMessage);
-          // Refresh data after creation
         } else {
           setResponseMessage("Failed to create machine.");
         }

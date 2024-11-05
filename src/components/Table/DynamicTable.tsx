@@ -211,6 +211,38 @@ const DynamicTable: React.FC<TableProps> = ({
                           {row[keyNameItem]}
                         </Link>
                       </td>
+                    ) : keyNameItem === "keyis_id" ? (
+                      <td
+                        style={{
+                          textDecoration: "underline",
+                          borderBottom: "1px solid #ddd",
+                          padding: "8px",
+                          color: "#777",
+                        }}
+                      >
+                        <Link
+                          to={{ pathname: "/keyissue/details" }}
+                          state={{ keyis_id: row[keyNameItem] }}
+                        >
+                          {row[keyNameItem]}
+                        </Link>
+                      </td>
+                    ) : keyNameItem === "scrtId" ? (
+                      <td
+                        style={{
+                          textDecoration: "underline",
+                          borderBottom: "1px solid #ddd",
+                          padding: "8px",
+                          color: "#777",
+                        }}
+                      >
+                        <Link
+                          to={{ pathname: "/script/details" }}
+                          state={{ scrtId: row[keyNameItem] }}
+                        >
+                          {row[keyNameItem]}
+                        </Link>
+                      </td>
                     ) : (
                       <td
                         key={colIndex}

@@ -8,7 +8,6 @@ import {
   Title,
 } from "../../styles/styledTableLayout";
 import { useList } from "../../customHooks/useList";
-
 import { keyIssueAtom } from "../../recoil/atoms/setting";
 import { useSetRecoilState, useRecoilValue } from "recoil";
 import { fetchKeyIssueList } from "../../recoil/atoms/setting";
@@ -17,12 +16,17 @@ import Pagination from "../../components/Table/Pagination";
 import { selectedRowAtom } from "../../recoil/atoms/selected";
 import { dynamicObject } from "../../utils/types";
 import Error from "../Error";
+import AddKeyIssueConfig from "./AddKeyIssueConfig";
+import EditKeyIssueConfig from "./EditKeyIssueConfig";
+import DeleteKeyIssueConfig from "./DeleteKeyIssueConfig";
 
+// 키발급코드 Config
 const SettingKeyIssueCodeConfig: React.FC = () => {
-  const setKeyIssueState = useSetRecoilState(keyIssueAtom);
+  const setRecoilState = useSetRecoilState(keyIssueAtom);
   const recoilData = useRecoilValue(keyIssueAtom);
   const selectedRow = useRecoilValue(selectedRowAtom);
 
+  const itemsPerPage = 5;
   const [headers, setHeaders] = useState<string[] | null>(null);
   const [keyName, setKeyname] = useState<string[] | null>(null);
   const [headerInfos, setHeaderInfos] = useState<dynamicObject[] | null>(null);
@@ -53,16 +57,15 @@ const SettingKeyIssueCodeConfig: React.FC = () => {
     });
 
     if (result?.body) {
-      console.log("result : ", result);
-      setKeyIssueState(result);
+      setRecoilState(result);
     } else {
-      setError(result);
+      setError(result?.error);
     }
   };
 
   const [params, setParams] = useState<FetchListParams>({
     isHeaderInfo: true,
-    rowCnt: 2,
+    rowCnt: itemsPerPage,
     startNum: 0,
     sortKeyName: "updated_at", // 업데이트 시간
     order: "DESC",
@@ -70,7 +73,6 @@ const SettingKeyIssueCodeConfig: React.FC = () => {
     filter: null,
   });
 
-  const itemsPerPage = 2;
   const {
     sortOption,
     handleSort,
@@ -85,23 +87,22 @@ const SettingKeyIssueCodeConfig: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (recoilData) {
-      const headers = recoilData?.body?.headerInfos.map(
-        (item: { [key: string]: any }) => item.name
-      );
-      const keyName = recoilData?.body?.headerInfos.map(
-        (item: { [key: string]: any }) => item.keyName
-      );
+    if (recoilData && recoilData.body) {
+      const headers = recoilData?.body?.headerInfos
+        .filter((item: { [key: string]: any }) => item.display) // Only items with display as true
+        .map((item: { [key: string]: any }) => item.name); // Extract only the name
 
-      console.log(recoilData.body);
+      const keyName = recoilData?.body?.headerInfos
+        .filter((item: { [key: string]: any }) => item.display) // Only items with display as true
+        .map((item: { [key: string]: any }) => item.keyName); // Extract only the keyName
 
-      const { headerInfos, itemsList, totCnt } = recoilData?.body;
+      const { headerInfos, configList, totalCnt } = recoilData?.body;
 
       setHeaders(headers);
       setKeyname(keyName);
       setHeaderInfos(headerInfos);
-      setData(itemsList);
-      setTotCnt(totCnt);
+      setData(configList);
+      setTotCnt(totalCnt);
     }
   }, [recoilData]);
 
@@ -146,9 +147,17 @@ const SettingKeyIssueCodeConfig: React.FC = () => {
               gap: "5px",
             }}
           >
-            <Button>추가</Button>
-            <Button disabled={selectedRow === null}>변경</Button>
-            <Button disabled={selectedRow === null}>삭제</Button>
+            <AddKeyIssueConfig handleRefresh={handleRefresh}>
+              <Button>추가</Button>
+            </AddKeyIssueConfig>
+
+            <EditKeyIssueConfig handleRefresh={handleRefresh}>
+              <Button disabled={selectedRow === null}>변경</Button>
+            </EditKeyIssueConfig>
+
+            <DeleteKeyIssueConfig handleRefresh={handleRefresh}>
+              <Button disabled={selectedRow === null}>삭제</Button>
+            </DeleteKeyIssueConfig>
           </div>
         </div>
 
@@ -163,7 +172,7 @@ const SettingKeyIssueCodeConfig: React.FC = () => {
           height="400px"
         />
 
-        {totCnt && totCnt > 0 && (
+        {totCnt !== null && totCnt > 0 && (
           <div style={{ padding: "10px 10px" }}>
             <Pagination
               currentPage={currentPage}

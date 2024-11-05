@@ -16,9 +16,13 @@ import Pagination from "../../components/Table/Pagination";
 import { selectedRowAtom } from "../../recoil/atoms/selected";
 import { dynamicObject } from "../../utils/types";
 import Error from "../Error";
+import AddScriptConfig from "./AddScriptConfig";
+import EditScriptConfig from "./EditScriptConfig";
+import DeleteScriptConfig from "./DeleteScriptConfig";
 
+// 스크립트 Config
 const SettingScriptConfig: React.FC = () => {
-  const setScriptAtom = useSetRecoilState(scriptAtom);
+  const setRecoilState = useSetRecoilState(scriptAtom);
   const recoilData = useRecoilValue(scriptAtom);
   const selectedRow = useRecoilValue(selectedRowAtom);
 
@@ -28,6 +32,7 @@ const SettingScriptConfig: React.FC = () => {
   const [data, setData] = useState<dynamicObject[] | null>(null);
   const [totCnt, setTotCnt] = useState<number | null>(null);
   const [error, setError] = useState<dynamicObject | null>(null);
+  const itemsPerPage = 5;
 
   const fetchListData = async ({
     isHeaderInfo,
@@ -52,16 +57,16 @@ const SettingScriptConfig: React.FC = () => {
     });
 
     if (result?.body) {
-      console.log("result : ", result);
-      setScriptAtom(result);
+      setRecoilState(result);
     } else {
-      setError(result);
+      console.log("axios error");
+      setError(result?.error);
     }
   };
 
   const [params, setParams] = useState<FetchListParams>({
     isHeaderInfo: true,
-    rowCnt: 2,
+    rowCnt: itemsPerPage,
     startNum: 0,
     sortKeyName: "updated_at", // 업데이트 시간
     order: "DESC",
@@ -69,7 +74,6 @@ const SettingScriptConfig: React.FC = () => {
     filter: null,
   });
 
-  const itemsPerPage = 2;
   const {
     sortOption,
     handleSort,
@@ -84,21 +88,22 @@ const SettingScriptConfig: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (recoilData) {
-      const headers = recoilData?.body?.headerInfos.map(
-        (item: { [key: string]: any }) => item.name
-      );
-      const keyName = recoilData?.body?.headerInfos.map(
-        (item: { [key: string]: any }) => item.keyName
-      );
+    if (recoilData && recoilData.body) {
+      const headers = recoilData?.body?.headerInfos
+        .filter((item: { [key: string]: any }) => item.display) // Only items with display as true
+        .map((item: { [key: string]: any }) => item.name); // Extract only the name
 
-      const { headerInfos, itemsList, totCnt } = recoilData?.body;
+      const keyName = recoilData?.body?.headerInfos
+        .filter((item: { [key: string]: any }) => item.display) // Only items with display as true
+        .map((item: { [key: string]: any }) => item.keyName); // Extract only the keyName
+
+      const { headerInfos, configList, totalCnt } = recoilData?.body;
 
       setHeaders(headers);
       setKeyname(keyName);
       setHeaderInfos(headerInfos);
-      setData(itemsList);
-      setTotCnt(totCnt);
+      setData(configList);
+      setTotCnt(totalCnt);
     }
   }, [recoilData]);
 
@@ -143,9 +148,17 @@ const SettingScriptConfig: React.FC = () => {
               gap: "5px",
             }}
           >
-            <Button>추가</Button>
-            <Button disabled={selectedRow === null}>변경</Button>
-            <Button disabled={selectedRow === null}>삭제</Button>
+            <AddScriptConfig handleRefresh={handleRefresh}>
+              <Button>추가</Button>
+            </AddScriptConfig>
+
+            <EditScriptConfig handleRefresh={handleRefresh}>
+              <Button disabled={selectedRow === null}>변경</Button>
+            </EditScriptConfig>
+
+            <DeleteScriptConfig handleRefresh={handleRefresh}>
+              <Button disabled={selectedRow === null}>삭제</Button>
+            </DeleteScriptConfig>
           </div>
         </div>
 
@@ -159,8 +172,7 @@ const SettingScriptConfig: React.FC = () => {
           handleSort={handleSort}
           height="400px"
         />
-
-        {totCnt && totCnt > 0 && (
+        {totCnt !== null && totCnt > 0 && (
           <div style={{ padding: "10px 10px" }}>
             <Pagination
               currentPage={currentPage}

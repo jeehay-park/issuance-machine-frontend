@@ -8,12 +8,9 @@ import {
   Title,
 } from "../../styles/styledTableLayout";
 import { useList } from "../../customHooks/useList";
-import { profileAtom, profileInfoAtom } from "../../recoil/atoms/setting";
+import { profileAtom } from "../../recoil/atoms/setting";
 import { useSetRecoilState, useRecoilValue } from "recoil";
-import {
-  fetchProfileList,
-  fetchProfileInfoList,
-} from "../../recoil/atoms/setting";
+import { fetchProfileList } from "../../recoil/atoms/setting";
 import { FetchListParams } from "../../utils/types";
 import Pagination from "../../components/Table/Pagination";
 import { selectedRowAtom } from "../../recoil/atoms/selected";
@@ -23,9 +20,9 @@ import AddProfileConfig from "./AddProfileConfig";
 import EditProfileConfig from "./EditProfileConfig";
 import DeleteProfileConfig from "./DeleteProfileConfig";
 
+// 프로파일 Config
 const SettingProfileConfig: React.FC = () => {
   const setRecoilState = useSetRecoilState(profileAtom);
-  const setProfileInfoState = useSetRecoilState(profileInfoAtom);
   const recoilData = useRecoilValue(profileAtom);
   const selectedRow = useRecoilValue(selectedRowAtom);
 
@@ -62,20 +59,7 @@ const SettingProfileConfig: React.FC = () => {
     if (result?.body) {
       setRecoilState(result);
     } else {
-      setError(result);
-    }
-  };
-
-  const fetchDetails = async () => {
-    const result = await fetchProfileInfoList({
-      configType: "profle",
-      profId: "profId",
-      keyisId: "keyisId",
-      scrtId: "scrtId",
-    });
-
-    if (result?.body) {
-      setRecoilState(result.body);
+      setError(result?.error);
     }
   };
 
@@ -185,9 +169,7 @@ const SettingProfileConfig: React.FC = () => {
           handleSort={handleSort}
           height="400px"
         />
-
-        <p onClick={fetchDetails}>파일보기</p>
-        {totCnt && totCnt > 0 && (
+          {totCnt !== null && totCnt > 0 && (
           <div style={{ padding: "10px 10px" }}>
             <Pagination
               currentPage={currentPage}

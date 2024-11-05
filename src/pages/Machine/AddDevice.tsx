@@ -3,7 +3,6 @@ import React, {
   useEffect,
   useRef,
   ReactNode,
-  FormEvent,
   ChangeEvent,
 } from "react";
 import {
@@ -22,18 +21,16 @@ import { useRecoilValue, useSetRecoilState } from "recoil";
 import success from "../../components/assets/green-tick.png";
 import {
   FormContainer,
-  FormRow,
   FormColumn,
   FormLabel,
   FormInput,
 } from "../../styles/styledForm";
 import { MdClose, MdCheck } from "react-icons/md";
-import { FaPlus } from "react-icons/fa";
+import { FaPlus, FaMinus } from "react-icons/fa";
 import { createDevice } from "../../recoil/atoms/device";
-import plusIcon from "../../components/assets/plus.jpg";
 
 // Define the shape of form data and error messages
-interface FormData {
+interface DeviceData {
   dvcId: null;
   dvcName: string;
   dvcNum: number;
@@ -42,13 +39,8 @@ interface FormData {
 }
 
 interface FormErrors {
-  dvcId: null;
   dvcName: string;
-  dvcNum: number;
-  ip: string;
-  romVer: string;
 }
-
 interface WarningType {
   dvcNameWarning: string | null;
   ipWarning: string | null;
@@ -61,13 +53,14 @@ const AddDevice: React.FC<{
   handleRefresh: () => void;
   mcnId: string;
 }> = ({ children, handleRefresh, mcnId }) => {
-  const initialValues = {
+  const initialDeviceData: DeviceData = {
     dvcId: null,
     dvcName: "",
     dvcNum: 1,
     ip: "",
     romVer: "",
   };
+
   const selectedRow = useRecoilValue(selectedRowAtom);
   const setSelectedRow = useSetRecoilState(selectedRowAtom);
   const [isModalOpen, setModalOpen] = useState(false);
@@ -84,21 +77,11 @@ const AddDevice: React.FC<{
     romVerWarning: null,
   });
 
-  const [formData, setFormData] = useState<FormData>(initialValues);
-  const [errors, setErrors] = useState<FormErrors>(initialValues);
-  const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
+  const [devices, setDevices] = useState<DeviceData[]>([initialDeviceData]);
+  const [errors, setErrors] = useState<FormErrors>({ dvcName: "" });
 
   useEffect(() => {
     if (formContainerRef.current) {
-      console.log("formContainerRef.current : ", formContainerRef.current);
-      console.log(
-        "formContainerRef.current.offsetHeight : ",
-        formContainerRef.current.offsetHeight
-      );
-      console.log(
-        "formContainerRef.current.offsetWidth : ",
-        formContainerRef.current.offsetWidth
-      );
       setFormHeight(formContainerRef.current.offsetHeight);
       setFormWidth(formContainerRef.current.offsetWidth);
     }
@@ -108,8 +91,8 @@ const AddDevice: React.FC<{
     setResponseMessage(null);
     setModalOpen(true);
     setFormHeight(0); // Reset height when opening modal
-    setFormData(initialValues);
-    setErrors(initialValues);
+    setDevices([initialDeviceData]); // Reset to initial state
+    setErrors({ dvcName: "" });
     setWarning({
       dvcNameWarning: null,
       ipWarning: null,
@@ -119,8 +102,8 @@ const AddDevice: React.FC<{
 
   const closeModal = () => {
     setModalOpen(false);
-    setFormData(initialValues);
-    setErrors(initialValues);
+    setDevices([initialDeviceData]); // Reset to initial state
+    setErrors({ dvcName: "" });
     setFormHeight(0); // Reset the height when closing the modal
     setWarning({
       dvcNameWarning: null,
@@ -131,14 +114,14 @@ const AddDevice: React.FC<{
   };
 
   // Handle input changes
-  const handleChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>, index: number) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
+    const updatedDevices = [...devices];
+    updatedDevices[index] = {
+      ...updatedDevices[index],
       [name]: value,
-    }));
+    };
+    setDevices(updatedDevices);
 
     setWarning((prev) => ({
       ...prev,
@@ -148,13 +131,15 @@ const AddDevice: React.FC<{
 
   // Validate form inputs
   const validate = (): boolean => {
-    let tempErrors: FormErrors = initialValues;
+    let tempErrors: FormErrors = { dvcName: "" };
     let isValid = true;
 
-    if (!formData.dvcName) {
-      tempErrors.dvcName = "mcnName is required";
-      isValid = false;
-    }
+    devices.forEach((device, index) => {
+      if (!device.dvcName) {
+        tempErrors.dvcName = `Device ${index + 1}: dvcName is required`;
+        isValid = false;
+      }
+    });
 
     setErrors(tempErrors);
     return isValid;
@@ -162,16 +147,22 @@ const AddDevice: React.FC<{
 
   // Handle form submission
   const handleSubmit = async (event: React.MouseEvent<HTMLDivElement>) => {
+    event.preventDefault(); // Prevent form default behavior, just in case
+
+    const updatedDevices = devices.map((item, index) => ({
+      ...item,
+      dvcNum: index + 1,
+    }));
+
     if (validate()) {
       try {
         const result = await createDevice({
           mcnId: mcnId,
-          deviceList: [{ ...formData }],
+          deviceList: updatedDevices,
         });
         if (result) {
           handleRefresh();
           setResponseMessage(result.header.rtnMessage);
-          // Refresh data after creation
         } else {
           setResponseMessage("Failed to create machine.");
         }
@@ -181,7 +172,20 @@ const AddDevice: React.FC<{
     }
   };
 
-  console.log("response width & height : ", formWidth, formHeight);
+  // Add a new device input field
+  const addDeviceInput = () => {
+    setDevices((prevDevices) => [...prevDevices, initialDeviceData]);
+  };
+
+  // Add a new device input field
+  const deleteDeviceInput = (selectedIndex: number) => {
+    if (devices.length <= 1) {
+      setDevices([initialDeviceData]); // Reset to initial state
+    } else {
+      const temp = devices?.filter((item, index) => index !== selectedIndex);
+      setDevices(temp);
+    }
+  };
 
   return (
     <>
@@ -234,61 +238,92 @@ const AddDevice: React.FC<{
                       gap: "10px",
                     }}
                   >
-                    <FormColumn>
-                      <FormLabel
-                        htmlFor="dvcName"
-                        style={{ textAlign: "center", width : "100%" }}
-                      >
-                        이름
-                      </FormLabel>
-                      <FormInput
-                        type="text"
-                        id="dvcName"
-                        name="dvcName"
-                        onChange={handleChange}
-                        value={formData.dvcName}
-                        // required
-                      />
+                    <FormColumn style={{ flex: 1, textAlign: "center" }}>
+                      <FormLabel>이름</FormLabel>
                     </FormColumn>
-                    <FormColumn>
-                      <FormLabel htmlFor="ip" style={{ textAlign: "center", width : "100%" }}>
-                        IP
-                      </FormLabel>
-                      <FormInput
-                        type="text"
-                        id="ip"
-                        name="ip"
-                        onChange={handleChange}
-                        value={formData.ip}
-                        // required
-                      />
+                    <FormColumn style={{ flex: 1, textAlign: "center" }}>
+                      <FormLabel style={{ textAlign: "center" }}>IP</FormLabel>
                     </FormColumn>
-                    {warning.dvcNameWarning && <p>{warning.dvcNameWarning}</p>}
-                    <FormColumn>
-                      <FormLabel
-                        htmlFor="romVer"
-                        style={{ textAlign: "center", width : "100%" }}
-                      >
+                    <FormColumn style={{ flex: 1, textAlign: "center" }}>
+                      <FormLabel style={{ textAlign: "center" }}>
                         롬(ROM) 버전
                       </FormLabel>
-                      <FormInput
-                        type="text"
-                        id="romVer"
-                        name="romVer"
-                        onChange={handleChange}
-                        value={formData.romVer}
-                        // required
-                      />
                     </FormColumn>
-                    <FormColumn style={{marginRight : "20px", cursor : "pointer"}}>
-                      <FaPlus
+                    <FormColumn style={{ flex: 0.1 }}>
+                      <FaMinus
                         size={30}
-                        color="var(--blue)"
-                        style={{ fontWeight: "bolder" }}
+                        color="white"
+                        style={{ fontWeight: "bolder", visibility: "hidden" }}
                       />
                     </FormColumn>
                   </div>
+
+                  {devices.map((device, index) => (
+                    <div
+                      key={index}
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        gap: "10px",
+                      }}
+                    >
+                      <FormColumn>
+                        <FormInput
+                          type="text"
+                          id={`dvcName-${index}`}
+                          name="dvcName"
+                          onChange={(e) => handleChange(e, index)}
+                          value={device.dvcName}
+                        />
+                        {errors.dvcName && (
+                          <p style={{ color: "red" }}>{errors.dvcName}</p>
+                        )}
+                      </FormColumn>
+                      <FormColumn>
+                        <FormInput
+                          type="text"
+                          id={`ip-${index}`}
+                          name="ip"
+                          onChange={(e) => handleChange(e, index)}
+                          value={device.ip}
+                        />
+                      </FormColumn>
+                      <FormColumn>
+                        <FormInput
+                          type="text"
+                          id={`romVer-${index}`}
+                          name="romVer"
+                          onChange={(e) => handleChange(e, index)}
+                          value={device.romVer}
+                        />
+                      </FormColumn>
+                      <FormColumn
+                        style={{
+                          marginRight: "20px",
+                          cursor: "pointer",
+                        }}
+                        onClick={() => deleteDeviceInput(index)}
+                      >
+                        <FaMinus
+                          size={30}
+                          color="var(--red)"
+                          style={{ fontWeight: "bolder" }}
+                        />
+                      </FormColumn>
+                    </div>
+                  ))}
                 </form>
+
+                <FormColumn
+                  style={{ marginRight: "20px", cursor: "pointer" }}
+                  onClick={addDeviceInput}
+                >
+                  <FaPlus
+                    size={30}
+                    color="var(--blue)"
+                    style={{ fontWeight: "bolder" }}
+                  />
+                </FormColumn>
               </FormContainer>
             )}
           </ModalContent>

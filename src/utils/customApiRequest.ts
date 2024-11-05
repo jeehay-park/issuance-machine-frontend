@@ -22,15 +22,15 @@ export const customApiRequest = async (
 
     return response;
   } catch (err: any) {
+    console.log("axios error", err);
+
     if (err.customError) {
       return err.payload;
-    } else if (err.response?.data) {
-      return err.response.data;
     } else {
       return {
         error: {
-          code: err.code ?? "UNKNOWN_ERROR",
-          message: err.message ?? "An unknown error occurred",
+          code: err?.code ?? "UNKNOWN_ERROR",
+          message: err?.message ?? "An unknown error occurred",
           details: "An unexpected error occurred. Please try again later.",
         },
       };

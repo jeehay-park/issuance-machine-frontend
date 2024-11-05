@@ -19,7 +19,7 @@ import AddMachine from "./AddMachine";
 import EditMachine from "./EditMachine";
 import DeleteMachine from "./DeleteMachine";
 
-// 발급기계 서비스
+// 발급 기계
 const Machine: React.FC = () => {
   const [recoilData, setRecoilData] = useRecoilState(machineListAtom);
   const selectedRow = useRecoilValue(selectedRowAtom);
@@ -55,7 +55,7 @@ const Machine: React.FC = () => {
     if (result?.body) {
       setRecoilData(result);
     } else {
-      setError(result);
+      setError(result?.error);
     }
   };
 
@@ -91,8 +91,6 @@ const Machine: React.FC = () => {
         .map((item: { [key: string]: any }) => item.keyName); // Extract only the keyName
 
       const { headerInfos, machineList, totalCnt } = recoilData?.body;
-
-      console.log("total Count : ", totalCnt);
 
       setHeaders(headers);
       setKeyname(keyName);
@@ -134,7 +132,7 @@ const Machine: React.FC = () => {
             marginBottom: "10px",
           }}
         >
-          <Search label="SN 규칙명" onSearch={handleSearch} />
+          <Search label="발급기 이름" onSearch={handleSearch} />
           <div
             style={{
               display: "flex",

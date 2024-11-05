@@ -18,7 +18,7 @@ import { MdClose, MdCheck } from "react-icons/md";
 import { deleteProfile } from "../../recoil/atoms/setting";
 import Card from "../../components/Layout/Card";
 
-// Profile 설정 삭제
+// 프로파일 설정 삭제
 const DeleteProfileConfig: React.FC<{
   children: ReactNode;
   handleRefresh: () => void;

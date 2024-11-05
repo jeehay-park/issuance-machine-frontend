@@ -3,10 +3,10 @@ import { customApiRequest } from "../../utils/customApiRequest";
 
 // 발급설정 - 프로파일 목록 조회를 위한 API
 export const profileAtom = customCreateAtom("profile");
-export const fetchProfileList = (body: { [key: string]: any }) => {
+export const fetchProfileList = async(body: { [key: string]: any }) => {
   const trId = process.env.REACT_APP_TRID_CONFIG_LIST!; // No more warning: TypeScript trusts your assertion.
   const url = "/config/list";
-  return customApiRequest(url, trId, body);
+  return await customApiRequest(url, trId, body);
 };
 
 // 발급설정 - 키발급코드 목록 조회를 위한 API

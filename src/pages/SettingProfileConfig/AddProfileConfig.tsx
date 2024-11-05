@@ -55,7 +55,7 @@ interface FormErrors {
   };
 }
 
-// Profile 설정 추가
+// 프로파일 설정 추가
 const AddProfileConfig: React.FC<{
   children: ReactNode;
   handleRefresh: () => void;

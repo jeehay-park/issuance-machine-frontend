@@ -54,7 +54,7 @@ interface FormErrors {
   };
 }
 
-// Profile 삭제
+// 프로파일 설정 변경
 const EditProfileConfig: React.FC<{
   children: ReactNode;
   handleRefresh: () => void;

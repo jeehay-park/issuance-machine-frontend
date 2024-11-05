@@ -56,7 +56,7 @@ const SerialNumber: React.FC = () => {
     if (result?.body) {
       setRecoilState(result);
     } else {
-      setError(result);
+      setError(result?.error);
     }
   };
 

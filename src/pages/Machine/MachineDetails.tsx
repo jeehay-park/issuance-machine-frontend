@@ -8,6 +8,8 @@ import SimpleTable from "../../components/Table/SimpleTable";
 import { selectedRowAtom } from "../../recoil/atoms/selected";
 import { Button } from "../../styles/styledTableLayout";
 import AddDevice from "./AddDevice";
+import DeleteDevice from "./DeleteDevice";
+import EditDevice from "./EditDevice";
 
 // 발급 기계 상세정보
 const MachineDetails: React.FC = () => {
@@ -37,16 +39,28 @@ const MachineDetails: React.FC = () => {
           }
         }
       } catch (error) {
-        console.error("Error fetching serial number info:", error);
+        console.error("Error fetching machine info:", error);
       }
     };
     fetchData();
   }, [state]);
 
   const handleRefresh = async () => {
-    await fetchMachineInfo({
+    const result = await fetchMachineInfo({
       mcnId: state.mcn_id,
     });
+
+    if (result) {
+      setRecoilData(result.body);
+      setMachineHeader(
+        Object.keys(result.body).filter((str) => str !== "deviceList")
+      );
+      setDeviceData(result.body.deviceList);
+
+      if (result.body.deviceList?.length > 0) {
+        setDeviceHeader(Object.keys(result.body.deviceList[0]));
+      }
+    }
   };
 
   return (
@@ -81,17 +95,18 @@ const MachineDetails: React.FC = () => {
             }}
           >
             {DeviceData && (
-              <AddDevice
-                mcnId={state.mcn_id}
-                handleRefresh={handleRefresh}
-              >
+              <AddDevice mcnId={state.mcn_id} handleRefresh={handleRefresh}>
                 <Button>추가</Button>
               </AddDevice>
             )}
 
-            <Button disabled={selectedRow === null}>변경</Button>
+            <EditDevice handleRefresh={handleRefresh} mcnId={state.mcn_id}>
+              <Button disabled={selectedRow === null}>변경</Button>
+            </EditDevice>
 
-            <Button disabled={selectedRow === null}>삭제</Button>
+            <DeleteDevice handleRefresh={handleRefresh}>
+              <Button disabled={selectedRow === null}>삭제</Button>
+            </DeleteDevice>
           </div>
         </div>
 

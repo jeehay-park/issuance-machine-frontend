@@ -1,0 +1,28 @@
+{
+  "files": {
+    "main.css": "/static/css/main.05d35ce8.css",
+    "main.js": "/static/js/main.e8253adc.js",
+    "static/js/453.7ade1527.chunk.js": "/static/js/453.7ade1527.chunk.js",
+    "static/media/chevronRight.gif": "/static/media/chevronRight.2d0db2c08622a43d3719.gif",
+    "static/media/id.gif": "/static/media/id.53ece3639890ec6f13d1.gif",
+    "static/media/chevronLeft.gif": "/static/media/chevronLeft.4122cacb263b95deb126.gif",
+    "static/media/program.gif": "/static/media/program.64c7eef79827b70bc391.gif",
+    "static/media/setting.gif": "/static/media/setting.3f003261fef002b0d2e7.gif",
+    "static/media/issuance.gif": "/static/media/issuance.a31066ca67c66135d829.gif",
+    "static/media/dashboard.gif": "/static/media/dashboard.daa65e97283b314010b8.gif",
+    "static/media/code.gif": "/static/media/code.d84810a37ed169af8bc8.gif",
+    "static/media/sn.gif": "/static/media/sn.6d7f4d813a4319c8b650.gif",
+    "static/media/machine.gif": "/static/media/machine.ef372834e2a4ce3eef91.gif",
+    "static/media/warning.png": "/static/media/warning.708a684178007792b920.png",
+    "static/media/closeIcon.png": "/static/media/closeIcon.1c2963ee3467352a1681.png",
+    "static/media/green-tick.png": "/static/media/green-tick.26eb06fcae5d8a64329c.png",
+    "index.html": "/index.html",
+    "main.05d35ce8.css.map": "/static/css/main.05d35ce8.css.map",
+    "main.e8253adc.js.map": "/static/js/main.e8253adc.js.map",
+    "453.7ade1527.chunk.js.map": "/static/js/453.7ade1527.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.05d35ce8.css",
+    "static/js/main.e8253adc.js"
+  ]
+}

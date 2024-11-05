@@ -3,7 +3,6 @@ import React, {
   useEffect,
   useRef,
   ReactNode,
-  FormEvent,
   ChangeEvent,
 } from "react";
 import {
@@ -25,15 +24,9 @@ import {
   FormRow,
   FormLabel,
   FormInput,
-  RadioInput,
-  RadioLabel,
-  FormSelect,
-  FormButton,
-  FormError,
 } from "../../styles/styledForm";
 import { MdClose, MdCheck } from "react-icons/md";
 import { createMachine } from "../../recoil/atoms/machine";
-import Card from "../../components/Layout/Card";
 
 // Define the shape of form data and error messages
 interface FormData {
@@ -62,7 +55,7 @@ const AddMachine: React.FC<{
     mcnName: "",
     etc: "",
   };
-  const selectedRow = useRecoilValue(selectedRowAtom);
+
   const setSelectedRow = useSetRecoilState(selectedRowAtom);
   const [isModalOpen, setModalOpen] = useState(false);
   const [responseMessage, setResponseMessage] = useState<string | null>(null);
@@ -78,19 +71,9 @@ const AddMachine: React.FC<{
 
   const [formData, setFormData] = useState<FormData>(initialValues);
   const [errors, setErrors] = useState<FormErrors>(initialValues);
-  const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
 
   useEffect(() => {
     if (formContainerRef.current) {
-      console.log("formContainerRef.current : ", formContainerRef.current);
-      console.log(
-        "formContainerRef.current.offsetHeight : ",
-        formContainerRef.current.offsetHeight
-      );
-      console.log(
-        "formContainerRef.current.offsetWidth : ",
-        formContainerRef.current.offsetWidth
-      );
       setFormHeight(formContainerRef.current.offsetHeight);
       setFormWidth(formContainerRef.current.offsetWidth);
     }
@@ -156,7 +139,6 @@ const AddMachine: React.FC<{
         if (result) {
           handleRefresh();
           setResponseMessage(result.header.rtnMessage);
-          // Refresh data after creation
         } else {
           setResponseMessage("Failed to create machine.");
         }
@@ -165,8 +147,6 @@ const AddMachine: React.FC<{
       }
     }
   };
-
-  console.log("response width & height : ", formWidth, formHeight);
 
   return (
     <>

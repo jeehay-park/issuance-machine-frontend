@@ -14,8 +14,10 @@ import SettingScriptConfig from "./pages/SettingScriptConfig/SettingScriptConfig
 import NotFound from "./pages/NotFound";
 import SerialNumberDetails from "./pages/SerialNumber/SerialNumberDetails";
 import ProfileConfigDetails from "./pages/SettingProfileConfig/ProfileConfigDetails";
+import KeyIssueConfigDetails from "./pages/SettingKeyIssueCodeConfig/KeyIssueConfigDetails";
 import Machine from "./pages/Machine/Machine";
 import MachineDetails from "./pages/Machine/MachineDetails";
+
 
 const App: React.FC = () => {
   const sidebarContents = {
@@ -35,7 +37,15 @@ const App: React.FC = () => {
       description: "프로파일 Config 상세정보",
     },
     keyIssue: { path: "/keyissue", description: "키발급코드 Config" },
+    keyIssueDetails: {
+      path: "/keyissue/details",
+      description: "키발급코드 Config 상세정보",
+    },
     script: { path: "/script", description: "스크립트 Config" },
+    scriptDetails: {
+      path: "/script/details",
+      description: "스크립트 Config 상세정보",
+    },
     machine: { path: "/machine", description: "발급 기계 정보" },
     machineDetails: {
       path: "/machine/details",
@@ -82,6 +92,10 @@ const App: React.FC = () => {
             <Route
               path={sidebarContents.keyIssue.path}
               element={<SettingKeyIssueCodeConfig />}
+            />
+             <Route
+              path={sidebarContents.keyIssueDetails.path}
+              element={<KeyIssueConfigDetails />}
             />
             <Route
               path={sidebarContents.script.path}
