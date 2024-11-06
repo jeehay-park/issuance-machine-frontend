@@ -1,29 +1,29 @@
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { Card, Title, TitleContainer } from "../../styles/styledTableLayout";
-import { fetchProfileInfoList, profileAtom } from "../../recoil/atoms/setting";
+import { fetchScriptInfo, scriptInfoAtom } from "../../recoil/atoms/setting";
 import { useRecoilState } from "recoil";
 
 // 스크립트 상세정보
 const ScriptConfigDetails: React.FC = () => {
   const { state } = useLocation();
-  const [recoilData, setRecoilData] = useRecoilState(profileAtom);
+  const [recoilData, setRecoilData] = useRecoilState(scriptInfoAtom);
   const [key, setKey] = useState<string[] | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const result = await fetchProfileInfoList({
-          configType: "PROFILE",
-          profId: state.prof_id,
+        const result = await fetchScriptInfo({
+          configType: "SCRIPT",
+          scrtId: state.scrt_id,
         });
 
         if (result) {
-          setRecoilData(result.body.profileConfig);
-          setKey(Object.keys(result.body.profileConfig));
+          setRecoilData(result.body.scriptConfig);
+          setKey(Object.keys(result.body.scriptConfig));
         }
       } catch (error) {
-        console.error("Error fetching profile info:", error);
+        console.error("Error fetching script info:", error);
       }
     };
     fetchData();

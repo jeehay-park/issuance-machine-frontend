@@ -227,7 +227,7 @@ const DynamicTable: React.FC<TableProps> = ({
                           {row[keyNameItem]}
                         </Link>
                       </td>
-                    ) : keyNameItem === "scrtId" ? (
+                    ) : keyNameItem === "scrt_id" ? (
                       <td
                         style={{
                           textDecoration: "underline",
@@ -238,7 +238,7 @@ const DynamicTable: React.FC<TableProps> = ({
                       >
                         <Link
                           to={{ pathname: "/script/details" }}
-                          state={{ scrtId: row[keyNameItem] }}
+                          state={{ scrt_id: row[keyNameItem] }}
                         >
                           {row[keyNameItem]}
                         </Link>

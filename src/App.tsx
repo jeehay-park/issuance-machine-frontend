@@ -17,7 +17,7 @@ import ProfileConfigDetails from "./pages/SettingProfileConfig/ProfileConfigDeta
 import KeyIssueConfigDetails from "./pages/SettingKeyIssueCodeConfig/KeyIssueConfigDetails";
 import Machine from "./pages/Machine/Machine";
 import MachineDetails from "./pages/Machine/MachineDetails";
-
+import ScriptConfigDetails from "./pages/SettingScriptConfig/ScriptConfigDetails";
 
 const App: React.FC = () => {
   const sidebarContents = {
@@ -93,13 +93,17 @@ const App: React.FC = () => {
               path={sidebarContents.keyIssue.path}
               element={<SettingKeyIssueCodeConfig />}
             />
-             <Route
+            <Route
               path={sidebarContents.keyIssueDetails.path}
               element={<KeyIssueConfigDetails />}
             />
             <Route
               path={sidebarContents.script.path}
               element={<SettingScriptConfig />}
+            />
+            <Route
+              path={sidebarContents.scriptDetails.path}
+              element={<ScriptConfigDetails />}
             />
             <Route path={sidebarContents.machine.path} element={<Machine />} />
             <Route

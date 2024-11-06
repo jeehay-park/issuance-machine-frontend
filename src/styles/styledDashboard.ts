@@ -9,6 +9,7 @@ export const DashboardContainer = styled.div`
   grid-template-rows: 0.1fr 0.3fr auto;
   grid-template-columns: 1fr;
   height: calc(100vh - 50px);
+
 `;
 
 export const Round = styled.div<{ color: string; size: string }>`
@@ -29,6 +30,7 @@ export const Round = styled.div<{ color: string; size: string }>`
   box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.3),
     /* Shadow for depth */ -4px -4px 10px rgba(255, 255, 255, 0.6); /* Highlight for depth */
   text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4); /* Shadow for text */
+
 `;
 
 export const InfoItem = styled.div`
@@ -46,6 +48,10 @@ export const InfoItem = styled.div`
   & > strong {
     color: #0056ff; /* Change color for highlighted text */
   }
+
+  @media (max-width: 1024px) {
+    font-size: 14px; // Smaller text on smaller screens
+  }
 `;
 
 export const TabContainer = styled.div`
@@ -54,6 +60,7 @@ export const TabContainer = styled.div`
   margin: 20px 0;
   align-items: baseline;
   gap: 5px;
+
 `;
 
 export const Tab = styled.button<{ active: boolean }>`
@@ -77,4 +84,5 @@ export const Tab = styled.button<{ active: boolean }>`
   &:focus {
     outline: none;
   }
+
 `;

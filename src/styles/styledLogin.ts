@@ -7,6 +7,7 @@ export const Container = styled.div`
   align-items: center; /* Vertically center the children */
   justify-content: center; /* Horizontally center the children, if needed */
   /* border: 1px solid yellow; */
+
 `;
 
 export const ImageSection = styled.div`
@@ -17,6 +18,10 @@ export const ImageSection = styled.div`
   /* border: 1px solid red; */
   height: 100vh;
   position: relative;
+  
+  @media (max-width: 1024px) {
+    display: none; /* Hide the image section on smaller screens */
+  }
 `;
 
 export const OverlayText = styled.div`
@@ -42,6 +47,11 @@ export const FormSection = styled.div`
   justify-content: center;
   height: 50vh;
   /* border: 1px solid #0056ff; */
+
+  @media (max-width: 1024px) {
+    width: 100%; /* Full width on smaller screens */
+  }
+  
 `;
 
 // Styled components for form elements

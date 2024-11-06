@@ -55,7 +55,7 @@ const EditDevice: React.FC<{
 }> = ({ children, handleRefresh, mcnId }) => {
   const selectedRow = useRecoilValue(selectedRowAtom);
   const initialDeviceData: DeviceData = {
-    dvcId: null,
+    dvcId: selectedRow?.dvcId,
     dvcName: selectedRow?.dvcName,
     dvcNum: 1,
     ip: selectedRow?.ip,

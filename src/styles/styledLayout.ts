@@ -7,9 +7,17 @@ export const Container = styled.div<{ isExpanded: boolean }>`
     "sidebar main"; // the second row will have two columns: one for the "sidebar" and one for the "main" content area
   grid-template-rows: 10px auto;
   grid-template-columns: ${({ isExpanded }) => (isExpanded ? "250px" : "80px")} 1fr;
-  height: 100vh;
+  /* height: 100vh; */
+  height: auto; /* Let the container grow based on content */
   /* transition: grid-template-columns 0.5s ease;  */
   min-height: 0;
+
+  @media (max-width: 1024px) {
+   width: auto;
+   height: auto ;
+   orientation: landscape;
+   
+  }
 `;
 
 export const Header = styled.header`
@@ -65,6 +73,12 @@ export const Sidebar = styled.aside<{ isExpanded: boolean }>`
   align-items: ${({ isExpanded }) => (isExpanded ? "flex-start" : "center")};
   gap: 2rem;
   transition: all 0.3s ease;
+  height: auto;
+
+  @media (max-width: 1024px) {
+   width: auto;
+   height: auto ;
+  }
 `;
 
 export const MainContent = styled.main`
