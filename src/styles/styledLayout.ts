@@ -73,7 +73,7 @@ export const Sidebar = styled.aside<{ isExpanded: boolean }>`
   align-items: ${({ isExpanded }) => (isExpanded ? "flex-start" : "center")};
   gap: 2rem;
   transition: all 0.3s ease;
-  height: auto;
+  height: 100vh;
 
   @media (max-width: 1024px) {
    width: auto;
