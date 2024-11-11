@@ -5,7 +5,7 @@ import Dashboard from "./pages/Dashboard";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Layout from "./components/Layout/Layout";
 import IssuanceWorkScreen from "./pages/IssuanceWorkScreen";
-import CodeInfo from "./pages/CodeInfo";
+import CodeInfo from "./pages/CodeInfo/CodeInfo";
 import SerialNumber from "./pages/SerialNumber/SerialNumber";
 import Program from "./pages/Program";
 import SettingProfileConfig from "./pages/SettingProfileConfig/SettingProfileConfig";

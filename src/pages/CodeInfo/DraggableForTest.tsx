@@ -56,6 +56,7 @@ const getListStyle = (isDraggingOver: boolean): React.CSSProperties => ({
   color: "black",
 });
 
+// Dragable UI Test
 const CodeInfoModal: React.FC = () => {
   const [items, setItems] = useState<Item[]>(getItems(10));
 

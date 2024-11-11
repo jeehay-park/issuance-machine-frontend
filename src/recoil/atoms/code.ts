@@ -4,7 +4,7 @@ import { customApiRequest } from "../../utils/customApiRequest";
 // 코드정보 - 코드 목록 조회를 위한 API
 export const codeListAtom = customCreateAtom("codeList");
 export const fetchCodeList = async (body: { [key: string]: any }) => {
-  const url = "/code/list";
+  const url = "/codeinfo/list";
   const trId = process.env.REACT_APP_TRID_CODE_LIST!;
   return customApiRequest(url, trId, body);
 };
@@ -12,7 +12,7 @@ export const fetchCodeList = async (body: { [key: string]: any }) => {
 // 코드정보 - 코드(단일) 정보 조회를 위한 API
 export const codeInfoAtom = customCreateAtom("codeInfo");
 export const fetchCodeInfo = async (body: { [key: string]: any }) => {
-  const url = "/code/info";
+  const url = "/codeinfo/info";
   const trId = process.env.REACT_APP_TRID_CODE_INFO!;
   return customApiRequest(url, trId, body);
 };
@@ -20,7 +20,7 @@ export const fetchCodeInfo = async (body: { [key: string]: any }) => {
 // 코드정보 - 코드 생성을 위한 API
 export const createCodeAtom = customCreateAtom("createCode");
 export const createCode = async (body: { [key: string]: any }) => {
-  const url = "/code/create";
+  const url = "/codeinfo/save";
   const trId = process.env.REACT_APP_TRID_CODE_CREATE!;
   return customApiRequest(url, trId, body);
 };
@@ -28,7 +28,7 @@ export const createCode = async (body: { [key: string]: any }) => {
 // 코드정보 - 코드 변경을 위한 API
 export const updateCodeAtom = customCreateAtom("updateCode");
 export const updateCode = async (body: { [key: string]: any }) => {
-  const url = "/code/update";
+  const url = "/codeinfo/save";
   const trId = process.env.REACT_APP_TRID_CODE_UPDATE!;
   return customApiRequest(url, trId, body);
 };
@@ -36,7 +36,7 @@ export const updateCode = async (body: { [key: string]: any }) => {
 // 코드정보 - 코드 삭제를 위한 API
 export const deleteCodeAtom = customCreateAtom("deleteCode");
 export const deleteCode = async (body: { [key: string]: any }) => {
-  const url = "/code/delete";
+  const url = "/codeinfo/delete";
   const trId = process.env.REACT_APP_TRID_CODE_DELETE!;
   return customApiRequest(url, trId, body);
 };
