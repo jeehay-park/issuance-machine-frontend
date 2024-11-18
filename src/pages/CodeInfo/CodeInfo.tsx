@@ -84,19 +84,41 @@ const CodeInfo: React.FC = () => {
 
   useEffect(() => {
     if (recoilData) {
-      const headers = recoilData?.body?.headerInfos
+      const headers = recoilData?.body?.headerInfos.concat({
+        "idx": 8,
+        "keyName": "code_enum",
+        "name": "ENUM",
+        "filter": false,
+        "sort": false,
+        "display": true
+    }).filter((item: { [key: string]: any }) => item.display) // Only items with display as true
+        .map((item: { [key: string]: any }) => item.name)
+        // Extract only the name
+   
+      const keyName = recoilData?.body?.headerInfos.concat({
+        "idx": 8,
+        "keyName": "code_enum",
+        "name": "ENUM",
+        "filter": false,
+        "sort": false,
+        "display": true
+    })
         .filter((item: { [key: string]: any }) => item.display) // Only items with display as true
-        .map((item: { [key: string]: any }) => item.name); // Extract only the name
-
-      const keyName = recoilData?.body?.headerInfos
-        .filter((item: { [key: string]: any }) => item.display) // Only items with display as true
-        .map((item: { [key: string]: any }) => item.keyName); // Extract only the keyName
+        .map((item: { [key: string]: any }) => item.keyName)
+       
 
       const { headerInfos, codeInfoList, totalCnt } = recoilData?.body;
 
       setHeaders(headers);
       setKeyname(keyName);
-      setHeaderInfos(headerInfos);
+      setHeaderInfos(headerInfos.concat({
+        "idx": 8,
+        "keyName": "code_enum",
+        "name": "ENUM",
+        "filter": false,
+        "sort": false,
+        "display": true
+    }));
       setData(codeInfoList);
       setTotCnt(totalCnt);
     }

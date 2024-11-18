@@ -3,6 +3,8 @@ import { selectedRowAtom } from "../../recoil/atoms/selected";
 import { useSetRecoilState, useRecoilValue } from "recoil";
 import { dynamicObject, rowType } from "../../utils/types";
 import { Link } from "react-router-dom";
+import { Button } from "../../styles/styledTableLayout";
+import CodeEnumModal from "../../pages/CodeInfo/CodeEnumModal";
 
 type SortOption = {
   key: string; // Assuming 'key' is the index of the header
@@ -242,6 +244,23 @@ const DynamicTable: React.FC<TableProps> = ({
                         >
                           {row[keyNameItem]}
                         </Link>
+                      </td>
+                    ) : keyNameItem === "code_enum" ? (
+                      <td
+                        style={{
+                          textDecoration: "underline",
+                          borderBottom: "1px solid #ddd",
+                          padding: "8px",
+                          color: "#777",
+                          textAlign: "center",
+                        }}
+                      >
+                        <CodeEnumModal row={row}>
+                        <Button
+                      
+                        >ENUM</Button>
+                        </CodeEnumModal>
+                        
                       </td>
                     ) : (
                       <td

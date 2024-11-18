@@ -18,6 +18,7 @@ import KeyIssueConfigDetails from "./pages/SettingKeyIssueCodeConfig/KeyIssueCon
 import Machine from "./pages/Machine/Machine";
 import MachineDetails from "./pages/Machine/MachineDetails";
 import ScriptConfigDetails from "./pages/SettingScriptConfig/ScriptConfigDetails";
+import CodeEnum from "./pages/CodeEnum/CodeEnum";
 
 const App: React.FC = () => {
   const sidebarContents = {
@@ -52,6 +53,7 @@ const App: React.FC = () => {
       description: "발급 기계 상세 정보",
     },
     codeinfo: { path: "/codeinfo", description: "코드 정보" },
+    codeenum: { path: "/codeinfo/codeenum", description: "코드 ENUM 정보" },
   };
 
   return (
@@ -109,6 +111,10 @@ const App: React.FC = () => {
             <Route
               path={sidebarContents.machineDetails.path}
               element={<MachineDetails />}
+            />
+             <Route
+              path={sidebarContents.codeenum.path}
+              element={<CodeEnum />}
             />
           </Route>
           <Route path="*" element={<NotFound />} />
