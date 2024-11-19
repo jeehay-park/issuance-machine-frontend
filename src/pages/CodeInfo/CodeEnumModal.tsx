@@ -27,7 +27,7 @@ import {
   FormError,
 } from "../../styles/styledForm";
 import { MdClose, MdCheck } from "react-icons/md";
-import { createCode } from "../../recoil/atoms/code";
+import { codeEnumListAtom, fetchCodeEnumList } from "../../recoil/atoms/code";
 import { dynamicObject } from "../../utils/types";
 import { createCodeEnum } from "../../recoil/atoms/code";
 import { FormColumn } from "../../styles/styledForm";
@@ -68,6 +68,8 @@ const CodeEnumModal: React.FC<{
 
   const selectedRow = useRecoilValue(selectedRowAtom);
   const setSelectedRow = useSetRecoilState(selectedRowAtom);
+  const recoilData = useRecoilValue(codeEnumListAtom);
+  const setCodeEnumList = useSetRecoilState(codeEnumListAtom);
   const [isModalOpen, setModalOpen] = useState(false);
   const [responseMessage, setResponseMessage] = useState<string | null>(null);
 
@@ -126,19 +128,18 @@ const CodeEnumModal: React.FC<{
     const { name, value } = e.target;
 
     let updatedEnumList = [...enumList];
-    
-    if(name === "isMandatory") {
-        updatedEnumList[index] = {
-            ...updatedEnumList[index],
-            isMandatory: e.target.checked,
-          };
+
+    if (name === "isMandatory") {
+      updatedEnumList[index] = {
+        ...updatedEnumList[index],
+        isMandatory: e.target.checked,
+      };
     } else {
-        updatedEnumList[index] = {
-            ...updatedEnumList[index],
-            [name]: value,
-          };
+      updatedEnumList[index] = {
+        ...updatedEnumList[index],
+        [name]: value,
+      };
     }
-  
 
     setEnumList(updatedEnumList);
 
@@ -148,21 +149,21 @@ const CodeEnumModal: React.FC<{
     }));
   };
 
-//   Validate form inputs
-    // const validate = (): boolean => {
-    //   let tempErrors: FormErrors = { enumValue: "" };
-    //   let isValid = true;
+  //   Validate form inputs
+  // const validate = (): boolean => {
+  //   let tempErrors: FormErrors = { enumValue: "" };
+  //   let isValid = true;
 
-    //   enumList.forEach((enum, index) => {
-    //     if (!enum.enumValue) {
-    //       tempErrors.enumValue = `ENUM ${index + 1}: EnumValue is required`;
-    //       isValid = false;
-    //     }
-    //   });
+  //   enumList.forEach((enum, index) => {
+  //     if (!enum.enumValue) {
+  //       tempErrors.enumValue = `ENUM ${index + 1}: EnumValue is required`;
+  //       isValid = false;
+  //     }
+  //   });
 
-    //   setErrors(tempErrors);
-    //   return isValid;
-    // };
+  //   setErrors(tempErrors);
+  //   return isValid;
+  // };
 
   // Handle form submission
   const handleSubmit = async (event: React.MouseEvent<HTMLDivElement>) => {
@@ -173,24 +174,20 @@ const CodeEnumModal: React.FC<{
       order: index,
     }));
 
-console.log("handleSubmit clicked!")
-    console.log(updatedEnumList);
-
-
     try {
-        const result = await createCodeEnum({
-          codeId: row.code_id,
-          enumList: updatedEnumList,
-        });
-        if (result) {
+      const result = await createCodeEnum({
+        codeId: row.code_id,
+        enumList: updatedEnumList,
+      });
+      if (result) {
         //   handleRefresh();
-          setResponseMessage(result.header.rtnMessage);
-        } else {
-          setResponseMessage("Failed to create machine.");
-        }
-      } catch (error) {
-        setResponseMessage("An error occurred while creating the machine.");
+        setResponseMessage(result.header.rtnMessage);
+      } else {
+        setResponseMessage("Failed to create machine.");
       }
+    } catch (error) {
+      setResponseMessage("An error occurred while creating the machine.");
+    }
   };
 
   // Add a new device input field
@@ -207,6 +204,25 @@ console.log("handleSubmit clicked!")
       setEnumList(temp);
     }
   };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const result = await fetchCodeEnumList({
+        codeId: row.code_id,
+      });
+
+      if (result.body) {
+        if (result.body.enumList.length > 0) {
+          setCodeEnumList(result.body.enumList);
+          setEnumList(result.body.enumList);
+        }
+      }
+    };
+
+    if (isModalOpen) {
+      fetchData();
+    }
+  }, [isModalOpen, row]);
 
   return (
     <>
@@ -324,7 +340,7 @@ console.log("handleSubmit clicked!")
                     </FormColumn>
                   </div>
 
-                  {enumList.map((enumItem, index) => (
+                  {enumList?.map((enumItem, index) => (
                     <div
                       key={index}
                       style={{

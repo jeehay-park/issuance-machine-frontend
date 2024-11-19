@@ -56,3 +56,11 @@ export const updateCodeEnum = async (body: { [key: string]: any }) => {
   const trId = process.env.REACT_APP_TRID_CODEENUM_UPDATE!;
   return customApiRequest(url, trId, body);
 };
+
+// 코드정보 - 코드 ENUM 목록 조회를 위한 API
+export const codeEnumListAtom = customCreateAtom("codeEnumList");
+export const fetchCodeEnumList = async (body: { [key: string]: any }) => {
+  const url = "/codeenum/list";
+  const trId = process.env.REACT_APP_TRID_CODEENUM_LIST!;
+  return customApiRequest(url, trId, body);
+};
