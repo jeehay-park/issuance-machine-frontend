@@ -7,23 +7,23 @@ import {
   TitleContainer,
   Title,
 } from "../../styles/styledTableLayout";
-import Pagination from "../../components/Table/Pagination";
 import { useList } from "../../customHooks/useList";
-import { fetchCodeList } from "../../recoil/atoms/code";
-import { useRecoilValue, useRecoilState } from "recoil";
-import { codeListAtom } from "../../recoil/atoms/code";
+import { useSetRecoilState, useRecoilValue } from "recoil";
 import { FetchListParams } from "../../utils/types";
+import Pagination from "../../components/Table/Pagination";
 import { selectedRowAtom } from "../../recoil/atoms/selected";
+import { programListAtom, fetchProgramList } from "../../recoil/atoms/program";
 import { dynamicObject } from "../../utils/types";
-import Error from "../Error";
-import AddCodeInfo from "./AddCodeInfo";
-import DeleteCodeInfo from "./DeleteCodeInfo";
-import EditCodeInfo from "./EditCodeInfo";
+import AddProgram from "./AddProgram";
+import EditProgram from "./EditProgram";
+import DeleteProgram from "./DeleteProgram";
 
-// 코드 정보 모록
-const CodeInfo: React.FC = () => {
-  const [recoilData, setRecoilData] = useRecoilState(codeListAtom);
+// 프로그램 정보
+const Program: React.FC = () => {
+  const setProgramListState = useSetRecoilState(programListAtom);
+  const recoilData = useRecoilValue(programListAtom);
   const selectedRow = useRecoilValue(selectedRowAtom);
+
   const itemsPerPage = 5;
   const [headers, setHeaders] = useState<string[] | null>(null);
   const [keyName, setKeyname] = useState<string[] | null>(null);
@@ -42,7 +42,7 @@ const CodeInfo: React.FC = () => {
     filterArrAndOr,
     filterArr,
   }: FetchListParams) => {
-    const result = await fetchCodeList({
+    const result = await fetchProgramList({
       isHeaderInfo,
       rowCnt,
       startNum,
@@ -53,10 +53,8 @@ const CodeInfo: React.FC = () => {
       filterArr,
     });
 
-    if (result?.body) {
-      setRecoilData(result);
-    } else {
-      setError(result?.error);
+    if (result) {
+      setProgramListState(result);
     }
   };
 
@@ -64,7 +62,7 @@ const CodeInfo: React.FC = () => {
     isHeaderInfo: true,
     rowCnt: itemsPerPage,
     startNum: 0,
-    sortKeyName: "created_at",
+    sortKeyName: "updated_at", // 업데이트 시간
     order: "DESC",
   });
 
@@ -84,72 +82,28 @@ const CodeInfo: React.FC = () => {
   useEffect(() => {
     if (recoilData) {
       const headers = recoilData?.body?.headerInfos
-        .concat({
-          idx: 8,
-          keyName: "code_enum",
-          name: "ENUM",
-          filter: false,
-          sort: false,
-          display: true,
-        })
         .filter((item: { [key: string]: any }) => item.display) // Only items with display as true
-        .map((item: { [key: string]: any }) => item.name);
+        .map((item: { [key: string]: any }) => item.name); // Extract only the name
 
       const keyName = recoilData?.body?.headerInfos
-        .concat({
-          idx: 8,
-          keyName: "code_enum",
-          name: "ENUM",
-          filter: false,
-          sort: false,
-          display: true,
-        })
         .filter((item: { [key: string]: any }) => item.display) // Only items with display as true
-        .map((item: { [key: string]: any }) => item.keyName);
+        .map((item: { [key: string]: any }) => item.keyName); // Extract only the keyName
 
-      const { headerInfos, codeInfoList, totalCnt } = recoilData?.body;
+      const { headerInfos, programList, totalCnt } = recoilData?.body;
 
       setHeaders(headers);
       setKeyname(keyName);
-      setHeaderInfos(
-        headerInfos.concat({
-          idx: 8,
-          keyName: "code_enum",
-          name: "ENUM",
-          filter: false,
-          sort: false,
-          display: true,
-        })
-      );
-      setData(codeInfoList);
+      setHeaderInfos(headerInfos);
+      setData(programList);
       setTotCnt(totalCnt);
     }
   }, [recoilData]);
-
-  if (recoilData === null || error) {
-    return (
-      <>
-        <Card>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              //   border: "1px solid red",
-            }}
-          >
-            <Error error={error} />
-          </div>
-        </Card>
-      </>
-    );
-  }
 
   return (
     <>
       <Card>
         <TitleContainer>
-          <Title>코드 정보</Title>
+          <Title>프로그램 정보</Title>
         </TitleContainer>
         <div
           style={{
@@ -158,7 +112,7 @@ const CodeInfo: React.FC = () => {
             marginBottom: "10px",
           }}
         >
-          <Search label="코드명" onSearch={handleSearch} />
+          <Search label="프로그램명" onSearch={handleSearch} />
           <div
             style={{
               display: "flex",
@@ -168,15 +122,17 @@ const CodeInfo: React.FC = () => {
               gap: "5px",
             }}
           >
-            <AddCodeInfo handleRefresh={handleRefresh}>
+            <AddProgram handleRefresh={handleRefresh}>
               <Button>추가</Button>
-            </AddCodeInfo>
-            <EditCodeInfo handleRefresh={handleRefresh}>
+            </AddProgram>
+
+            <EditProgram handleRefresh={handleRefresh}>
               <Button disabled={selectedRow === null}>변경</Button>
-            </EditCodeInfo>
-            <DeleteCodeInfo handleRefresh={handleRefresh}>
+            </EditProgram>
+
+            <DeleteProgram handleRefresh={handleRefresh}>
               <Button disabled={selectedRow === null}>삭제</Button>
-            </DeleteCodeInfo>
+            </DeleteProgram>
           </div>
         </div>
 
@@ -206,4 +162,4 @@ const CodeInfo: React.FC = () => {
   );
 };
 
-export default CodeInfo;
+export default Program;

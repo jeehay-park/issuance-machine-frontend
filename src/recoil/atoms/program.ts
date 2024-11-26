@@ -20,7 +20,7 @@ export const fetchProgramInfo = async (body: { [key: string]: any }) => {
 // 프로그램 정보 - 프로그램 생성을 위한 API(생성)
 export const createProgramAtom = customCreateAtom("createProgram");
 export const createProgram = async (body: { [key: string]: any }) => {
-  const url = "/program/create";
+  const url = "/program/save";
   const trId = process.env.REACT_APP_TRID_PROGRAM_CREATE!;
   return customApiRequest(url, trId, body);
 };
@@ -28,7 +28,7 @@ export const createProgram = async (body: { [key: string]: any }) => {
 // 프로그램 정보 - 프로그램 생성을 위한 API(변경)
 export const updateProgramAtom = customCreateAtom("updateProgram");
 export const updateProgram = async (body: { [key: string]: any }) => {
-  const url = "/program/update";
+  const url = "/program/save";
   const trId = process.env.REACT_APP_TRID_PROGRAM_UPDATE!;
   return customApiRequest(url, trId, body);
 };

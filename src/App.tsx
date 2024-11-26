@@ -7,7 +7,7 @@ import Layout from "./components/Layout/Layout";
 import IssuanceWorkScreen from "./pages/IssuanceWorkScreen";
 import CodeInfo from "./pages/CodeInfo/CodeInfo";
 import SerialNumber from "./pages/SerialNumber/SerialNumber";
-import Program from "./pages/Program";
+import Program from "./pages/Program/Program";
 import SettingProfileConfig from "./pages/SettingProfileConfig/SettingProfileConfig";
 import SettingKeyIssueCodeConfig from "./pages/SettingKeyIssueCodeConfig/SettingKeyIssueCodeConfig";
 import SettingScriptConfig from "./pages/SettingScriptConfig/SettingScriptConfig";
@@ -19,6 +19,7 @@ import Machine from "./pages/Machine/Machine";
 import MachineDetails from "./pages/Machine/MachineDetails";
 import ScriptConfigDetails from "./pages/SettingScriptConfig/ScriptConfigDetails";
 import CodeEnum from "./pages/CodeEnum/CodeEnum";
+import ProgramDetails from "./pages/Program/ProgramDetails";
 
 const App: React.FC = () => {
   const sidebarContents = {
@@ -26,6 +27,10 @@ const App: React.FC = () => {
     dashboard: { path: "/dashboard", description: "대시보드" },
     issuance: { path: "/issuance", description: "작업 화면" },
     program: { path: "/program", description: "프로그램 정보" },
+    ProgramDetails: {
+      path: "/program/details",
+      description: "프로그램 상세 정보",
+    },
     serialnumber: { path: "/serialnumber", description: "시리얼 넘버 규칙" },
     serialnumberDetails: {
       path: "/serialnumber/details",
@@ -84,6 +89,10 @@ const App: React.FC = () => {
             />
             <Route path={sidebarContents.program.path} element={<Program />} />
             <Route
+              path={sidebarContents.ProgramDetails.path}
+              element={<ProgramDetails />}
+            />
+            <Route
               path={sidebarContents.profile.path}
               element={<SettingProfileConfig />}
             />
@@ -112,7 +121,7 @@ const App: React.FC = () => {
               path={sidebarContents.machineDetails.path}
               element={<MachineDetails />}
             />
-             <Route
+            <Route
               path={sidebarContents.codeenum.path}
               element={<CodeEnum />}
             />

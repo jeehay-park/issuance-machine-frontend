@@ -48,6 +48,14 @@ const DynamicTable: React.FC<TableProps> = ({
     }
   };
 
+  const showText = (str: String | null | boolean) => {
+    if (typeof str === "boolean") {
+      return str === true ? "true" : "false";
+    } else {
+      return str;
+    }
+  };
+
   return (
     <div style={{ height: height || "400px", overflowY: "auto" }}>
       <table
@@ -245,6 +253,22 @@ const DynamicTable: React.FC<TableProps> = ({
                           {row[keyNameItem]}
                         </Link>
                       </td>
+                    ) : keyNameItem === "prog_id" ? (
+                      <td
+                        style={{
+                          textDecoration: "underline",
+                          borderBottom: "1px solid #ddd",
+                          padding: "8px",
+                          color: "#777",
+                        }}
+                      >
+                        <Link
+                          to={{ pathname: "/program/details" }}
+                          state={{ prog_id: row[keyNameItem] }}
+                        >
+                          {row[keyNameItem]}
+                        </Link>
+                      </td>
                     ) : keyNameItem === "code_enum" ? (
                       <td
                         style={{
@@ -256,11 +280,8 @@ const DynamicTable: React.FC<TableProps> = ({
                         }}
                       >
                         <CodeEnumModal row={row}>
-                        <Button
-                      
-                        >ENUM</Button>
+                          <Button>ENUM</Button>
                         </CodeEnumModal>
-                        
                       </td>
                     ) : (
                       <td
@@ -271,7 +292,7 @@ const DynamicTable: React.FC<TableProps> = ({
                           color: "#777",
                         }}
                       >
-                        {row[keyNameItem]}
+                        {showText(row[keyNameItem])}
                         {/* Render data or fallback to '-' */}
                       </td>
                     )}

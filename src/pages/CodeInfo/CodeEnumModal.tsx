@@ -66,9 +66,7 @@ const CodeEnumModal: React.FC<{
     description: "",
   };
 
-  const selectedRow = useRecoilValue(selectedRowAtom);
   const setSelectedRow = useSetRecoilState(selectedRowAtom);
-  const recoilData = useRecoilValue(codeEnumListAtom);
   const setCodeEnumList = useSetRecoilState(codeEnumListAtom);
   const [isModalOpen, setModalOpen] = useState(false);
   const [responseMessage, setResponseMessage] = useState<string | null>(null);
@@ -149,22 +147,6 @@ const CodeEnumModal: React.FC<{
     }));
   };
 
-  //   Validate form inputs
-  // const validate = (): boolean => {
-  //   let tempErrors: FormErrors = { enumValue: "" };
-  //   let isValid = true;
-
-  //   enumList.forEach((enum, index) => {
-  //     if (!enum.enumValue) {
-  //       tempErrors.enumValue = `ENUM ${index + 1}: EnumValue is required`;
-  //       isValid = false;
-  //     }
-  //   });
-
-  //   setErrors(tempErrors);
-  //   return isValid;
-  // };
-
   // Handle form submission
   const handleSubmit = async (event: React.MouseEvent<HTMLDivElement>) => {
     event.preventDefault(); // Prevent form default behavior, just in case
@@ -183,19 +165,19 @@ const CodeEnumModal: React.FC<{
         //   handleRefresh();
         setResponseMessage(result.header.rtnMessage);
       } else {
-        setResponseMessage("Failed to create machine.");
+        setResponseMessage("Failed to create the code enum.");
       }
     } catch (error) {
-      setResponseMessage("An error occurred while creating the machine.");
+      setResponseMessage("An error occurred while creating the code enum.");
     }
   };
 
-  // Add a new device input field
+  // Add a new code enum input field
   const addEnumInput = () => {
     setEnumList((prevEnumList) => [...prevEnumList, initialEnumData]);
   };
 
-  // Add a new device input field
+  // Add a new code enum input field
   const deleteEnumInput = (selectedIndex: number) => {
     if (enumList.length <= 1) {
       setEnumList([initialEnumData]); // Reset to initial state
