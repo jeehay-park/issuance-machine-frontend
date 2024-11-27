@@ -4,7 +4,7 @@ import customAxios from "./customAxios";
 export const customApiRequest = async (
   url: string,
   trId: string,
-  body: { [key: string]: any }
+  body?: { [key: string]: any }
 ) => {
   try {
     const req = {

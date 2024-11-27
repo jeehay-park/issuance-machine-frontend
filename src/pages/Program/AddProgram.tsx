@@ -39,6 +39,7 @@ import {
   sessionHandlerOptions,
   statusOptions,
 } from "../../utils/options";
+import { fetchSettingId } from "../../recoil/atoms/setting";
 
 interface FormData {
   progId: null;
@@ -72,8 +73,7 @@ const AddProgram: React.FC<{
   children: ReactNode;
   handleRefresh: () => void;
 }> = ({ children, handleRefresh }) => {
-
-  // TODO: Create an API to fetch a list of profileId, keyissueId, and scriptId.
+  // DONE: Create an API to fetch a list of profileId, keyissueId, and scriptId.
 
   const selectedRow = useRecoilValue(selectedRowAtom);
   const setSelectedRow = useSetRecoilState(selectedRowAtom);
@@ -83,6 +83,11 @@ const AddProgram: React.FC<{
   const [formWidth, setFormWidth] = useState(0);
 
   const formContainerRef = useRef<HTMLDivElement>(null);
+
+  const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
+  const [profIdListOptions, setProfIdListOptions] = useState<string[]>([]);
+  const [keyisIdListOptions, setKeyisIdListOptions] = useState<string[]>([]);
+  const [scrtIdListOptions, setScrtIdListOptions] = useState<string[]>([]);
 
   useEffect(() => {
     if (formContainerRef.current) {
@@ -155,8 +160,6 @@ const AddProgram: React.FC<{
     status: "",
   });
 
-  const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
-
   // Handle input changes
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -182,7 +185,7 @@ const AddProgram: React.FC<{
     }));
   };
 
-  const addStringToArrary = (value: String) => {
+  const addStringToArrary = (value: string) => {
     let arr = [];
 
     if (formData.etcOption?.length === 0) {
@@ -268,6 +271,22 @@ const AddProgram: React.FC<{
     }
   };
 
+  useEffect(() => {
+    const fetchConfigIds = async () => {
+      const result = await fetchSettingId();
+
+      if (result?.body) {
+        setProfIdListOptions(result?.body?.profIdList);
+        setKeyisIdListOptions(result?.body?.keyisIdList);
+        setScrtIdListOptions(result?.body?.scrtIdList);
+      }
+    };
+
+    if (isModalOpen) {
+      fetchConfigIds();
+    }
+  }, [isModalOpen]);
+
   return (
     <>
       <div onClick={openModal}>{children}</div>
@@ -338,6 +357,7 @@ const AddProgram: React.FC<{
                   <FormRow>
                     <FormLabel htmlFor="product">제품(Chip)</FormLabel>
                     <FormSelect name="product" onChange={handleChange}>
+                      <option value="">- 선택 -</option>
                       {createOptions(chipOtpions)}
                     </FormSelect>
                     <FormLabel
@@ -346,15 +366,14 @@ const AddProgram: React.FC<{
                     >
                       세션 핸들러
                     </FormLabel>
-                    <FormSelect name="sessionHandler" onChange={handleChange}>
-                      {createOptions(sessionHandlerOptions)}
-                    </FormSelect>
-                    {/* <FormInput
-                      type="text"
-                      id="sessionHandler"
+                    <FormSelect
                       name="sessionHandler"
                       onChange={handleChange}
-                    /> */}
+                      required
+                    >
+                      <option value="">- 선택 -</option>
+                      {createOptions(sessionHandlerOptions)}
+                    </FormSelect>
                   </FormRow>
                   <FormRow>
                     <FormLabel htmlFor="testCode">테스트 코드</FormLabel>
@@ -367,43 +386,32 @@ const AddProgram: React.FC<{
                     <FormLabel htmlFor="status" style={{ marginLeft: "1rem" }}>
                       상태
                     </FormLabel>
-                    {/* <FormInput
-                      type="text"
-                      id="status"
-                      name="status"
-                      onChange={handleChange}
-                    /> */}
-
                     <FormSelect name="status" onChange={handleChange}>
+                      <option value="">- 선택 -</option>
                       {createOptions(statusOptions)}
                     </FormSelect>
                   </FormRow>
                   <FormRow>
                     <FormLabel htmlFor="profId">프로파일 ID</FormLabel>
-                    <FormInput
-                      type="text"
-                      id="profId"
-                      name="profId"
-                      onChange={handleChange}
-                    />
+                    <FormSelect name="profId" onChange={handleChange}>
+                      <option value="">- 선택 -</option>
+                      {createOptions(profIdListOptions)}
+                    </FormSelect>
                     <FormLabel htmlFor="keyisId" style={{ marginLeft: "1rem" }}>
                       키발급코드 ID
                     </FormLabel>
-                    <FormInput
-                      type="text"
-                      id="keyisId"
-                      name="keyisId"
-                      onChange={handleChange}
-                    />
+                    <FormSelect name="keyisId" onChange={handleChange}>
+                      <option value="">- 선택 -</option>
+                      {createOptions(scrtIdListOptions)}
+                    </FormSelect>
                   </FormRow>
                   <FormRow>
                     <FormLabel htmlFor="scrtId">스크립트 ID</FormLabel>
-                    <FormInput
-                      type="text"
-                      id="scrtId"
-                      name="scrtId"
-                      onChange={handleChange}
-                    />
+                    <FormSelect name="scrtId" onChange={handleChange}>
+                      <option value="">- 선택 -</option>
+                      {createOptions(scrtIdListOptions)}
+                    </FormSelect>
+
                     <FormLabel
                       htmlFor="isEncryptSn"
                       style={{ marginLeft: "1rem" }}
@@ -411,28 +419,17 @@ const AddProgram: React.FC<{
                       SN 암호화
                     </FormLabel>
                     <FormSelect name="isEncryptSn" onChange={handleChange}>
+                      <option value="">- 선택 -</option>
                       <option value={"true"}>TRUE</option>
                       <option value={"false"}>FALSE</option>
                     </FormSelect>
-                    {/* <FormInput
-                      type="text"
-                      id="isEncryptSn"
-                      name="isEncryptSn"
-                      onChange={handleChange}
-                    /> */}
                   </FormRow>
                   <FormRow>
                     <FormLabel htmlFor="companyCode">회사코드</FormLabel>
                     <FormSelect name="companyCode" onChange={handleChange}>
+                      <option value="">- 선택 -</option>
                       {createOptions(companyCodeOptions)}
                     </FormSelect>
-                    {/*                     
-                    <FormInput
-                      type="text"
-                      id="companyCode"
-                      name="companyCode"
-                      onChange={handleChange}
-                    /> */}
                     <FormLabel
                       htmlFor="countryCode"
                       style={{ marginLeft: "1rem" }}
@@ -440,29 +437,19 @@ const AddProgram: React.FC<{
                       국가코드
                     </FormLabel>
                     <FormSelect name="countryCode" onChange={handleChange}>
+                      <option value="">- 선택 -</option>
                       {createOptions(countryCodeOptions)}
                     </FormSelect>
-
-                    {/* <FormInput
-                      type="text"
-                      id="countryCode"
-                      name="countryCode"
-                      onChange={handleChange}
-                    /> */}
                   </FormRow>
                   <FormRow>
                     <FormLabel htmlFor="interfaceType">
                       인터페이스 타입
                     </FormLabel>
                     <FormSelect name="interfaceType" onChange={handleChange}>
+                      <option value="">- 선택 -</option>
                       {createOptions(interfaceTypeOptions)}
                     </FormSelect>
-                    {/* <FormInput
-                      type="text"
-                      id="interfaceType"
-                      name="interfaceType"
-                      onChange={handleChange}
-                    /> */}
+
                     <FormLabel
                       htmlFor="packageType"
                       style={{ marginLeft: "1rem" }}
@@ -470,18 +457,14 @@ const AddProgram: React.FC<{
                       패키지 타입
                     </FormLabel>
                     <FormSelect name="packageType" onChange={handleChange}>
+                      <option value="">- 선택 -</option>
                       {createOptions(packageTypeOptions)}
                     </FormSelect>
-                    {/* <FormInput
-                      type="text"
-                      id="packageType"
-                      name="packageType"
-                      onChange={handleChange}
-                    /> */}
                   </FormRow>
                   <FormRow>
                     <FormLabel htmlFor="etcOption">기타코드 옵션</FormLabel>
                     <FormSelect name="etcOption" onChange={handleChange}>
+                      <option value="">- 선택 -</option>
                       <option value="option1">option1</option>
                       <option value="option2">option2</option>
                       <option value="option3">option3</option>

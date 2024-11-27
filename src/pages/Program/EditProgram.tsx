@@ -30,6 +30,17 @@ import {
 import { MdClose, MdCheck } from "react-icons/md";
 import Card from "../../components/Layout/Card";
 import { updateProgram, updateProgramAtom } from "../../recoil/atoms/program";
+import { createOptions } from "../../utils/createOptions";
+import {
+  chipOtpions,
+  companyCodeOptions,
+  countryCodeOptions,
+  interfaceTypeOptions,
+  packageTypeOptions,
+  sessionHandlerOptions,
+  statusOptions,
+} from "../../utils/options";
+import { fetchSettingId } from "../../recoil/atoms/setting";
 
 // Define the shape of form data and error messages
 interface FormData {
@@ -96,6 +107,10 @@ const EditProgram: React.FC<{
   const [errors, setErrors] = useState<FormErrors>(initialValues);
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
 
+  const [profIdListOptions, setProfIdListOptions] = useState<string[]>([]);
+  const [keyisIdListOptions, setKeyisIdListOptions] = useState<string[]>([]);
+  const [scrtIdListOptions, setScrtIdListOptions] = useState<string[]>([]);
+
   useEffect(() => {
     if (formContainerRef.current) {
       setFormHeight(formContainerRef.current.offsetHeight);
@@ -142,9 +157,16 @@ const EditProgram: React.FC<{
   ) => {
     const { name, value } = e.target;
 
+    let boolean: boolean;
+
+    if (name === "isEncryptSn") {
+      boolean = value === "TRUE" ? true : false;
+    }
+
     setFormData((prevData) => ({
       ...prevData,
-      [name]: value,
+      isEncryptSn: boolean,
+      [name]: name === "etcOption" ? addStringToArrary(value) : value,
     }));
 
     // Clear error for the current field
@@ -166,6 +188,21 @@ const EditProgram: React.FC<{
 
     setErrors(tempErrors);
     return isValid;
+  };
+
+  const addStringToArrary = (value: string) => {
+    let arr = [];
+
+    if (formData.etcOption?.length === 0) {
+      arr.push(value);
+    } else {
+      arr = [...formData.etcOption];
+      if (!arr.includes(value)) {
+        arr.push(value);
+      }
+    }
+
+    return arr;
   };
 
   // Handle form submission
@@ -198,6 +235,22 @@ const EditProgram: React.FC<{
       }));
     }
   };
+
+  useEffect(() => {
+    const fetchConfigIds = async () => {
+      const result = await fetchSettingId();
+
+      if (result?.body) {
+        setProfIdListOptions(result?.body?.profIdList);
+        setKeyisIdListOptions(result?.body?.keyisIdList);
+        setScrtIdListOptions(result?.body?.scrtIdList);
+      }
+    };
+
+    if (isModalOpen) {
+      fetchConfigIds();
+    }
+  }, [isModalOpen]);
 
   return (
     <>
@@ -240,7 +293,7 @@ const EditProgram: React.FC<{
                       id="progName"
                       name="progName"
                       onChange={handleChange}
-                      value={formData?.progName}
+                      value={formData.progName}
                     />
                   </FormRow>
                   {isSubmitted && errors?.progName && (
@@ -253,31 +306,33 @@ const EditProgram: React.FC<{
                       id="description"
                       name="description"
                       onChange={handleChange}
-                      value={formData?.description ?? ""}
+                      value={formData?.description || ""}
                     />
                   </FormRow>
                   <FormRow>
                     <FormLabel htmlFor="product">제품(Chip)</FormLabel>
-                    <FormInput
-                      type="text"
-                      id="product"
+                    <FormSelect
                       name="product"
                       onChange={handleChange}
-                      value={formData?.product ?? ""}
-                    />
+                      value={formData?.product || ""}
+                    >
+                      <option value="">- 선택 -</option>
+                      {createOptions(chipOtpions)}
+                    </FormSelect>
                     <FormLabel
                       htmlFor="sessionHandler"
                       style={{ marginLeft: "1rem" }}
                     >
                       세션 핸들러
                     </FormLabel>
-                    <FormInput
-                      type="text"
-                      id="sessionHandler"
+                    <FormSelect
                       name="sessionHandler"
                       onChange={handleChange}
-                      value={formData?.sessionHandler ?? ""}
-                    />
+                      value={formData?.sessionHandler || ""}
+                    >
+                      <option value="">- 선택 -</option>
+                      {createOptions(sessionHandlerOptions)}
+                    </FormSelect>
                   </FormRow>
                   <FormRow>
                     <FormLabel htmlFor="testCode">테스트 코드</FormLabel>
@@ -285,115 +340,127 @@ const EditProgram: React.FC<{
                       type="text"
                       id="testCode"
                       name="testCode"
-                      value={formData?.testCode ?? ""}
                       onChange={handleChange}
+                      value={formData?.testCode || ""}
                     />
                     <FormLabel htmlFor="status" style={{ marginLeft: "1rem" }}>
                       상태
                     </FormLabel>
-                    <FormInput
-                      type="text"
-                      id="status"
+                    <FormSelect
                       name="status"
-                      value={formData?.status ?? ""}
                       onChange={handleChange}
-                    />
+                      value={formData?.status || ""}
+                    >
+                      <option value="">- 선택 -</option>
+                      {createOptions(statusOptions)}
+                    </FormSelect>
                   </FormRow>
                   <FormRow>
                     <FormLabel htmlFor="profId">프로파일 ID</FormLabel>
-                    <FormInput
-                      type="text"
-                      id="profId"
+                    <FormSelect
                       name="profId"
-                      value={formData?.profId ?? ""}
                       onChange={handleChange}
-                    />
+                      value={formData?.profId || ""}
+                    >
+                      <option value="">- 선택 -</option>
+                      {createOptions(profIdListOptions)}
+                    </FormSelect>
                     <FormLabel htmlFor="keyisId" style={{ marginLeft: "1rem" }}>
                       키발급코드 ID
                     </FormLabel>
-                    <FormInput
-                      type="text"
-                      id="keyisId"
+                    <FormSelect
                       name="keyisId"
-                      value={formData?.keyisId ?? ""}
                       onChange={handleChange}
-                    />
+                      value={formData?.keyisId || ""}
+                    >
+                      <option value="">- 선택 -</option>
+                      {createOptions(scrtIdListOptions)}
+                    </FormSelect>
                   </FormRow>
                   <FormRow>
                     <FormLabel htmlFor="scrtId">스크립트 ID</FormLabel>
-                    <FormInput
-                      type="text"
-                      id="scrtId"
+                    <FormSelect
                       name="scrtId"
-                      value={formData?.scrtId ?? ""}
                       onChange={handleChange}
-                    />
+                      value={formData?.scrtId || ""}
+                    >
+                      <option value="">- 선택 -</option>
+                      {createOptions(scrtIdListOptions)}
+                    </FormSelect>
+
                     <FormLabel
                       htmlFor="isEncryptSn"
                       style={{ marginLeft: "1rem" }}
                     >
                       SN 암호화
                     </FormLabel>
-                    <FormInput
-                      type="checkbox"
-                      id="isEncryptSn"
+                    <FormSelect
                       name="isEncryptSn"
-                      checked={formData?.isEncryptSn}
                       onChange={handleChange}
-                    />
+                      value={formData?.isEncryptSn ? "true" : "false"}
+                    >
+                      <option value="">- 선택 -</option>
+                      <option value={"true"}>TRUE</option>
+                      <option value={"false"}>FALSE</option>
+                    </FormSelect>
                   </FormRow>
-                  <FormRow></FormRow>
                   <FormRow>
                     <FormLabel htmlFor="companyCode">회사코드</FormLabel>
-                    <FormInput
-                      type="text"
-                      id="companyCode"
+                    <FormSelect
                       name="companyCode"
-                      value={formData?.companyCode ?? ""}
                       onChange={handleChange}
-                    />
+                      value={formData?.companyCode || ""}
+                    >
+                      <option value="">- 선택 -</option>
+                      {createOptions(companyCodeOptions)}
+                    </FormSelect>
                     <FormLabel
                       htmlFor="countryCode"
                       style={{ marginLeft: "1rem" }}
                     >
                       국가코드
                     </FormLabel>
-                    <FormInput
-                      type="text"
-                      id="countryCode"
+                    <FormSelect
                       name="countryCode"
-                      value={formData?.countryCode ?? ""}
                       onChange={handleChange}
-                    />
+                      value={formData?.countryCode || ""}
+                    >
+                      <option value="">- 선택 -</option>
+                      {createOptions(countryCodeOptions)}
+                    </FormSelect>
                   </FormRow>
                   <FormRow>
                     <FormLabel htmlFor="interfaceType">
                       인터페이스 타입
                     </FormLabel>
-                    <FormInput
-                      type="text"
-                      id="interfaceType"
+                    <FormSelect
                       name="interfaceType"
-                      value={formData?.interfaceType ?? ""}
                       onChange={handleChange}
-                    />
+                      value={formData?.interfaceType || ""}
+                    >
+                      <option value="">- 선택 -</option>
+                      {createOptions(interfaceTypeOptions)}
+                    </FormSelect>
+
                     <FormLabel
                       htmlFor="packageType"
                       style={{ marginLeft: "1rem" }}
                     >
                       패키지 타입
                     </FormLabel>
-                    <FormInput
-                      type="text"
-                      id="packageType"
+                    <FormSelect
                       name="packageType"
-                      value={formData?.packageType ?? ""}
                       onChange={handleChange}
-                    />
+                      value={formData?.packageType || ""}
+                    >
+                      <option value="">- 선택 -</option>
+                      {createOptions(packageTypeOptions)}
+                    </FormSelect>
                   </FormRow>
                   <FormRow>
                     <FormLabel htmlFor="etcOption">기타코드 옵션</FormLabel>
                     <FormSelect name="etcOption" onChange={handleChange}>
+                      <option value="">- 선택 -</option>
                       <option value="option1">option1</option>
                       <option value="option2">option2</option>
                       <option value="option3">option3</option>
