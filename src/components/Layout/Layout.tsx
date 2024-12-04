@@ -10,7 +10,7 @@ import {
   Dropdown,
   DropdownItem,
 } from "../../styles/styledLayout";
-import { Link } from "react-router-dom";
+import { Link, useLocation} from "react-router-dom";
 import dashboard from "../assets/dashboard.gif";
 import code from "../assets/code.gif";
 import issuance from "../assets/issuance.gif";
@@ -31,9 +31,11 @@ type MenuItem = {
 };
 
 const Layout: React.FC = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [isSidebarExpanded, setSidebarExpanded] = useState(true);
   const [isDropdownVisible, setDropdownVisible] = useState(false);
-  const navigate = useNavigate();
+  const [selected, setSelected] = useState<String | undefined>(undefined);
 
   const goToDashboard = () => {
     navigate("/dashboard");
@@ -150,7 +152,7 @@ const Layout: React.FC = () => {
                     onClick={() => console.log("clicked!")}
                   >
                     {isSidebarExpanded && (
-                      <span style={{ marginLeft: "20px" }}>{subItem.name}</span>
+                      <span style={{ marginLeft: "20px", color : location.pathname.startsWith(subItem.path) ? "#FFE599" : undefined }}>{subItem.name}</span>
                     )}
                   </div>
                   </Link>
@@ -185,7 +187,7 @@ const Layout: React.FC = () => {
               />
 
               {isSidebarExpanded && (
-                <span style={{ marginLeft: "20px" }}>{item.name}</span>
+                <span style={{ marginLeft: "20px", color : location.pathname.startsWith(item.path) ? "#FFE599" : undefined }}>{item.name}</span>
               )}
             </div>
           </Link>

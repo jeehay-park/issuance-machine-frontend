@@ -147,7 +147,7 @@ const Program: React.FC = () => {
           height="400px"
         />
 
-        {totCnt && totCnt > 0 && (
+        { (totCnt !== null && totCnt > 0 ) && (
           <div style={{ padding: "10px 10px" }}>
             <Pagination
               currentPage={currentPage}
