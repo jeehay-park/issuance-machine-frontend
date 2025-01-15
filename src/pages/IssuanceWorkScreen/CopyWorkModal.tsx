@@ -1,4 +1,4 @@
-import React, { useState, ReactNode, FormEvent, ChangeEvent } from "react";
+import React, { useState, ReactNode, useEffect, ChangeEvent } from "react";
 import {
   ModalBackground,
   ModalContainer,
@@ -11,8 +11,7 @@ import {
   ModalContent,
 } from "../../styles/styledModal";
 import { selectedRowAtom } from "../../recoil/atoms/selected";
-import { useRecoilValue } from "recoil";
-import { deleteCode } from "../../recoil/atoms/code";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import confetti from "canvas-confetti";
 import success from "../../components/assets/green-tick.png";
 import {
@@ -20,43 +19,42 @@ import {
   FormRow,
   FormLabel,
   FormInput,
-  FormTextArea,
-  RadioInput,
-  RadioLabel,
   FormSelect,
-  FormButton,
   FormError,
 } from "../../styles/styledForm";
-import { dynamicObject } from "../../utils/types";
 import { MdClose, MdCheck } from "react-icons/md";
+import { programIdAtom, fetchProgramIdList } from "../../recoil/atoms/program";
+import { snruleIdAtom, fetchSnruleIdList } from "../../recoil/atoms/snrule";
+import { machineIdAtom, fetchMachineIdList } from "../../recoil/atoms/machine";
+import { createWork } from "../../recoil/atoms/work";
 
 // Define the shape of form data and error messages
 interface FormData {
-  parser?: string;
-  tag_name: string;
+  workNo: string;
+  tagName: string;
   customer: string;
-  order_no: string;
-  device_name: string;
-  prog_id: string;
-  mcn_id: string;
-  snr_id: string;
-  is_lock: string;
-  target_size: string;
-  due_date: string;
+  orderNo: string;
+  deviceName: string;
+  progId: string;
+  mcnId: string;
+  snrId: string;
+  isLock: string;
+  targetQnty: string;
+  dueDate: string;
 }
 
 interface FormErrors {
-  parser?: string;
-  tag_name: string;
+  workNo: string;
+  tagName: string;
   customer: string;
-  order_no: string;
-  device_name: string;
-  prog_id: string;
-  mcn_id: string;
-  snr_id: string;
-  is_lock: string;
-  target_size: string;
-  due_date: string;
+  orderNo: string;
+  deviceName: string;
+  progId: string;
+  mcnId: string;
+  snrId: string;
+  isLock: string;
+  targetQnty: string;
+  dueDate: string;
 }
 
 // 작업 복제
@@ -64,103 +62,156 @@ const CopyWorkModal: React.FC<{
   children: ReactNode;
   handleRefresh: () => void;
 }> = ({ children, handleRefresh }) => {
+  const defaultData = {
+    workNo: "",
+    tagName: "",
+    customer: "",
+    orderNo: "",
+    deviceName: "",
+    progId: "",
+    mcnId: "",
+    snrId: "",
+    isLock: "",
+    targetQnty: "",
+    dueDate: "",
+  };
+
   const selectedRow = useRecoilValue(selectedRowAtom);
   const [isModalOpen, setModalOpen] = useState(false);
   const [responseMessage, setResponseMessage] = useState<string | null>(null);
 
-  console.log(selectedRow);
-  const openModal = () => {
-    setFormData(defaultData);
-    setErrors(defaultData);
-    setResponseMessage(null);
-    setModalOpen(true);
-  };
-  const closeModal = () => setModalOpen(false);
+  const setProgIds = useSetRecoilState(programIdAtom);
+  const setSnruleIds = useSetRecoilState(snruleIdAtom);
+  const setMachineIds = useSetRecoilState(machineIdAtom);
 
-  const handleCancel = (event: MouseEvent) => {
-    event.preventDefault();
-    setModalOpen(false);
-  };
+  const progIds = useRecoilValue(programIdAtom);
+  const snrRuleIds = useRecoilValue(snruleIdAtom);
+  const machineIds = useRecoilValue(machineIdAtom);
 
-  const defaultData = {
-    parser: "",
-    tag_name: "",
-    customer: "",
-    order_no: "",
-    device_name: "",
-    prog_id: "",
-    mcn_id: "",
-    snr_id: "",
-    is_lock: "",
-    target_size: "",
-    due_date: "",
-  };
+  const [progIdOptions, setProgIdOptions] = useState<string[]>([]);
+  const [snrIdOptions, setSnrIdoptions] = useState<string[]>([]);
+  const [machineIdOptions, setMachineIdoptions] = useState<string[]>([]);
 
   const [formData, setFormData] = useState<FormData>(defaultData);
   const [errors, setErrors] = useState<FormErrors>(defaultData);
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
 
+  const openModal = () => {
+    setFormData({
+      workNo: "",
+      tagName: selectedRow?.tag_name,
+      customer: selectedRow?.customer,
+      orderNo: selectedRow?.order_no,
+      deviceName: selectedRow?.device_name,
+      progId: selectedRow?.prog_id,
+      mcnId: selectedRow?.mcn_id,
+      snrId: selectedRow?.snr_id,
+      isLock: selectedRow?.is_lock,
+      targetQnty: selectedRow?.target_size,
+      dueDate: selectedRow?.due_date,
+    });
+    setErrors(defaultData);
+    setResponseMessage(null);
+    setModalOpen(true);
+  };
+
+  const closeModal = () => setModalOpen(false);
+
   // Handle input changes
   const handleChange = (
-    e:
-      | ChangeEvent<HTMLInputElement | HTMLSelectElement>
-      | ChangeEvent<HTMLTextAreaElement>
+    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-
-    if (name === "parser") {
-      const arr = value.split("	");
-
-      setFormData((prevData) => ({
-        ...prevData,
-
-        due_date: arr[0],
-        device_name: arr[1],
-        customer: arr[2],
-
-        [name]: value,
-      }));
-    } else {
-      setFormData((prevData) => ({ ...prevData, [name]: value }));
-      setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
-    }
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
+    setErrors((prevErrors) => ({ ...prevErrors, [name]: "" })); // Clear error for the current field
   };
 
   // Validate form inputs
   const validate = (): boolean => {
     let tempErrors: FormErrors = defaultData;
     let isValid = true;
-
-    if (!formData.tag_name) {
-      tempErrors.tag_name = "Name is required";
-      isValid = false;
+    for (const key of Object.keys(tempErrors)) {
+      if (formData[key as keyof typeof formData] === "") {
+        tempErrors[key as keyof FormErrors] = `${key} is required`;
+        isValid = false;
+      }
     }
 
-    if (!formData.customer) {
-      tempErrors.customer = "Email is required";
-      isValid = false;
-    } else if (!/\S+@\S+\.\S+/.test(formData.customer)) {
-      tempErrors.customer = "Email is invalid";
-      isValid = false;
-    }
-
-    console.log(tempErrors);
     setErrors(tempErrors);
     return isValid;
   };
 
   // Handle form submission
-  const handleSubmit = () => {
-    // e.preventDefault();
+  const handleSubmit = async (event: React.MouseEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    console.log("formData : ", formData);
+    
     if (validate()) {
-      console.log("Form submitted:", formData);
+      try {
+        
+        const editedForm = {
+          ...formData,
+          isLock: formData?.isLock === "true" ? true : false,
+          targetQnty: parseInt(formData.targetQnty),
+        };
+
+        console.log("editedForm :", editedForm)
+
+        const result = await createWork(editedForm);
+
+        if (result) {
+          handleRefresh();
+          setResponseMessage(result.header.rtnMessage);
+        } else {
+          setResponseMessage("Failed to create profile.");
+        }
+      } catch (error) {
+        setResponseMessage("An error occurred while duplicating the work.");
+      }
+
       setFormData(defaultData);
       setErrors(defaultData);
       setIsSubmitted(false); // Reset submission state
     }
-    console.log("handle submit");
-    console.log(formData);
   };
+
+  useEffect(() => {
+    const fetchIds = async () => {
+      const progIdsResponse = await fetchProgramIdList();
+
+      if (progIdsResponse?.body) {
+        setProgIds(progIdsResponse);
+      }
+
+      const snrIdsResponse = await fetchSnruleIdList();
+      if (snrIdsResponse?.body) {
+        setSnruleIds(snrIdsResponse);
+      }
+
+      const machineIdsResponse = await fetchMachineIdList();
+      if (machineIdsResponse?.body) {
+        setMachineIds(machineIdsResponse);
+      }
+    };
+
+    if (isModalOpen) {
+      fetchIds();
+    }
+  }, [isModalOpen]);
+
+  useEffect(() => {
+    if (progIds) {
+      setProgIdOptions(progIds?.body?.programInfoIdList || []);
+    }
+
+    if (snrRuleIds) {
+      setSnrIdoptions(snrRuleIds?.body?.snruleIdList || []);
+    }
+
+    if (machineIds) {
+      setMachineIdoptions(machineIds?.body?.machineIdList || []);
+    }
+  }, [progIds, snrRuleIds, machineIds]);
 
   return (
     <>
@@ -170,7 +221,7 @@ const CopyWorkModal: React.FC<{
           <ModalPadding>
             <ModalHeader backgroundColor="var(--layoutBlue)">
               <ModalHeaderTitle>
-                <h3 style={{ color: "white" }}>작업 복제</h3>
+                <h3 style={{ color: "white" }}>발급 작업 복제</h3>
               </ModalHeaderTitle>
               <CloseButton onClick={closeModal}>&times;</CloseButton>
             </ModalHeader>
@@ -193,32 +244,33 @@ const CopyWorkModal: React.FC<{
               </div>
             ) : (
               <FormContainer>
-                <form onSubmit={handleSubmit}>
+                <form>
                   <FormRow>
-                    <FormLabel htmlFor="parser">파서창</FormLabel>
-                    <FormTextArea
-                      id="parser"
-                      name="parser"
-                      value={formData.parser}
-                      onChange={handleChange}
-                      // required
-                    />
-                  </FormRow>
-
-                  <FormRow>
-                    <FormLabel htmlFor="tag_name">태그 이름</FormLabel>
+                    <FormLabel htmlFor="workNo">작업 표시 번호</FormLabel>
                     <FormInput
                       type="text"
-                      id="tag_name"
-                      name="tag_name"
-                      value={formData.tag_name}
+                      id="workNo"
+                      name="workNo"
+                      value={formData.workNo}
                       onChange={handleChange}
                       // required
                     />
                   </FormRow>
-                  {isSubmitted && errors?.tag_name && (
-                    <FormError>{errors?.tag_name}</FormError>
-                  )}
+                  {isSubmitted && errors?.workNo && (
+                    <FormError>{errors?.workNo}</FormError>
+                  )}{" "}
+                  {/* Render error if exists */}
+                  <FormRow>
+                    <FormLabel htmlFor="tagName">태그 이름</FormLabel>
+                    <FormInput
+                      type="text"
+                      id="tagName"
+                      name="tagName"
+                      value={formData.tagName}
+                      onChange={handleChange}
+                      // required
+                    />
+                  </FormRow>
                   <FormRow>
                     <FormLabel htmlFor="customer">고객사</FormLabel>
                     <FormInput
@@ -231,93 +283,106 @@ const CopyWorkModal: React.FC<{
                     />
                   </FormRow>
                   <FormRow>
-                    <FormLabel htmlFor="order_no">발주번호</FormLabel>
+                    <FormLabel htmlFor="orderNo">발주번호</FormLabel>
                     <FormInput
                       type="text"
-                      id="order_no"
-                      name="order_no"
-                      value={formData.order_no}
+                      id="orderNo"
+                      name="orderNo"
+                      value={formData.orderNo}
                       onChange={handleChange}
                       // required
                     />
                   </FormRow>
                   <FormRow>
-                    <FormLabel htmlFor="device_name">디바이스 이름</FormLabel>
+                    <FormLabel htmlFor="deviceName">디바이스 이름</FormLabel>
                     <FormInput
                       type="text"
-                      id="device_name"
-                      name="device_name"
-                      value={formData.device_name}
+                      id="deviceName"
+                      name="deviceName"
+                      value={formData.deviceName}
                       onChange={handleChange}
                       // required
                     />
                   </FormRow>
                   <FormRow>
-                    <FormLabel htmlFor="prog_id">프로그램 선택</FormLabel>
+                    <FormLabel htmlFor="progId">프로그램</FormLabel>
                     <FormSelect
-                      id="prog_id"
-                      name="prog_id"
+                      id="progId"
+                      name="progId"
                       onChange={handleChange}
+                      value={selectedRow?.prog_id || formData?.progId}
                     >
-                      <option value="option1">Option 1</option>
-                      <option value="option2">Option 2</option>
-                      <option value="option3">Option 3</option>
+                      <option value={""}>- 선택 -</option>
+                      {progIdOptions?.map((item) => (
+                        <option value={item} key={item}>
+                          {item}
+                        </option>
+                      ))}
                     </FormSelect>
                   </FormRow>
                   <FormRow>
-                    <FormLabel htmlFor="mcn_id">장비 선택</FormLabel>
+                    <FormLabel htmlFor="mcnId">장비</FormLabel>
                     <FormSelect
-                      id="mcn_id"
-                      name="mcn_id"
+                      id="mcnId"
+                      name="mcnId"
                       onChange={handleChange}
+                      value={selectedRow?.mcn_id || formData?.mcnId}
                     >
-                      <option value="option1">Option 1</option>
-                      <option value="option2">Option 2</option>
-                      <option value="option3">Option 3</option>
+                      <option value={""}>- 선택 -</option>
+                      {machineIdOptions?.map((item) => (
+                        <option value={item} key={item}>
+                          {item}
+                        </option>
+                      ))}
                     </FormSelect>
                   </FormRow>
                   <FormRow>
-                    <FormLabel htmlFor="snr_id">규칙 선택</FormLabel>
+                    <FormLabel htmlFor="snrId">SN 규칙</FormLabel>
                     <FormSelect
-                      id="snr_id"
-                      name="snr_id"
+                      id="snrId"
+                      name="snrId"
                       onChange={handleChange}
+                      value={selectedRow?.snr_id || formData?.snrId}
                     >
-                      <option value="option1">Option 1</option>
-                      <option value="option2">Option 2</option>
-                      <option value="option3">Option 3</option>
+                      <option value={""}>- 선택 -</option>
+                      {snrIdOptions?.map((item) => (
+                        <option value={item} key={item}>
+                          {item}
+                        </option>
+                      ))}
                     </FormSelect>
                   </FormRow>
                   <FormRow>
-                    <FormLabel htmlFor="is_lock">발급칩 LOCK</FormLabel>
+                    <FormLabel htmlFor="isLock">발급칩 LOCK</FormLabel>
                     <FormSelect
-                      id="is_lock"
-                      name="is_lock"
+                      id="isLock"
+                      name="isLock"
+                      value={selectedRow?.is_lock.toString() || formData.isLock}
                       onChange={handleChange}
                     >
-                      <option value="option1">Option 1</option>
-                      <option value="option2">Option 2</option>
-                      <option value="option3">Option 3</option>
+                      <option value={""}>- 선택 -</option>
+                      <option value="true">TRUE</option>
+                      <option value="false">FALSE</option>
                     </FormSelect>
                   </FormRow>
                   <FormRow>
-                    <FormLabel htmlFor="target_size">목표 수량</FormLabel>
+                    <FormLabel htmlFor="targetQnty">목표 수량</FormLabel>
                     <FormInput
                       type="text"
-                      id="target_size"
-                      name="target_size"
-                      value={formData.target_size}
+                      id="targetQnty"
+                      name="targetQnty"
+                      value={formData.targetQnty}
                       onChange={handleChange}
                       // required
                     />
                   </FormRow>
                   <FormRow>
-                    <FormLabel htmlFor="due_date">DUE</FormLabel>
+                    <FormLabel htmlFor="dueDate">완료 예정일시</FormLabel>
                     <FormInput
                       type="text"
-                      id="due_date"
-                      name="due_date"
-                      value={formData.due_date}
+                      id="dueDate"
+                      name="dueDate"
+                      value={formData.dueDate}
                       onChange={handleChange}
                       // required
                     />
@@ -353,7 +418,7 @@ const CopyWorkModal: React.FC<{
                     alignItems: "center",
                     gap: "5px",
                   }}
-                  onClick={handleSubmit}
+                  onClick={responseMessage ? closeModal : handleSubmit}
                 >
                   <MdCheck
                     size={20}

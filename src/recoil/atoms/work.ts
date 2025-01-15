@@ -20,7 +20,7 @@ export const fetchWorkInfo = async (body: { [key: string]: any }) => {
 // 작업화면 - 작업 생성을 위한 API(생성)
 export const createWorkAtom = customCreateAtom("createWork");
 export const createWork = async (body: { [key: string]: any }) => {
-  const url = "/work/create";
+  const url = "/work/save";
   const trId = process.env.REACT_APP_TRID_WORK_CREATE!;
   return customApiRequest(url, trId, body);
 };
@@ -28,7 +28,7 @@ export const createWork = async (body: { [key: string]: any }) => {
 // 작업화면 - 작업 생성을 위한 API(변경)
 export const updateWorkAtom = customCreateAtom("updateWork");
 export const updateWork = async (body: { [key: string]: any }) => {
-  const url = "/work/update";
+  const url = "/work/save";
   const trId = process.env.REACT_APP_TRID_WORK_UPDATE!;
   return customApiRequest(url, trId, body);
 };
@@ -44,7 +44,7 @@ export const deleteWork = async (body: { [key: string]: any }) => {
 // 작업화면 - 탭(tab)메뉴 발급 작업 상세 (기본)정보 조회를 위한 API
 export const workDetailAtom = customCreateAtom("workDetail");
 export const fetchWorkDetail = async (body: { [key: string]: any }) => {
-  const url = "/work/detail";
+  const url = "/work/info";
   const trId = process.env.REACT_APP_TRID_WORK_DETAIL!;
   return customApiRequest(url, trId, body);
 };

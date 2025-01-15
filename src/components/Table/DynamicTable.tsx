@@ -160,7 +160,7 @@ const DynamicTable: React.FC<TableProps> = ({
                 )}
                 {keyName?.map((keyNameItem, colIndex) => (
                   <>
-                    {keyNameItem === "name" && handleAddTab ? (
+                    {keyNameItem === "work_no" && handleAddTab ? (
                       <td
                         key={colIndex}
                         style={{
@@ -169,7 +169,7 @@ const DynamicTable: React.FC<TableProps> = ({
                           textDecoration: "underline",
                           color: "#777",
                         }}
-                        onClick={() => handleAddTab(row["workNo"])}
+                        onClick={() => handleAddTab(row["work_no"])}
                       >
                         {row[keyNameItem]}
                       </td>

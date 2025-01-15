@@ -40,3 +40,11 @@ export const deleteSnrule = (body: { [key: string]: any }) => {
   const url = "/snrule/delete";
   return customApiRequest(url, trId, body);
 };
+
+// 시리얼넘버 규칙 - SN 규칙 Id 목록 조회를 위한 API
+export const snruleIdAtom = customCreateAtom("snruleIdList");
+export const fetchSnruleIdList = async (body?: { [key: string]: any }) => {
+  const url = "/snrule/id-list";
+  const trId = process.env.REACT_APP_TRID_SNRULE_ID_LIST!;
+  return customApiRequest(url, trId, body);
+};

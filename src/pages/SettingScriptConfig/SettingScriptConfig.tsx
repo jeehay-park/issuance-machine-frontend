@@ -59,7 +59,6 @@ const SettingScriptConfig: React.FC = () => {
     if (result?.body) {
       setRecoilState(result);
     } else {
-      console.log("axios error");
       setError(result?.error);
     }
   };

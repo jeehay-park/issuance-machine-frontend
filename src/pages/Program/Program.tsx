@@ -17,6 +17,7 @@ import { dynamicObject } from "../../utils/types";
 import AddProgram from "./AddProgram";
 import EditProgram from "./EditProgram";
 import DeleteProgram from "./DeleteProgram";
+import Error from "../Error";
 
 // 프로그램 정보
 const Program: React.FC = () => {
@@ -53,8 +54,10 @@ const Program: React.FC = () => {
       filterArr,
     });
 
-    if (result) {
+    if (result?.body) {
       setProgramListState(result);
+    } else {
+      setError(result?.error);
     }
   };
 
@@ -80,6 +83,7 @@ const Program: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    console.log(recoilData);
     if (recoilData) {
       const headers = recoilData?.body?.headerInfos
         .filter((item: { [key: string]: any }) => item.display) // Only items with display as true
@@ -98,6 +102,25 @@ const Program: React.FC = () => {
       setTotCnt(totalCnt);
     }
   }, [recoilData]);
+
+  if (recoilData === null || error) {
+    return (
+      <>
+        <Card>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              //   border: "1px solid red",
+            }}
+          >
+            <Error error={error} />
+          </div>
+        </Card>
+      </>
+    );
+  }
 
   return (
     <>
@@ -147,7 +170,7 @@ const Program: React.FC = () => {
           height="400px"
         />
 
-        { (totCnt !== null && totCnt > 0 ) && (
+        {totCnt !== null && totCnt > 0 && (
           <div style={{ padding: "10px 10px" }}>
             <Pagination
               currentPage={currentPage}

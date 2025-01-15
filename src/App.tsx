@@ -20,12 +20,14 @@ import MachineDetails from "./pages/Machine/MachineDetails";
 import ScriptConfigDetails from "./pages/SettingScriptConfig/ScriptConfigDetails";
 import CodeEnum from "./pages/CodeEnum/CodeEnum";
 import ProgramDetails from "./pages/Program/ProgramDetails";
+import Work from "./pages/WorkInfo/Work";
 
 const App: React.FC = () => {
   const sidebarContents = {
     login: { path: "/", description: "로그인" },
     dashboard: { path: "/dashboard", description: "대시보드" },
-    issuance: { path: "/issuance", description: "작업 화면" },
+    // issuance: { path: "/issuance", description: "작업 화면" },
+    work: { path: "/work", description: "작업 화면" },
     program: { path: "/program", description: "프로그램 정보" },
     ProgramDetails: {
       path: "/program/details",
@@ -71,9 +73,13 @@ const App: React.FC = () => {
               path={sidebarContents.dashboard.path}
               element={<Dashboard />}
             />
-            <Route
+            {/* <Route
               path={sidebarContents.issuance.path}
               element={<IssuanceWorkScreen />}
+            /> */}
+            <Route
+              path={sidebarContents.work.path}
+              element={<Work />}
             />
             <Route
               path={sidebarContents.codeinfo.path}

@@ -40,3 +40,11 @@ export const deleteProgram = async (body: { [key: string]: any }) => {
   const trId = process.env.REACT_APP_TRID_PROGRAM_DELETE!;
   return customApiRequest(url, trId, body);
 };
+
+// 프로그램 정보 - 프로그램 Id 목록 조회를 위한 API
+export const programIdAtom = customCreateAtom("programIdList");
+export const fetchProgramIdList = async (body?: { [key: string]: any }) => {
+  const url = "/program/id-list";
+  const trId = process.env.REACT_APP_TRID_PROGRAM_ID_LIST!;
+  return customApiRequest(url, trId, body);
+};

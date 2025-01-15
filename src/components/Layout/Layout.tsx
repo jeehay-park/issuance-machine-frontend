@@ -47,7 +47,8 @@ const Layout: React.FC = () => {
 
   const sidebarContents: MenuItem[] = [
     { name: "대시보드", path: "/dashboard", icon: dashboard, alt: "dashboard" },
-    { name: "작업 화면", path: "/issuance", icon: issuance, alt: "issuance" },
+    // { name: "작업 화면", path: "/issuance", icon: issuance, alt: "issuance" },
+    { name: "작업 화면", path: "/work", icon: issuance, alt: "work" },
     {
       name: "프로그램 정보",
       path: "/program",

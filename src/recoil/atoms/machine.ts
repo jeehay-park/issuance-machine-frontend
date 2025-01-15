@@ -40,3 +40,11 @@ export const deleteMachine = (body: { [key: string]: any }) => {
   const url = "/machine/delete";
   return customApiRequest(url, trId, body);
 };
+
+// 발급기계 - 발급기계 목록 Id를 위한 API
+export const machineIdAtom = customCreateAtom("machineIdList");
+export const fetchMachineIdList = (body?: { [key: string]: any }) => {
+  const trId = process.env.REACT_APP_TRID_MACHINE_ID_LIST!; // No more warning: TypeScript trusts your assertion.
+  const url = "/machine/id-list";
+  return customApiRequest(url, trId, body);
+};

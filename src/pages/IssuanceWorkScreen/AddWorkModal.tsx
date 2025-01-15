@@ -1,4 +1,4 @@
-import React, { useState, ReactNode, FormEvent, ChangeEvent } from "react";
+import React, { useState, ReactNode, ChangeEvent, useEffect } from "react";
 import {
   ModalBackground,
   ModalContainer,
@@ -11,8 +11,7 @@ import {
   ModalContent,
 } from "../../styles/styledModal";
 import { selectedRowAtom } from "../../recoil/atoms/selected";
-import { useRecoilValue } from "recoil";
-import { deleteCode } from "../../recoil/atoms/code";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import confetti from "canvas-confetti";
 import success from "../../components/assets/green-tick.png";
 import {
@@ -20,49 +19,106 @@ import {
   FormRow,
   FormLabel,
   FormInput,
-  RadioInput,
-  RadioLabel,
   FormSelect,
-  FormButton,
   FormError,
 } from "../../styles/styledForm";
-import { dynamicObject } from "../../utils/types";
 import { MdClose, MdCheck } from "react-icons/md";
+import { createWork } from "../../recoil/atoms/work";
+import { fetchProgramIdList, programIdAtom } from "../../recoil/atoms/program";
+import { fetchSnruleIdList, snruleIdAtom } from "../../recoil/atoms/snrule";
+import { fetchMachineIdList, machineIdAtom } from "../../recoil/atoms/machine";
 
 // Define the shape of form data and error messages
 interface FormData {
-  name: string;
-  email: string;
+  workNo: string;
+  tagName: string;
+  customer: string;
+  orderNo: string;
+  deviceName: string;
+  progId: string;
+  mcnId: string;
+  snrId: string;
+  isLock: string;
+  targetQnty: string;
+  dueDate: string;
 }
 
 interface FormErrors {
-  name: string;
-  email: string;
+  workNo: string;
+  tagName: string;
+  customer: string;
+  orderNo: string;
+  deviceName: string;
+  progId: string;
+  mcnId: string;
+  snrId: string;
+  isLock: string;
+  targetQnty: string;
+  dueDate: string;
 }
+
+const defaultData = {
+  workNo: "",
+  tagName: "",
+  customer: "",
+  orderNo: "",
+  deviceName: "",
+  progId: "",
+  mcnId: "",
+  snrId: "",
+  isLock: "",
+  targetQnty: "",
+  dueDate: "",
+};
 
 // 작업 추가
 const AddWorkModal: React.FC<{
   children: ReactNode;
   handleRefresh: () => void;
 }> = ({ children, handleRefresh }) => {
-  const selectedRow = useRecoilValue(selectedRowAtom);
+  // const defaultData = {
+  //   workNo: "",
+  //   tagName: "",
+  //   customer: "",
+  //   orderNo: "",
+  //   deviceName: "",
+  //   progId: "",
+  //   mcnId: "",
+  //   snrId: "",
+  //   isLock: "",
+  //   targetQnty: "",
+  //   dueDate: "",
+  // };
+
   const [isModalOpen, setModalOpen] = useState(false);
   const [responseMessage, setResponseMessage] = useState<string | null>(null);
+
+  const setProgIds = useSetRecoilState(programIdAtom);
+  const setSnruleIds = useSetRecoilState(snruleIdAtom);
+  const setMachineIds = useSetRecoilState(machineIdAtom);
+
+  const progIds = useRecoilValue(programIdAtom);
+  const snrRuleIds = useRecoilValue(snruleIdAtom);
+  const machineIds = useRecoilValue(machineIdAtom);
+
+  const [formData, setFormData] = useState(defaultData);
+  const [errors, setErrors] = useState(defaultData);
+  const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
+
+  const [progIdOptions, setProgIdOptions] = useState<string[]>([]);
+  const [snrIdOptions, setSnrIdoptions] = useState<string[]>([]);
+  const [machineIdOptions, setMachineIdoptions] = useState<string[]>([]);
 
   const openModal = () => {
     setResponseMessage(null);
     setModalOpen(true);
   };
-  const closeModal = () => setModalOpen(false);
 
-  const handleCancel = (event: MouseEvent) => {
-    event.preventDefault();
+  const closeModal = () => {
+    setFormData(defaultData);
+    setErrors(defaultData);
     setModalOpen(false);
   };
-
-  const [formData, setFormData] = useState({ name: "", email: "" });
-  const [errors, setErrors] = useState({ name: "", email: "" });
-  const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
 
   // Handle input changes
   const handleChange = (
@@ -70,45 +126,104 @@ const AddWorkModal: React.FC<{
   ) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
-
-    // Clear error for the current field
-    setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
+    setErrors((prevErrors) => ({ ...prevErrors, [name]: "" })); // Clear error for the current field
   };
 
   // Validate form inputs
   const validate = (): boolean => {
-    let tempErrors: FormErrors = { name: "", email: "" };
+    let tempErrors: FormErrors = {
+      workNo: "",
+      tagName: "",
+      customer: "",
+      orderNo: "",
+      deviceName: "",
+      progId: "",
+      mcnId: "",
+      snrId: "",
+      isLock: "",
+      targetQnty: "",
+      dueDate: "",
+    };
+
     let isValid = true;
 
-    if (!formData.name) {
-      tempErrors.name = "Name is required";
-      isValid = false;
+    for (const key of Object.keys(tempErrors)) {
+      if (formData[key as keyof typeof formData] === "") {
+        tempErrors[key as keyof FormErrors] = `${key} is required`;
+        isValid = false;
+      }
     }
 
-    if (!formData.email) {
-      tempErrors.email = "Email is required";
-      isValid = false;
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      tempErrors.email = "Email is invalid";
-      isValid = false;
-    }
-
-    console.log(tempErrors);
     setErrors(tempErrors);
     return isValid;
   };
 
   // Handle form submission
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleSubmit = async (event: React.MouseEvent<HTMLDivElement>) => {
+    event.preventDefault();
     if (validate()) {
-      console.log("Form submitted:", formData);
-      setFormData({ name: "", email: "" });
-      setErrors({ name: "", email: "" });
+      try {
+        const editedForm = {
+          ...formData,
+          isLock: formData?.isLock === "true" ? true : false,
+          targetQnty: parseInt(formData.targetQnty),
+        };
+
+        const result = await createWork(editedForm);
+
+        if (result) {
+          handleRefresh();
+          setResponseMessage(result.header.rtnMessage);
+        } else {
+          setResponseMessage("Failed to create profile.");
+        }
+      } catch (error) {
+        setResponseMessage("An error occurred while creating the work.");
+      }
+
+      setFormData(defaultData);
+      setErrors(defaultData);
       setIsSubmitted(false); // Reset submission state
     }
-    console.log("handle submit");
   };
+
+  useEffect(() => {
+    const fetchIds = async () => {
+      const progIdsResponse = await fetchProgramIdList();
+
+      if (progIdsResponse?.body) {
+        setProgIds(progIdsResponse);
+      }
+
+      const snrIdsResponse = await fetchSnruleIdList();
+      if (snrIdsResponse?.body) {
+        setSnruleIds(snrIdsResponse);
+      }
+
+      const machineIdsResponse = await fetchMachineIdList();
+      if (machineIdsResponse?.body) {
+        setMachineIds(machineIdsResponse);
+      }
+    };
+
+    if (isModalOpen) {
+      fetchIds();
+    }
+  }, [isModalOpen]);
+
+  useEffect(() => {
+    if (progIds) {
+      setProgIdOptions(progIds?.body?.programInfoIdList || []);
+    }
+
+    if (snrRuleIds) {
+      setSnrIdoptions(snrRuleIds?.body?.snruleIdList || []);
+    }
+
+    if (machineIds) {
+      setMachineIdoptions(machineIds?.body?.machineIdList || []);
+    }
+  }, [progIds, snrRuleIds, machineIds]);
 
   return (
     <>
@@ -118,7 +233,7 @@ const AddWorkModal: React.FC<{
           <ModalPadding>
             <ModalHeader backgroundColor="var(--layoutBlue)">
               <ModalHeaderTitle>
-                <h3 style={{ color: "white" }}>작업 추가</h3>
+                <h3 style={{ color: "white" }}>발급 작업 추가</h3>
               </ModalHeaderTitle>
               <CloseButton onClick={closeModal}>&times;</CloseButton>
             </ModalHeader>
@@ -141,132 +256,133 @@ const AddWorkModal: React.FC<{
               </div>
             ) : (
               <FormContainer>
-                <form onSubmit={handleSubmit}>
+                <form>
                   <FormRow>
-                    <FormLabel htmlFor="name">파서창</FormLabel>
+                    <FormLabel htmlFor="workNo">작업 표시 번호</FormLabel>
                     <FormInput
                       type="text"
-                      id="name"
-                      name="name"
-                      value={formData.name}
+                      id="workNo"
+                      name="workNo"
+                      value={formData.workNo}
                       onChange={handleChange}
                       // required
                     />
                   </FormRow>
-                  {isSubmitted && errors?.name && (
-                    <FormError>{errors?.name}</FormError>
+                  {isSubmitted && errors?.workNo && (
+                    <FormError>{errors?.workNo}</FormError>
                   )}{" "}
                   {/* Render error if exists */}
                   <FormRow>
-                    <FormLabel htmlFor="email">태그 이름</FormLabel>
+                    <FormLabel htmlFor="tagName">태그 이름</FormLabel>
                     <FormInput
-                      type="email"
-                      id="email"
-                      name="email"
-                      value={formData.email}
+                      type="text"
+                      id="tagName"
+                      name="tagName"
+                      value={formData.tagName}
                       onChange={handleChange}
                       // required
                     />
                   </FormRow>
                   <FormRow>
-                    <FormLabel htmlFor="email">고객사</FormLabel>
+                    <FormLabel htmlFor="customer">고객사</FormLabel>
                     <FormInput
-                      type="email"
-                      id="email"
-                      name="email"
-                      value={formData.email}
+                      type="text"
+                      id="customer"
+                      name="customer"
+                      value={formData.customer}
                       onChange={handleChange}
                       // required
                     />
                   </FormRow>
                   <FormRow>
-                    <FormLabel htmlFor="email">발주번호</FormLabel>
+                    <FormLabel htmlFor="orderNo">발주번호</FormLabel>
                     <FormInput
-                      type="email"
-                      id="email"
-                      name="email"
-                      value={formData.email}
+                      type="text"
+                      id="orderNo"
+                      name="orderNo"
+                      value={formData.orderNo}
                       onChange={handleChange}
                       // required
                     />
                   </FormRow>
                   <FormRow>
-                    <FormLabel htmlFor="email">디바이스 이름</FormLabel>
+                    <FormLabel htmlFor="deviceName">디바이스 이름</FormLabel>
                     <FormInput
-                      type="email"
-                      id="email"
-                      name="email"
-                      value={formData.email}
+                      type="text"
+                      id="deviceName"
+                      name="deviceName"
+                      value={formData.deviceName}
                       onChange={handleChange}
                       // required
                     />
                   </FormRow>
                   <FormRow>
-                    <FormLabel htmlFor="category">프로그램 선택</FormLabel>
+                    <FormLabel htmlFor="progId">프로그램</FormLabel>
                     <FormSelect
-                      id="category"
-                      name="category"
+                      id="progId"
+                      name="progId"
                       onChange={handleChange}
                     >
-                      <option value="option1">Option 1</option>
-                      <option value="option2">Option 2</option>
-                      <option value="option3">Option 3</option>
+                      <option value={""}>- 선택 -</option>
+                      {progIdOptions?.map((item) => (
+                        <option value={item} key={item}>
+                          {item}
+                        </option>
+                      ))}
                     </FormSelect>
                   </FormRow>
                   <FormRow>
-                    <FormLabel htmlFor="category">장비 선택</FormLabel>
-                    <FormSelect
-                      id="category"
-                      name="category"
-                      onChange={handleChange}
-                    >
-                      <option value="option1">Option 1</option>
-                      <option value="option2">Option 2</option>
-                      <option value="option3">Option 3</option>
+                    <FormLabel htmlFor="mcnId">장비</FormLabel>
+                    <FormSelect id="mcnId" name="mcnId" onChange={handleChange}>
+                      <option value={""}>- 선택 -</option>
+                      {machineIdOptions?.map((item) => (
+                        <option value={item} key={item}>
+                          {item}
+                        </option>
+                      ))}
                     </FormSelect>
                   </FormRow>
                   <FormRow>
-                    <FormLabel htmlFor="category">규칙 선택</FormLabel>
-                    <FormSelect
-                      id="category"
-                      name="category"
-                      onChange={handleChange}
-                    >
-                      <option value="option1">Option 1</option>
-                      <option value="option2">Option 2</option>
-                      <option value="option3">Option 3</option>
+                    <FormLabel htmlFor="snrId">SN 규칙</FormLabel>
+                    <FormSelect id="snrId" name="snrId" onChange={handleChange}>
+                      <option value={""}>- 선택 -</option>
+                      {snrIdOptions?.map((item) => (
+                        <option value={item} key={item}>
+                          {item}
+                        </option>
+                      ))}
                     </FormSelect>
                   </FormRow>
                   <FormRow>
-                    <FormLabel htmlFor="category">발급칩 LOCK</FormLabel>
+                    <FormLabel htmlFor="isLock">발급칩 LOCK</FormLabel>
                     <FormSelect
-                      id="category"
-                      name="category"
+                      id="isLock"
+                      name="isLock"
                       onChange={handleChange}
                     >
-                      <option value="option1">Option 1</option>
-                      <option value="option2">Option 2</option>
-                      <option value="option3">Option 3</option>
+                      <option value={""}>- 선택 -</option>
+                      <option value="true">TRUE</option>
+                      <option value="false">FALSE</option>
                     </FormSelect>
                   </FormRow>
                   <FormRow>
-                    <FormLabel htmlFor="email">목표 수량</FormLabel>
+                    <FormLabel htmlFor="targetQnty">목표 수량</FormLabel>
                     <FormInput
-                      type="email"
-                      id="email"
-                      name="email"
-                      value={formData.email}
+                      type="text"
+                      id="targetQnty"
+                      name="targetQnty"
+                      value={formData.targetQnty}
                       onChange={handleChange}
                       // required
                     />
                   </FormRow>
                   <FormRow>
-                    <FormLabel htmlFor="email">DUE</FormLabel>
+                    <FormLabel htmlFor="dueDate">완료 예정일시</FormLabel>
                     <FormInput
-                      type="email"
-                      id="email"
-                      name="email"
-                      value={formData.email}
+                      type="text"
+                      id="dueDate"
+                      name="dueDate"
+                      value={formData.dueDate}
                       onChange={handleChange}
                       // required
                     />
@@ -302,6 +418,7 @@ const AddWorkModal: React.FC<{
                     alignItems: "center",
                     gap: "5px",
                   }}
+                  onClick={responseMessage ? closeModal : handleSubmit}
                 >
                   <MdCheck
                     size={20}
