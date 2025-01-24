@@ -169,7 +169,10 @@ const DynamicTable: React.FC<TableProps> = ({
                           textDecoration: "underline",
                           color: "#777",
                         }}
-                        onClick={() => handleAddTab(row["work_no"])}
+                        onClick={() => {
+                          console.log(row);
+                          handleAddTab(row["work_no"]);
+                        }}
                       >
                         {row[keyNameItem]}
                       </td>

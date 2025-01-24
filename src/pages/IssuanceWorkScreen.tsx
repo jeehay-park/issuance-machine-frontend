@@ -29,7 +29,10 @@ const Issuance: React.FC = () => {
   const [searchJobName, setSearchJobName] = useState<string>(""); // Search state for Job Name
   const [filterStatus, setFilterStatus] = useState<string>("전체"); // Filter state for 발급 상태
   const [searchProgram, setSearchProgram] = useState<string>(""); // Search state for Program
-  const [sortOption, setSortOption] = useState({ key: "updated_at", order: "ASC" });
+  const [sortOption, setSortOption] = useState({
+    key: "updated_at",
+    order: "ASC",
+  });
 
   const headers = workResponse.body.headerInfos.map((item) => item.name);
   const keyName = workResponse.body.headerInfos.map((item) => item.keyName);
@@ -118,11 +121,11 @@ const Issuance: React.FC = () => {
             >
               <Button disabled={selectedRow === null}>삭제</Button>
               <CopyWorkModal handleRefresh={() => console.log("fdsd")}>
-              <Button disabled={selectedRow === null}>복제</Button>
+                <Button disabled={selectedRow === null}>복제</Button>
               </CopyWorkModal>
-              
+
               <AddWorkModal handleRefresh={() => console.log("fdsd")}>
-              <Button>추가</Button>
+                <Button>추가</Button>
               </AddWorkModal>
             </div>
           </div>
@@ -144,7 +147,11 @@ const Issuance: React.FC = () => {
 
       console.log(selectedJob, "selectedJob");
       return (
-        <div>{selectedJob ? selectedJob.name : "No details available."}</div>
+        <div>
+          {selectedJob
+            ? selectedJob.name
+            : "IssueWorkScreen : No details available."}
+        </div>
       );
     }
   };

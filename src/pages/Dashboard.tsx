@@ -47,51 +47,52 @@ const Dashboard: React.FC = () => {
 
   useEffect(() => {
     // Connect to the updated WebSocket endpoint
-    const ws = new WebSocket("ws://localhost:8080/ws/dashboard/500001");
-    setWs(ws); // Store the WebSocket connection
+    const wsUrl = "ws://localhost:17777/ws/work/500111";
+    const socket = new WebSocket(wsUrl);
 
-    ws.onopen = () => {
-      console.log("Connected to WebSocket");
-      ws.send("fetch users"); // Example request to fetch data
+    socket.onopen = () => {
+      console.log("WebSocket connection established");
+      socket.send(
+        JSON.stringify({
+          header: {
+            type: "reconnect",
+            clientId: "sfsfs",
+          },
+          body: {
+            workId: "wk_01",
+            duration: "12345",
+          },
+        })
+      );
     };
 
-    ws.onmessage = (event) => {
-      console.log("Raw data:", event.data);
-      try {
-        const parsedData = JSON.parse(event.data);
-        console.log("Parsed data:", parsedData);
+    // Handle incoming messages
+    socket.onmessage = (event) => {
+      console.log("Received message:", event.data);
 
-        setMessages(parsedData);
+      try {
+        console.log("this is parsed data!");
+        console.log(JSON.parse(event.data));
       } catch (error) {
-        console.error("Error parsing WebSocket data:", error);
+        console.log("Received plain text message:", event.data);
       }
     };
 
+    // Handle connection closure
+    socket.onclose = () => {
+      console.log("WebSocket connection closed");
+    };
+
+    // Handle any errors
+    socket.onerror = (error) => {
+      console.error("WebSocket error:", error);
+    };
+
+    // Cleanup on component unmount
     return () => {
-      ws.close();
+      socket.close();
     };
   }, []);
-
-  // Function to send a request for users
-  const fetchUsers = () => {
-    if (ws) {
-      ws.send("fetch users"); // Send the request again
-      console.log("Request sent to fetch users");
-
-      // Clear any previous onmessage handler
-      ws.onmessage = (event) => {
-        console.log("Raw data using fetchUsers:", event.data);
-        try {
-          const parsedData = JSON.parse(event.data); // Ensure to parse the received data
-          console.log("Parsed data using fetchUsers:", parsedData);
-
-          setMessages(parsedData); // Update the state with the new messages
-        } catch (error) {
-          console.error("Error parsing WebSocket data:", error);
-        }
-      };
-    }
-  };
 
   return (
     <>
@@ -280,7 +281,6 @@ const Dashboard: React.FC = () => {
               />
             </div>
           </div>
-          <h1 onClick={fetchUsers}>Fetch data using websocket!</h1>
           <div style={{ display: "flex", padding: "2rem 2rem", gap: "2rem" }}>
             {messages?.map((item) => (
               <ul>

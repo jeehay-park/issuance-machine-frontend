@@ -24,6 +24,7 @@ import { workListAtom, fetchWorkList } from "../../recoil/atoms/work";
 import { dynamicObject, FetchListParams } from "../../utils/types";
 import { useList } from "../../customHooks/useList";
 import Error from "../Error";
+import WorkDetails from "./WorkDetails";
 
 const Work: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>("작업화면"); // Default active tab
@@ -167,7 +168,7 @@ const Work: React.FC = () => {
               }}
             >
               <DeleteWorkModal handleRefresh={handleRefresh}>
-              <Button disabled={selectedRow === null}>삭제</Button>
+                <Button disabled={selectedRow === null}>삭제</Button>
               </DeleteWorkModal>
 
               <CopyWorkModal handleRefresh={handleRefresh}>
@@ -194,8 +195,10 @@ const Work: React.FC = () => {
       );
     } else {
       const selectedJob = data?.find((job) => job.workNo === activeTab);
+
       return (
-        <div>{selectedJob ? selectedJob.name : "No details available."}</div>
+        // <div>{selectedJob ? selectedJob.name : "No details available."}</div>
+        <WorkDetails />
       );
     }
   };
@@ -246,17 +249,6 @@ const Work: React.FC = () => {
       <Content>
         {renderContent()} {/* Render content based on the selected tab */}
       </Content>
-
-      {totCnt !== null && totCnt > 0 && (
-        <div style={{ padding: "10px 10px" }}>
-          <Pagination
-            currentPage={currentPage}
-            totCnt={totCnt}
-            itemsPerPage={itemsPerPage}
-            handlePageChange={handlePageChange}
-          />
-        </div>
-      )}
     </div>
   );
 };
