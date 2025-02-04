@@ -12,7 +12,7 @@ type SortOption = {
 };
 
 type TableProps = {
-  headers: string[] | null; // Array of header titles
+  headers: string[]; // Array of header titles
   keyName: string[] | null;
   data: Array<{ [key: string]: any }> | null; // Array of objects for the rows
   checkbox: Boolean;
@@ -38,7 +38,6 @@ const DynamicTable: React.FC<TableProps> = ({
   const setSelectedRowState = useSetRecoilState(selectedRowAtom);
   const selectedRow = useRecoilValue(selectedRowAtom);
   const handleRowClick = (row: rowType) => {
-    console.log("row : ", row);
     if (selectedRow === row) {
       setCheckedRow(null);
       setSelectedRowState(null);
@@ -171,6 +170,7 @@ const DynamicTable: React.FC<TableProps> = ({
                         }}
                         onClick={() => {
                           console.log(row);
+                          handleRowClick(row);
                           handleAddTab(row["work_no"]);
                         }}
                       >
@@ -304,10 +304,19 @@ const DynamicTable: React.FC<TableProps> = ({
               </tr>
             ))
           ) : (
-            <tr>
+            <tr
+              style={{
+                whiteSpace: "normal",
+                textAlign: "center", // This doesn't work on <tr> itself
+              }}
+            >
               <td
-                colSpan={headers?.length}
-                style={{ padding: "8px", textAlign: "center" }}
+                colSpan={headers?.length + 1} // Ensures the text spans all columns
+                style={{
+                  whiteSpace: "normal",
+                  textAlign: "center", // Apply it here instead
+                  padding: "10px",
+                }}
               >
                 No data available
               </td>

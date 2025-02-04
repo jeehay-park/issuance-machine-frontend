@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
 export const Card = styled.div`
   display: flex;
@@ -23,8 +23,8 @@ export const TabItem = styled.div<{ active: boolean }>`
   position: relative;
   padding: 10px 20px;
   cursor: pointer;
-  background-color: ${({ active }) => (active ? '#003b9e' : '#f1f1f1')};
-  color: ${({ active }) => (active ? 'white' : '#777')};
+  background-color: ${({ active }) => (active ? "#003b9e" : "#f1f1f1")};
+  color: ${({ active }) => (active ? "white" : "#777")};
   border: 1px solid #ddd;
   border-bottom: none;
   margin-right: 5px;
@@ -33,7 +33,7 @@ export const TabItem = styled.div<{ active: boolean }>`
   transition: background-color 0.3s ease;
   display: flex;
   align-items: center;
-/* 
+  /* 
   &:hover {
     background-color: #E5F3FA;
     color: white;
@@ -66,7 +66,8 @@ export const Table = styled.table`
   width: 100%;
   border-collapse: collapse;
 
-  td, th {
+  td,
+  th {
     padding: 10px;
     border: 1px solid #ddd;
     text-align: center;
@@ -117,21 +118,45 @@ export const ButtonContainer = styled.div`
 `;
 
 export const Button = styled.button`
- 
   padding: 12px 20px;
   border: none;
   background-color: #768398;
   color: white;
   cursor: pointer;
   font-weight: bold;
-  
 
   &:hover {
     background-color: #003b9e;
   }
 
   &:disabled {
-    background-color:#d5d9e0;
+    background-color: #d5d9e0;
   }
-  
+`;
+
+export const HandlerButton = styled.div<{
+  color?: string;
+  flex?: string;
+  disabled?: boolean;
+}>`
+  flex: ${({ flex }) => (flex ? flex : "0.1")};
+  border: ${({ color }) => `1px solid ${color ? color : "#0288D1"}`};
+  border-radius: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  white-space: normal;
+  color: ${({ color }) => (color ? color : "#0288D1")};
+  font-weight: bold;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+
+  &:hover {
+    background-color: ${({ color }) => (color ? color : "#0288D1")};
+    color: white;
+  }
+
+  &:disabled {
+    background-color: #d5d9e0;
+  }
 `;

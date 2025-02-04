@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Card } from "../../styles/styledTableLayout";
 import {
   FormContainer,
@@ -6,13 +6,88 @@ import {
   FormLabel,
   FormInput,
 } from "../../styles/styledForm";
-
 import {
   ProgressCircle,
   ProgressWrapper,
 } from "../../styles/styledProgressCircle";
+import { selectedRowAtom } from "../../recoil/atoms/selected";
+import { useRecoilValue } from "recoil";
+import { HandlerButton } from "../../styles/styledIssuance";
+import HandlerModal from "./HandlerModal";
+
+type DataType = {
+  workId: string;
+  startedAt: string;
+  completedExpAt: string;
+  remainedTime: string;
+  resourceInfo: {
+    cpuUsage: string;
+    memUsage: string;
+    memIncrease: string;
+  };
+  targetQnty: number;
+  completedQnty: number;
+  remainedQnty: number;
+  failedQnty: number;
+  sampleQnty: number;
+  workStatus: string;
+  deviceHandlers: Array<{ [key: string]: any }> | null;
+};
 
 const WorkDetails: React.FC = () => {
+  const [data, setData] = useState<DataType | null>(null);
+  const selectedRow = useRecoilValue(selectedRowAtom);
+  console.log(selectedRow);
+
+  useEffect(() => {
+    // Connect to the updated WebSocket endpoint
+    const wsUrl = "ws://localhost:17777/ws/work/500111";
+    const socket = new WebSocket(wsUrl);
+
+    socket.onopen = () => {
+      console.log("WebSocket connection established");
+      socket.send(
+        JSON.stringify({
+          header: {
+            type: "reconnect",
+            clientId: "sfsfs",
+          },
+          body: {
+            workId: "wk_01",
+            duration: "12345",
+          },
+        })
+      );
+    };
+
+    // Handle incoming messages
+    socket.onmessage = (event) => {
+      console.log("Received message:", event.data);
+
+      try {
+        const { header, body } = JSON.parse(event.data);
+        setData(body);
+      } catch (error) {
+        console.log("Error occured:", error);
+      }
+    };
+
+    // Handle connection closure
+    socket.onclose = () => {
+      console.log("WebSocket connection closed");
+    };
+
+    // Handle any errors
+    socket.onerror = (error) => {
+      console.error("WebSocket error:", error);
+    };
+
+    // Cleanup on component unmount
+    return () => {
+      socket.close();
+    };
+  }, []);
+
   return (
     <>
       <Card>
@@ -24,7 +99,10 @@ const WorkDetails: React.FC = () => {
             marginBottom: "10px",
           }}
         >
+          <HandlerModal>
           <Button>핸들러</Button>
+          </HandlerModal>
+         
           <Button>SN 중복 확인</Button>
           <Button>출력 리포트</Button>
           <Button>작업 복구</Button>
@@ -71,7 +149,7 @@ const WorkDetails: React.FC = () => {
 
             <FormRow>
               <FormLabel htmlFor="progName">작업명</FormLabel>
-              <p>LGU+(LGU+) g5_usim usim test no lock 07/01_5</p>
+              <p>{selectedRow?.tag_name}</p>
             </FormRow>
 
             <FormRow>
@@ -197,13 +275,13 @@ const WorkDetails: React.FC = () => {
                 }}
               >
                 <FormRow>시작 시간</FormRow>
-                <FormInput value={"2024/08/29 08:10:00"} disabled />
+                <FormInput value={data?.startedAt} disabled />
 
                 <FormRow>완료 예상 시간</FormRow>
-                <FormInput value={"2024/08/29 08:10:00"} disabled />
+                <FormInput value={data?.completedExpAt} disabled />
 
                 <FormRow>남은 시간</FormRow>
-                <FormInput value={"08:10:00"} disabled />
+                <FormInput value={data?.remainedTime} disabled />
               </div>
             </FormRow>
 
@@ -244,10 +322,12 @@ const WorkDetails: React.FC = () => {
                   </p>
 
                   <ProgressWrapper>
-                    <ProgressCircle percent={45} />
+                    <ProgressCircle
+                      percent={parseInt(data?.resourceInfo?.cpuUsage as string)}
+                    />
                   </ProgressWrapper>
 
-                  <p>104 GB</p>
+                  <p style={{color : "#eaeaea"}}>104 GB</p>
                 </div>
 
                 {/* CPU */}
@@ -271,9 +351,11 @@ const WorkDetails: React.FC = () => {
                 >
                   <p>Memory 사용량</p>
                   <ProgressWrapper>
-                    <ProgressCircle percent={50} />
+                    <ProgressCircle
+                      percent={parseInt(data?.resourceInfo?.memUsage as string)}
+                    />
                   </ProgressWrapper>
-                  <p>900 MB</p>
+                  <p style={{color : "#eaeaea"}}>900 MB</p>
                 </div>
 
                 {/* CPU */}
@@ -297,9 +379,13 @@ const WorkDetails: React.FC = () => {
                 >
                   <p>Memory 증가량</p>
                   <ProgressWrapper>
-                    <ProgressCircle percent={75} />
+                    <ProgressCircle
+                      percent={parseInt(
+                        data?.resourceInfo?.memIncrease as string
+                      )}
+                    />
                   </ProgressWrapper>
-                  <p>800 MB</p>
+                  <p style={{color : "#eaeaea"}}>800 MB</p>
                 </div>
               </div>
             </FormRow>
@@ -333,7 +419,10 @@ const WorkDetails: React.FC = () => {
                 >
                   <p>목표/완성/잔여 갯수</p>
 
-                  <p>20000 / 19870 / 112</p>
+                  <p>
+                    {data?.targetQnty} / {data?.completedQnty} /{" "}
+                    {data?.remainedQnty}
+                  </p>
                 </div>
 
                 {/* 샘플 개수 */}
@@ -355,7 +444,7 @@ const WorkDetails: React.FC = () => {
                   }}
                 >
                   <p>샘플 갯수</p>
-                  <p>0</p>
+                  <p>{data?.sampleQnty}</p>
                 </div>
 
                 {/* 실패 갯수 */}
@@ -377,7 +466,7 @@ const WorkDetails: React.FC = () => {
                   }}
                 >
                   <p>실패 갯수</p>
-                  <p>0</p>
+                  <p>{data?.failedQnty}</p>
                 </div>
               </div>
             </FormRow>
@@ -466,29 +555,17 @@ const WorkDetails: React.FC = () => {
                     C,TF,.result=OK, fail rate:1.12 %
                   </p>
                 </div>
-                <div
-                  style={{
-                    flex: "0.1",
-                    border: "1px solid #DC3545",
-                    borderRadius: "1rem",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    textWrap: "wrap",
-                    color: "#DC3545",
-                    fontWeight: "bold",
-                    boxShadow:
-                      "0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.1)",
-                  }}
-                >
+                <HandlerButton color="#DC3545" flex="0.1">
                   BURNING
-                </div>
+                </HandlerButton>
               </div>
             </FormRow>
 
             {/* 핸들러 상태 2 */}
             <FormRow>
-              <FormLabel htmlFor="progName">핸들러 상태</FormLabel>
+              <FormLabel htmlFor="progName" style={{ visibility: "hidden" }}>
+                핸들러 상태
+              </FormLabel>
               <div
                 style={{
                   display: "flex",
@@ -570,29 +647,17 @@ const WorkDetails: React.FC = () => {
                     C,TF,.result=OK, fail rate:1.12 %
                   </p>
                 </div>
-                <div
-                  style={{
-                    flex: "0.1",
-                    border: "1px solid #0288D1",
-                    borderRadius: "1rem",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    textWrap: "wrap",
-                    color: "#0288D1",
-                    fontWeight: "bold",
-                    boxShadow:
-                      "0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.1)",
-                  }}
-                >
+                <HandlerButton color="#0288D1" flex="0.1">
                   READY
-                </div>
+                </HandlerButton>
               </div>
             </FormRow>
 
             {/* 핸들러 상태 3 */}
             <FormRow>
-              <FormLabel htmlFor="progName">핸들러 상태</FormLabel>
+              <FormLabel htmlFor="progName" style={{ visibility: "hidden" }}>
+                핸들러 상태
+              </FormLabel>
               <div
                 style={{
                   display: "flex",
@@ -674,23 +739,9 @@ const WorkDetails: React.FC = () => {
                     C,TF,.result=OK, fail rate:1.12 %
                   </p>
                 </div>
-                <div
-                  style={{
-                    flex: "0.1",
-                    border: "1px solid #28A745",
-                    borderRadius: "1rem",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    textWrap: "wrap",
-                    color: "#28A745",
-                    fontWeight: "bold",
-                    boxShadow:
-                      "0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.1)",
-                  }}
-                >
+                <HandlerButton color="#28A745" flex="0.1">
                   CONNECTING
-                </div>
+                </HandlerButton>
               </div>
             </FormRow>
           </form>

@@ -26,7 +26,7 @@ const SettingScriptConfig: React.FC = () => {
   const recoilData = useRecoilValue(scriptAtom);
   const selectedRow = useRecoilValue(selectedRowAtom);
 
-  const [headers, setHeaders] = useState<string[] | null>(null);
+  const [headers, setHeaders] = useState<string[]>([]);
   const [keyName, setKeyname] = useState<string[] | null>(null);
   const [headerInfos, setHeaderInfos] = useState<dynamicObject[] | null>(null);
   const [data, setData] = useState<dynamicObject[] | null>(null);

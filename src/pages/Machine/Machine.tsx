@@ -24,7 +24,7 @@ const Machine: React.FC = () => {
   const [recoilData, setRecoilData] = useRecoilState(machineListAtom);
   const selectedRow = useRecoilValue(selectedRowAtom);
   const itemsPerPage = 5;
-  const [headers, setHeaders] = useState<string[] | null>(null);
+  const [headers, setHeaders] = useState<string[]>([]);
   const [keyName, setKeyname] = useState<string[] | null>(null);
   const [headerInfos, setHeaderInfos] = useState<dynamicObject[] | null>(null);
   const [data, setData] = useState<dynamicObject[] | null>(null);

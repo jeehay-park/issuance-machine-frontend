@@ -45,54 +45,6 @@ const Dashboard: React.FC = () => {
     console.log("Fetching data for: ", tab);
   };
 
-  useEffect(() => {
-    // Connect to the updated WebSocket endpoint
-    const wsUrl = "ws://localhost:17777/ws/work/500111";
-    const socket = new WebSocket(wsUrl);
-
-    socket.onopen = () => {
-      console.log("WebSocket connection established");
-      socket.send(
-        JSON.stringify({
-          header: {
-            type: "reconnect",
-            clientId: "sfsfs",
-          },
-          body: {
-            workId: "wk_01",
-            duration: "12345",
-          },
-        })
-      );
-    };
-
-    // Handle incoming messages
-    socket.onmessage = (event) => {
-      console.log("Received message:", event.data);
-
-      try {
-        console.log("this is parsed data!");
-        console.log(JSON.parse(event.data));
-      } catch (error) {
-        console.log("Received plain text message:", event.data);
-      }
-    };
-
-    // Handle connection closure
-    socket.onclose = () => {
-      console.log("WebSocket connection closed");
-    };
-
-    // Handle any errors
-    socket.onerror = (error) => {
-      console.error("WebSocket error:", error);
-    };
-
-    // Cleanup on component unmount
-    return () => {
-      socket.close();
-    };
-  }, []);
 
   return (
     <>
