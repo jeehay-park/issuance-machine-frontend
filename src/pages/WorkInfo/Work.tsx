@@ -14,7 +14,6 @@ import {
 import DynamicTable from "../../components/Table/DynamicTable";
 import Search from "../../components/Table/Search";
 import closeIcon from "../../components/assets/closeIcon.png";
-import Pagination from "../../components/Table/Pagination";
 import { useSetRecoilState, useRecoilValue } from "recoil";
 import { selectedRowAtom } from "../../recoil/atoms/selected";
 import AddWorkModal from "../IssuanceWorkScreen/AddWorkModal";
@@ -25,14 +24,17 @@ import { dynamicObject, FetchListParams } from "../../utils/types";
 import { useList } from "../../customHooks/useList";
 import Error from "../Error";
 import WorkDetails from "./WorkDetails";
+import Pagination from "../../components/Table/Pagination";
+import { useNavigate } from "react-router-dom";
 
 const Work: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>("작업화면"); // Default active tab
   const [tabs, setTabs] = useState<string[]>(["작업화면"]); // Start with one tab
   const [filterStatus, setFilterStatus] = useState<string>("전체"); // Filter state for 발급 상태
 
-  const setRecoilState = useSetRecoilState(workListAtom);
-  const recoilData = useRecoilValue(workListAtom);
+  const setWorkList = useSetRecoilState(workListAtom);
+
+  const workListRecoilData = useRecoilValue(workListAtom);
   const selectedRow = useRecoilValue(selectedRowAtom);
 
   const [headers, setHeaders] = useState<string[]>([]);
@@ -42,6 +44,8 @@ const Work: React.FC = () => {
   const [totCnt, setTotCnt] = useState<number | null>(null);
   const [error, setError] = useState<dynamicObject | null>(null);
   const itemsPerPage = 5;
+
+  const navigate = useNavigate();
 
   const [params, setParams] = useState<FetchListParams>({
     isHeaderInfo: true,
@@ -73,7 +77,7 @@ const Work: React.FC = () => {
     });
 
     if (result?.body) {
-      setRecoilState(result);
+      setWorkList(result);
     } else {
       setError(result?.error);
     }
@@ -93,16 +97,16 @@ const Work: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (recoilData) {
-      const headers = recoilData?.body?.headerInfos
+    if (workListRecoilData) {
+      const headers = workListRecoilData?.body?.headerInfos
         .filter((item: { [key: string]: any }) => item.display) // Only items with display as true
         .map((item: { [key: string]: any }) => item.name); // Extract only the name
 
-      const keyName = recoilData?.body?.headerInfos
+      const keyName = workListRecoilData?.body?.headerInfos
         .filter((item: { [key: string]: any }) => item.display) // Only items with display as true
         .map((item: { [key: string]: any }) => item.keyName); // Extract only the keyName
 
-      const { headerInfos, workList, totalCnt } = recoilData?.body;
+      const { headerInfos, workList, totalCnt } = workListRecoilData?.body;
 
       setHeaders(headers);
       setKeyname(keyName);
@@ -110,13 +114,17 @@ const Work: React.FC = () => {
       setData(workList);
       setTotCnt(totalCnt);
     }
-  }, [recoilData]);
+  }, [workListRecoilData]);
 
   const handleAddTab = (tabName: string) => {
     if (!tabs.includes(tabName)) {
       setTabs((prevTabs) => [...prevTabs, tabName]); // Add new tab if not already added
     }
-    setActiveTab(tabName); // Set the new tab as active
+    setActiveTab(tabName);
+    navigate(tabName === "작업화면" ? `/work` : `/work/${tabName}`, {
+      state : {selectedRow : selectedRow}
+    });
+   
   };
 
   // Function to remove a tab
@@ -191,19 +199,25 @@ const Work: React.FC = () => {
             sortOption={sortOption}
             handleSort={handleSort}
           />
+
+          {totCnt !== null && totCnt > 0 && (
+            <div style={{ padding: "10px 10px" }}>
+              <Pagination
+                currentPage={currentPage}
+                totCnt={totCnt}
+                itemsPerPage={itemsPerPage}
+                handlePageChange={handlePageChange}
+              />
+            </div>
+          )}
         </>
       );
     } else {
-      const selectedJob = data?.find((job) => job.workNo === activeTab);
-
-      return (
-        // <div>{selectedJob ? selectedJob.name : "No details available."}</div>
-        <WorkDetails />
-      );
+      return <WorkDetails />;
     }
   };
 
-  if (recoilData === null || error) {
+  if (workListRecoilData === null || error) {
     return (
       <>
         <Card>
@@ -229,7 +243,12 @@ const Work: React.FC = () => {
           <TabItem
             key={tab}
             active={activeTab === tab}
-            onClick={() => setActiveTab(tab)}
+            onClick={() => {
+              setActiveTab(tab);
+              navigate(tab === "작업화면" ? `/work` : `/work/${tab}`, {
+                state : {selectedRow : selectedRow}
+              });
+            }}
           >
             {tab}
             {tab !== "작업화면" && (

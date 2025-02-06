@@ -4,7 +4,6 @@ import Login from "./components/Login/Login";
 import Dashboard from "./pages/Dashboard";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Layout from "./components/Layout/Layout";
-import IssuanceWorkScreen from "./pages/IssuanceWorkScreen";
 import CodeInfo from "./pages/CodeInfo/CodeInfo";
 import SerialNumber from "./pages/SerialNumber/SerialNumber";
 import Program from "./pages/Program/Program";
@@ -26,8 +25,7 @@ const App: React.FC = () => {
   const sidebarContents = {
     login: { path: "/", description: "로그인" },
     dashboard: { path: "/dashboard", description: "대시보드" },
-    // issuance: { path: "/issuance", description: "작업 화면" },
-    work: { path: "/work", description: "작업 화면" },
+    work: { path: "/work/*", description: "작업 화면" },
     program: { path: "/program", description: "프로그램 정보" },
     ProgramDetails: {
       path: "/program/details",
@@ -73,14 +71,12 @@ const App: React.FC = () => {
               path={sidebarContents.dashboard.path}
               element={<Dashboard />}
             />
+            <Route path={sidebarContents.work.path} element={<Work />} />
             {/* <Route
-              path={sidebarContents.issuance.path}
-              element={<IssuanceWorkScreen />}
+              path={sidebarContents.workId.path}
+              element={<WorkDetails />}
             /> */}
-            <Route
-              path={sidebarContents.work.path}
-              element={<Work />}
-            />
+
             <Route
               path={sidebarContents.codeinfo.path}
               element={<CodeInfo />}

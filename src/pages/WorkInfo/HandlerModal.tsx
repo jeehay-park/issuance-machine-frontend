@@ -1,4 +1,10 @@
-import React, { useState, ReactNode, useEffect, useRef } from "react";
+import React, {
+  useState,
+  ReactNode,
+  useEffect,
+  useRef,
+  useCallback,
+} from "react";
 import {
   ModalBackground,
   ModalContainer,
@@ -10,13 +16,11 @@ import {
   ModalPadding,
   ModalContent,
 } from "../../styles/styledModal";
-import { selectedRowAtom } from "../../recoil/atoms/selected";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import success from "../../components/assets/green-tick.png";
 import warning from "../../components/assets/warning.png";
 import { MdClose, MdCheck } from "react-icons/md";
 import { Card, Button } from "../../styles/styledTableLayout";
-import { deleteProgram } from "../../recoil/atoms/program";
 import { dynamicObject } from "../../utils/types";
 import {
   fetchWorkHandlerList,
@@ -24,24 +28,29 @@ import {
 } from "../../recoil/atoms/work";
 import DynamicTable from "../../components/Table/DynamicTable";
 import AddHandler from "./AddHandler";
+import DeleteHandler from "./DeleteHandler";
+import { selectedWorkIdAtom } from "../../recoil/atoms/selected";
+import Pagination from "../../components/Table/Pagination";
+import { useList } from "../../customHooks/useList";
+import { FetchListParams } from "../../utils/types";
 
 // 핸들러 모달
 const HandlerModal: React.FC<{
   children: ReactNode;
   handleRefresh?: () => void;
 }> = ({ children }) => {
-  const selectedRow = useRecoilValue(selectedRowAtom);
-  const setSelectedRow = useSetRecoilState(selectedRowAtom);
+  const formContainerRef = useRef<HTMLDivElement>(null);
+
+  const selectedWork = useRecoilValue(selectedWorkIdAtom);
+  const setworkHandlerList = useSetRecoilState(workHandlerListAtom);
+  const workHandlerListRecoilData = useRecoilValue(workHandlerListAtom);
+
   const [isModalOpen, setModalOpen] = useState(false);
   const [responseMessage, setResponseMessage] = useState<string | null>(null);
 
   const [formHeight, setFormHeight] = useState(0);
   const [formWidth, setFormWidth] = useState(0);
 
-  const formContainerRef = useRef<HTMLDivElement>(null);
-
-  const setRecoilState = useSetRecoilState(workHandlerListAtom);
-  const recoilData = useRecoilValue(workHandlerListAtom);
   const itemsPerPage = 5;
   const [headers, setHeaders] = useState<string[]>([]);
   const [keyName, setKeyname] = useState<string[] | null>(null);
@@ -65,79 +74,70 @@ const HandlerModal: React.FC<{
 
   const closeModal = () => {
     setModalOpen(false);
-    // handleRefresh();
     setFormHeight(0); // Reset the height when closing the modal
-    setSelectedRow(null);
+    // setSelectedRow(null);
   };
 
-  // Handle form submission
-  const handleSubmit = async (event: React.MouseEvent<HTMLDivElement>) => {
-    if (selectedRow) {
-      try {
-        const result = await deleteProgram({
-          progId: selectedRow.prog_id,
-        });
-
-        if (result) {
-          setResponseMessage(result.header.rtnMessage);
-          //   handleRefresh();
-        } else {
-          setResponseMessage("Failed to delete the program.");
-        }
-      } catch (error) {
-        setResponseMessage("An error occurred while deleting the program.");
-      }
-    }
-  };
-
-  type FetchListDataParams = {
-    workId: string;
-  };
-
-  const fetchListData = async ({ workId }: FetchListDataParams) => {
+  const fetchListData = async ({
+    workId,
+    rowCnt,
+    startNum,
+    sortKeyName,
+    order,
+    isHeaderInfo,
+  }: FetchListParams) => {
     const result = await fetchWorkHandlerList({
-      workId: selectedRow?.work_id,
+      workId: selectedWork?.work_id,
+      rowCnt,
+      startNum,
+      sortKeyName,
+      order,
+      isHeaderInfo,
     });
 
     if (result?.body) {
-      setRecoilState(result);
+      setworkHandlerList(result);
     } else {
       setError(result?.error);
     }
   };
 
-  const [params, setParams] = useState<FetchListDataParams>({
-    workId: selectedRow?.work_id,
+  const [params, setParams] = useState<FetchListParams>({
+    workId: selectedWork?.work_id,
+    isHeaderInfo: true,
+    rowCnt: itemsPerPage,
+    startNum: 0,
+    sortKeyName: "created_at",
+    order: "DESC",
   });
 
-  useEffect(() => {
-    const fetchListData = async ({ workId }: FetchListDataParams) => {
-      const result = await fetchWorkHandlerList({
-        workId: selectedRow?.work_id,
-      });
-
-      if (result?.body) {
-        setRecoilState(result);
-      } else {
-        setError(result?.error);
-      }
-    };
-
-    fetchListData({ workId: selectedRow?.work_id });
-  }, []);
+  const {
+    sortOption,
+    handleSort,
+    currentPage,
+    handlePageChange,
+    handleRefresh,
+    handleSearch,
+  } = useList(itemsPerPage, params, setParams, fetchListData);
 
   useEffect(() => {
-    console.log(recoilData);
-    if (recoilData) {
-      const headers = recoilData?.body?.headerInfos
+    if (isModalOpen) {
+      fetchListData(params);
+    }
+  }, [isModalOpen ? isModalOpen : undefined]);
+
+  useEffect(() => {
+    if (workHandlerListRecoilData) {
+      const headers = workHandlerListRecoilData?.body?.headerInfos
         .filter((item: { [key: string]: any }) => item.display) // Only items with display as true
         .map((item: { [key: string]: any }) => item.name); // Extract only the name
 
-      const keyName = recoilData?.body?.headerInfos
+      const keyName = workHandlerListRecoilData?.body?.headerInfos
         .filter((item: { [key: string]: any }) => item.display) // Only items with display as true
         .map((item: { [key: string]: any }) => item.keyName); // Extract only the keyName
 
-      const { headerInfos, workHandlers, totalCnt } = recoilData?.body;
+      const { headerInfos, workHandlers, totalCnt } =
+        workHandlerListRecoilData?.body;
 
       setHeaders(headers);
       setKeyname(keyName);
@@ -145,13 +145,7 @@ const HandlerModal: React.FC<{
       setData(workHandlers);
       setTotCnt(totalCnt);
     }
-  }, [recoilData]);
-
-  const handleRefresh = async () => {
-    await fetchWorkHandlerList({
-      workId: selectedRow?.work_id,
-    });
-  };
+  }, [workHandlerListRecoilData]);
 
   return (
     <>
@@ -216,7 +210,7 @@ const HandlerModal: React.FC<{
                     >
                       작업명
                     </div>
-                    <div>{selectedRow?.tag_name}</div>
+                    <div>{selectedWork?.tag_name}</div>
                   </div>
 
                   <div
@@ -246,26 +240,37 @@ const HandlerModal: React.FC<{
                         gap: "1rem",
                       }}
                     >
-                      <Button>삭제</Button>
+                      <DeleteHandler handleRefresh={handleRefresh}>
+                        <Button>삭제</Button>
+                      </DeleteHandler>
+
                       <AddHandler handleRefresh={handleRefresh}>
                         <Button>추가</Button>
                       </AddHandler>
                     </div>
                   </div>
 
-                  <div style={{ display: "flex", justifyContent: "center" }}>
-                    <DynamicTable
-                      headers={headers}
-                      data={data}
-                      keyName={keyName}
-                      checkbox={true}
-                      headerInfos={headerInfos}
-                      //   sortOption={sortOption}
-                      //   handleSort={handleSort}
-                      //   height="400px"
-                      height="200px"
-                    />
-                  </div>
+                  <DynamicTable
+                    headers={headers}
+                    data={data}
+                    keyName={keyName}
+                    checkbox={true}
+                    headerInfos={headerInfos}
+                    //   sortOption={sortOption}
+                    //   handleSort={handleSort}
+                    //   height="400px"
+                    height="300px"
+                  />
+                  {totCnt !== null && totCnt > 0 && (
+                    <div>
+                      <Pagination
+                        currentPage={currentPage}
+                        totCnt={totCnt}
+                        itemsPerPage={itemsPerPage}
+                        handlePageChange={handlePageChange}
+                      />
+                    </div>
+                  )}
                 </Card>
               </div>
             )}
@@ -296,7 +301,7 @@ const HandlerModal: React.FC<{
                     alignItems: "center",
                     gap: "5px",
                   }}
-                  onClick={responseMessage ? closeModal : handleSubmit}
+                  onClick={responseMessage ? closeModal : closeModal}
                 >
                   <MdCheck
                     size={20}

@@ -1,4 +1,10 @@
-import React, { useState, ReactNode, ChangeEvent, useEffect } from "react";
+import React, {
+  useState,
+  ReactNode,
+  ChangeEvent,
+  useEffect,
+  useRef,
+} from "react";
 import {
   ModalBackground,
   ModalContainer,
@@ -10,7 +16,6 @@ import {
   ModalPadding,
   ModalContent,
 } from "../../styles/styledModal";
-import { selectedRowAtom } from "../../recoil/atoms/selected";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import confetti from "canvas-confetti";
 import success from "../../components/assets/green-tick.png";
@@ -28,7 +33,7 @@ import { fetchProgramIdList, programIdAtom } from "../../recoil/atoms/program";
 import { fetchSnruleIdList, snruleIdAtom } from "../../recoil/atoms/snrule";
 import { fetchMachineIdList, machineIdAtom } from "../../recoil/atoms/machine";
 
-// Define the shape of form data and error messages
+// 작업 추가 모달
 interface FormData {
   workNo: string;
   tagName: string;
@@ -76,22 +81,7 @@ const AddWorkModal: React.FC<{
   children: ReactNode;
   handleRefresh: () => void;
 }> = ({ children, handleRefresh }) => {
-  // const defaultData = {
-  //   workNo: "",
-  //   tagName: "",
-  //   customer: "",
-  //   orderNo: "",
-  //   deviceName: "",
-  //   progId: "",
-  //   mcnId: "",
-  //   snrId: "",
-  //   isLock: "",
-  //   targetQnty: "",
-  //   dueDate: "",
-  // };
-
-  const [isModalOpen, setModalOpen] = useState(false);
-  const [responseMessage, setResponseMessage] = useState<string | null>(null);
+  const formContainerRef = useRef<HTMLDivElement>(null);
 
   const setProgIds = useSetRecoilState(programIdAtom);
   const setSnruleIds = useSetRecoilState(snruleIdAtom);
@@ -100,6 +90,11 @@ const AddWorkModal: React.FC<{
   const progIds = useRecoilValue(programIdAtom);
   const snrRuleIds = useRecoilValue(snruleIdAtom);
   const machineIds = useRecoilValue(machineIdAtom);
+
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [responseMessage, setResponseMessage] = useState<string | null>(null);
+  const [formHeight, setFormHeight] = useState(0);
+  const [formWidth, setFormWidth] = useState(0);
 
   const [formData, setFormData] = useState(defaultData);
   const [errors, setErrors] = useState(defaultData);
@@ -188,6 +183,13 @@ const AddWorkModal: React.FC<{
   };
 
   useEffect(() => {
+    if (formContainerRef.current) {
+      setFormHeight(formContainerRef.current.offsetHeight);
+      setFormWidth(formContainerRef.current.offsetWidth);
+    }
+  }, [formContainerRef, isModalOpen]);
+
+  useEffect(() => {
     const fetchIds = async () => {
       const progIdsResponse = await fetchProgramIdList();
 
@@ -240,22 +242,35 @@ const AddWorkModal: React.FC<{
           </ModalPadding>
           <ModalContent>
             {responseMessage ? (
-              <div
+              <FormContainer
                 style={{
-                  padding: "20px 20px",
+                  // padding: "20px 20px",
                   display: "flex",
                   justifyContent: "center",
                   alignItems: "center",
+                  width: `${formWidth}px`,
+                  height: `${formHeight}px`,
                 }}
               >
-                <img src={success} width={"40px"} />
+                <div
+                  style={{
+                    padding: "20px 20px",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    width: `${formWidth}px`,
+                    height: `${formHeight}px`,
+                  }}
+                >
+                  <img src={success} width={"40px"} />
 
-                <p style={{ padding: "5px 5px", fontWeight: "bold" }}>
-                  {responseMessage}
-                </p>
-              </div>
+                  <p style={{ padding: "5px 5px", fontWeight: "bold" }}>
+                    {responseMessage}
+                  </p>
+                </div>
+              </FormContainer>
             ) : (
-              <FormContainer>
+              <FormContainer ref={formContainerRef}>
                 <form>
                   <FormRow>
                     <FormLabel htmlFor="workNo">작업 표시 번호</FormLabel>

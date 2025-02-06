@@ -41,9 +41,6 @@ export const useList = (
 
   const handleSort = (headerKey: string) => {
     let newOrder = "ASC";
-
-    console.log("handleSort : ", headerKey);
-
     if (sortOption.key === headerKey) {
       newOrder = sortOption.order === "ASC" ? "DESC" : "ASC";
     } else {
@@ -76,7 +73,6 @@ export const useList = (
   };
 
   const handleSearch = (searchText: string, selectedOption: string) => {
-    console.log("handleSearch clicked!");
     const newParams = {
       ...params,
       filter: searchText,

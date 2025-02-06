@@ -29,6 +29,9 @@ import {
   FormSelect,
 } from "../../styles/styledForm";
 import { MdClose, MdCheck } from "react-icons/md";
+import { fetchWorkId } from "../../recoil/atoms/work";
+import { fetchDeviceId } from "../../recoil/atoms/device";
+import { createOptions } from "../../utils/createOptions";
 
 interface FormData {
   workId: string | undefined;
@@ -167,14 +170,28 @@ const AddHandler: React.FC<{
     }
   };
 
+  const [workIds, setWorkIds] = useState([]);
+  const [deviceIds, setDeviceIds] = useState([]);
+
   useEffect(() => {
     const fetchWorkIds = async () => {
-      // fetch work Id list
+      const result = await fetchWorkId();
+      if (result) {
+        setWorkIds(result.body.workIdList);
+      }
     };
 
     const fetchDvcIds = async () => {
-      // fetch device Id list
+      const result = await fetchDeviceId();
+      if (result) {
+        setDeviceIds(result.body.deviceIdList);
+      }
     };
+
+    if (isModalOpen) {
+      fetchWorkIds();
+      fetchDvcIds();
+    }
   }, [isModalOpen ? isModalOpen : undefined]);
 
   return (
@@ -222,15 +239,15 @@ const AddHandler: React.FC<{
               <FormContainer ref={formContainerRef}>
                 <form>
                   <FormRow>
-                    <FormLabel htmlFor="workId">발급작업 ID</FormLabel>
-                    <FormInput
-                      type="text"
-                      id="workId"
+                    <FormLabel htmlFor="workId">작업 ID</FormLabel>
+                    <FormSelect
                       name="workId"
                       onChange={handleChange}
-                      value={formData.workId}
-                      // required
-                    />
+                      value={formData?.workId || ""}
+                    >
+                      <option value="">- 선택 -</option>
+                      {createOptions(workIds)}
+                    </FormSelect>
                   </FormRow>
                   {isSubmitted && errors?.workId && (
                     <FormError>{errors?.workId}</FormError>
@@ -238,20 +255,20 @@ const AddHandler: React.FC<{
 
                   <FormRow>
                     <FormLabel htmlFor="dvcId">디바이스 ID</FormLabel>
-                    <FormInput
-                      type="text"
-                      id="dvcId"
+                    <FormSelect
                       name="dvcId"
                       onChange={handleChange}
-                      value={formData.dvcId}
-                      // required
-                    />
+                      value={formData?.dvcId || ""}
+                    >
+                      <option value="">- 선택 -</option>
+                      {createOptions(deviceIds)}
+                    </FormSelect>
                   </FormRow>
                   {isSubmitted && errors?.dvcId && (
                     <FormError>{errors?.dvcId}</FormError>
                   )}
                   <FormRow>
-                    <FormLabel htmlFor="hdlName">작업 핸들러 이름</FormLabel>
+                    <FormLabel htmlFor="hdlName">핸들러 이름</FormLabel>
                     <FormInput
                       type="text"
                       id="hdlName"

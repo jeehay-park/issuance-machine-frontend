@@ -33,6 +33,14 @@ export const updateWork = async (body: { [key: string]: any }) => {
   return customApiRequest(url, trId, body);
 };
 
+// 작업 ID 목록 조회를 위한 API
+export const fetchWorkIdListAtom = customCreateAtom("fetchWorkIdList");
+export const fetchWorkId = async (body?: { [key: string]: any }) => {
+  const url = "/work/id-list";
+  const trId = process.env.REACT_APP_TRID_WORK_ID_LIST!;
+  return customApiRequest(url, trId, body);
+};
+
 // 작업화면 - 작업 삭제를 위한 API
 export const deleteWorkAtom = customCreateAtom("deleteWork");
 export const deleteWork = async (body: { [key: string]: any }) => {
@@ -68,7 +76,7 @@ export const fetchWorkHandlerList = async (body: { [key: string]: any }) => {
 // 작업화면 - 작업 핸들러 추가(생성)을 위한 API
 export const createWorkHandlerAtom = customCreateAtom("createWorkHandler");
 export const createWorkHandler = async (body: { [key: string]: any }) => {
-  const url = "/work/handler/create";
+  const url = "/work/handler/save";
   const trId = process.env.REACT_APP_TRID_WORK_HANDLER_CREATE!;
   return customApiRequest(url, trId, body);
 };

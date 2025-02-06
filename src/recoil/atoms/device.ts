@@ -17,6 +17,14 @@ export const updateDevice = (body: { [key: string]: any }) => {
   return customApiRequest(url, trId, body);
 };
 
+// 디바이스 ID 목록 조회를 위한 API
+export const fetchDeviceIdListAtom = customCreateAtom("fetchDeviceIdList");
+export const fetchDeviceId = async (body?: { [key: string]: any }) => {
+  const url = "/device/id-list";
+  const trId = process.env.REACT_APP_TRID_DEVICE_ID_LIST!;
+  return customApiRequest(url, trId, body);
+};
+
 // 발급기계 - 발급기계 삭제를 위한 API
 export const deleteDeviceAtom = customCreateAtom("deleteDevice");
 export const deleteDevice = (body: { [key: string]: any }) => {

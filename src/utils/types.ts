@@ -14,6 +14,7 @@ export type FetchListParams = {
   filterArrAndOr?: string;
   filterArr?: filterArrProps[];
   configType?: string;
+  workId?: string;
 };
 
 export type dynamicObject = {

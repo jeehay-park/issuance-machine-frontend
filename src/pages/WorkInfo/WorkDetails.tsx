@@ -10,10 +10,11 @@ import {
   ProgressCircle,
   ProgressWrapper,
 } from "../../styles/styledProgressCircle";
-import { selectedRowAtom } from "../../recoil/atoms/selected";
-import { useRecoilValue } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import { HandlerButton } from "../../styles/styledIssuance";
 import HandlerModal from "./HandlerModal";
+import { selectedRowAtom, selectedWorkIdAtom } from "../../recoil/atoms/selected";
+import { useLocation } from "react-router-dom";
 
 type DataType = {
   workId: string;
@@ -35,12 +36,22 @@ type DataType = {
 };
 
 const WorkDetails: React.FC = () => {
+  const location = useLocation();
+  const { state } = useLocation();
+  const segments = location.pathname.split("/"); // ["", "work", "work_04"]
+  const workId = segments[2];
+
+  console.log(workId);
+  console.log(state?.selectedRow)
+
   const [data, setData] = useState<DataType | null>(null);
-  const selectedRow = useRecoilValue(selectedRowAtom);
-  console.log(selectedRow);
+  const selectedRow = useRecoilValue(state?.selectedRow)
+  const setSelectedWork = useSetRecoilState(selectedWorkIdAtom);
+  const selectedWork = useRecoilValue(selectedWorkIdAtom);
 
   useEffect(() => {
     // Connect to the updated WebSocket endpoint
+    setSelectedWork(state?.selectedRow);
     const wsUrl = "ws://localhost:17777/ws/work/500111";
     const socket = new WebSocket(wsUrl);
 
@@ -100,9 +111,9 @@ const WorkDetails: React.FC = () => {
           }}
         >
           <HandlerModal>
-          <Button>핸들러</Button>
+            <Button>핸들러</Button>
           </HandlerModal>
-         
+
           <Button>SN 중복 확인</Button>
           <Button>출력 리포트</Button>
           <Button>작업 복구</Button>
@@ -149,7 +160,7 @@ const WorkDetails: React.FC = () => {
 
             <FormRow>
               <FormLabel htmlFor="progName">작업명</FormLabel>
-              <p>{selectedRow?.tag_name}</p>
+              <p>{selectedWork?.tag_name}</p>
             </FormRow>
 
             <FormRow>
@@ -327,7 +338,7 @@ const WorkDetails: React.FC = () => {
                     />
                   </ProgressWrapper>
 
-                  <p style={{color : "#eaeaea"}}>104 GB</p>
+                  <p style={{ color: "#eaeaea" }}>104 GB</p>
                 </div>
 
                 {/* CPU */}
@@ -355,7 +366,7 @@ const WorkDetails: React.FC = () => {
                       percent={parseInt(data?.resourceInfo?.memUsage as string)}
                     />
                   </ProgressWrapper>
-                  <p style={{color : "#eaeaea"}}>900 MB</p>
+                  <p style={{ color: "#eaeaea" }}>900 MB</p>
                 </div>
 
                 {/* CPU */}
@@ -385,7 +396,7 @@ const WorkDetails: React.FC = () => {
                       )}
                     />
                   </ProgressWrapper>
-                  <p style={{color : "#eaeaea"}}>800 MB</p>
+                  <p style={{ color: "#eaeaea" }}>800 MB</p>
                 </div>
               </div>
             </FormRow>
