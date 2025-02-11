@@ -16,7 +16,7 @@ type TableProps = {
   keyName: string[] | null;
   data: Array<{ [key: string]: any }> | null; // Array of objects for the rows
   checkbox: Boolean;
-  handleAddTab?: (item: string) => void;
+  handleAddTab?: (item: { [key: string]: any }) => void;
   height?: string;
   headerInfos?: Array<{ [key: string]: any }> | null;
   sortOption?: SortOption; // Optional sorting information
@@ -169,9 +169,8 @@ const DynamicTable: React.FC<TableProps> = ({
                           color: "#777",
                         }}
                         onClick={() => {
-                          console.log(row);
-                          handleRowClick(row);
-                          handleAddTab(row["work_no"]);
+                          // handleRowClick(row);
+                          handleAddTab(row);
                         }}
                       >
                         {row[keyNameItem]}

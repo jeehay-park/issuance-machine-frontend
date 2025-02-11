@@ -1,10 +1,4 @@
-import React, {
-  useState,
-  ReactNode,
-  useEffect,
-  useRef,
-  useCallback,
-} from "react";
+import React, { useState, ReactNode, useEffect, useRef } from "react";
 import {
   ModalBackground,
   ModalContainer,
@@ -29,10 +23,12 @@ import {
 import DynamicTable from "../../components/Table/DynamicTable";
 import AddHandler from "./AddHandler";
 import DeleteHandler from "./DeleteHandler";
-import { selectedWorkIdAtom } from "../../recoil/atoms/selected";
+import { tabStateAtom } from "../../recoil/atoms/selected";
 import Pagination from "../../components/Table/Pagination";
 import { useList } from "../../customHooks/useList";
 import { FetchListParams } from "../../utils/types";
+import { useRecoilState } from "recoil";
+import { useLocation } from "react-router-dom";
 
 // 핸들러 모달
 const HandlerModal: React.FC<{
@@ -40,8 +36,11 @@ const HandlerModal: React.FC<{
   handleRefresh?: () => void;
 }> = ({ children }) => {
   const formContainerRef = useRef<HTMLDivElement>(null);
+  const location = useLocation();
+  const segments = location.pathname.split("/"); // ["", "work", "work_04"]
+  const selectedTab = segments[2];
+  const [tabState, setTabState] = useRecoilState(tabStateAtom);
 
-  const selectedWork = useRecoilValue(selectedWorkIdAtom);
   const setworkHandlerList = useSetRecoilState(workHandlerListAtom);
   const workHandlerListRecoilData = useRecoilValue(workHandlerListAtom);
 
@@ -87,7 +86,7 @@ const HandlerModal: React.FC<{
     isHeaderInfo,
   }: FetchListParams) => {
     const result = await fetchWorkHandlerList({
-      workId: selectedWork?.work_id,
+      workId: tabState?.[selectedTab]?.work_id,
       rowCnt,
       startNum,
       sortKeyName,
@@ -103,7 +102,7 @@ const HandlerModal: React.FC<{
   };
 
   const [params, setParams] = useState<FetchListParams>({
-    workId: selectedWork?.work_id,
+    workId: tabState?.[selectedTab]?.work_id,
     isHeaderInfo: true,
     rowCnt: itemsPerPage,
     startNum: 0,
@@ -210,7 +209,7 @@ const HandlerModal: React.FC<{
                     >
                       작업명
                     </div>
-                    <div>{selectedWork?.tag_name}</div>
+                    <div>{tabState?.[selectedTab]?.tag_name}</div>
                   </div>
 
                   <div

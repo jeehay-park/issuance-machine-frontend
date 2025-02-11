@@ -32,6 +32,9 @@ import { MdClose, MdCheck } from "react-icons/md";
 import { fetchWorkId } from "../../recoil/atoms/work";
 import { fetchDeviceId } from "../../recoil/atoms/device";
 import { createOptions } from "../../utils/createOptions";
+import { tabStateAtom } from "../../recoil/atoms/selected";
+import { useRecoilState } from "recoil";
+import { useLocation } from "react-router-dom";
 
 interface FormData {
   workId: string | undefined;
@@ -55,12 +58,17 @@ const AddHandler: React.FC<{
   children: ReactNode;
   handleRefresh: () => void;
 }> = ({ children, handleRefresh }) => {
+  const [tabState, setTabState] = useRecoilState(tabStateAtom);
+  const location = useLocation();
+  const segments = location.pathname.split("/");
+  const selectedTab = segments[2];
+
   const initialValues = {
-    workId: "",
+    workId: tabState?.[selectedTab]?.work_id,
     dvcId: "",
     hdlName: "",
   };
-  const selectedRow = useRecoilValue(selectedRowAtom);
+
   const setSelectedRow = useSetRecoilState(selectedRowAtom);
   const [isModalOpen, setModalOpen] = useState(false);
   const [responseMessage, setResponseMessage] = useState<string | null>(null);
@@ -240,14 +248,25 @@ const AddHandler: React.FC<{
                 <form>
                   <FormRow>
                     <FormLabel htmlFor="workId">작업 ID</FormLabel>
-                    <FormSelect
+                    {/* <FormSelect
                       name="workId"
                       onChange={handleChange}
                       value={formData?.workId || ""}
                     >
                       <option value="">- 선택 -</option>
                       {createOptions(workIds)}
-                    </FormSelect>
+                    </FormSelect> */}
+
+                    <FormInput
+                      type="text"
+                      id="hdlName"
+                      name="workId"
+                      onChange={handleChange}
+                      // value={tabState?.[selectedTab]?.work_id}
+                      placeholder={tabState?.[selectedTab]?.work_id}
+                      disabled
+                      // required
+                    />
                   </FormRow>
                   {isSubmitted && errors?.workId && (
                     <FormError>{errors?.workId}</FormError>

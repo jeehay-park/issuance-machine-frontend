@@ -10,11 +10,15 @@ import {
   ProgressCircle,
   ProgressWrapper,
 } from "../../styles/styledProgressCircle";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState } from "recoil";
 import { HandlerButton } from "../../styles/styledIssuance";
 import HandlerModal from "./HandlerModal";
-import { selectedRowAtom, selectedWorkIdAtom } from "../../recoil/atoms/selected";
+import { tabStateAtom } from "../../recoil/atoms/selected";
 import { useLocation } from "react-router-dom";
+import { WorkStatusButton } from "../../styles/styledIssuance";
+import CheckSerialNumberDuplicationModal from "./CheckSerialNumberDuplicationModal";
+import DownloadReportModal from "./DownloadReportModal";
+import WorkCommandModal from "./WorkCommandModal";
 
 type DataType = {
   workId: string;
@@ -37,21 +41,20 @@ type DataType = {
 
 const WorkDetails: React.FC = () => {
   const location = useLocation();
-  const { state } = useLocation();
-  const segments = location.pathname.split("/"); // ["", "work", "work_04"]
-  const workId = segments[2];
 
-  console.log(workId);
-  console.log(state?.selectedRow)
+  const segments = location.pathname.split("/"); // ["", "work", "work_04"]
+  const selectedTab = segments[2];
 
   const [data, setData] = useState<DataType | null>(null);
-  const selectedRow = useRecoilValue(state?.selectedRow)
-  const setSelectedWork = useSetRecoilState(selectedWorkIdAtom);
-  const selectedWork = useRecoilValue(selectedWorkIdAtom);
+
+  const [tabState, setTabState] = useRecoilState(tabStateAtom);
+
+  console.log("tabState : ", tabState);
+  console.log("selectedTab : ", selectedTab);
+  console.log("tabState : ", tabState?.[selectedTab]);
 
   useEffect(() => {
     // Connect to the updated WebSocket endpoint
-    setSelectedWork(state?.selectedRow);
     const wsUrl = "ws://localhost:17777/ws/work/500111";
     const socket = new WebSocket(wsUrl);
 
@@ -114,10 +117,25 @@ const WorkDetails: React.FC = () => {
             <Button>핸들러</Button>
           </HandlerModal>
 
-          <Button>SN 중복 확인</Button>
-          <Button>출력 리포트</Button>
-          <Button>작업 복구</Button>
-          <Button>작업 종료</Button>
+          <CheckSerialNumberDuplicationModal>
+            <Button>SN 중복 확인</Button>
+          </CheckSerialNumberDuplicationModal>
+
+          <DownloadReportModal>
+            <Button>출력 리포트</Button>
+          </DownloadReportModal>
+
+          <WorkCommandModal command={"RESTORE"}>
+            <Button>작업 복구</Button>
+          </WorkCommandModal>
+
+          <WorkCommandModal command={"START"}>
+            <Button>작업 시작</Button>
+          </WorkCommandModal>
+
+          <WorkCommandModal command={"FINISH"}>
+            <Button>작업 종료</Button>
+          </WorkCommandModal>
         </div>
 
         <hr></hr>
@@ -142,7 +160,7 @@ const WorkDetails: React.FC = () => {
                 </div>
               </FormRow>
 
-              <FormRow>
+              {/* <FormRow>
                 <FormLabel htmlFor="progName">작업 제어</FormLabel>
                 <div
                   style={{
@@ -153,14 +171,15 @@ const WorkDetails: React.FC = () => {
                 >
                   <Button>작업 시작</Button>
                   <></>
+
                   <Button>작업 종료</Button>
                 </div>
-              </FormRow>
+              </FormRow> */}
             </div>
 
             <FormRow>
               <FormLabel htmlFor="progName">작업명</FormLabel>
-              <p>{selectedWork?.tag_name}</p>
+              <p>{tabState?.[selectedTab]?.tag_name}</p>
             </FormRow>
 
             <FormRow>
@@ -281,8 +300,10 @@ const WorkDetails: React.FC = () => {
               <div
                 style={{
                   display: "flex",
-                  justifyContent: "flex-start",
+                  justifyContent: "flex-between",
                   gap: "1rem",
+                  // border : "1px solid red",
+                  width: "100%",
                 }}
               >
                 <FormRow>시작 시간</FormRow>
@@ -293,6 +314,10 @@ const WorkDetails: React.FC = () => {
 
                 <FormRow>남은 시간</FormRow>
                 <FormInput value={data?.remainedTime} disabled />
+
+                <WorkStatusButton status={data?.workStatus || "INIT"}>
+                  {data?.workStatus || "INIT"}
+                </WorkStatusButton>
               </div>
             </FormRow>
 
@@ -369,7 +394,7 @@ const WorkDetails: React.FC = () => {
                   <p style={{ color: "#eaeaea" }}>900 MB</p>
                 </div>
 
-                {/* CPU */}
+                {/* Memory */}
                 <div
                   style={{
                     textAlign: "center",

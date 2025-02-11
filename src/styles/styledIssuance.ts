@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { keyframes, css } from "styled-components";
 
 export const Card = styled.div`
   display: flex;
@@ -160,3 +160,88 @@ export const HandlerButton = styled.div<{
     background-color: #d5d9e0;
   }
 `;
+
+// Define animations
+const pulse = keyframes`
+  0% { box-shadow: 0 0 10px rgba(40, 167, 69, 0.7); }
+  50% { box-shadow: 0 0 20px rgba(40, 167, 69, 0.9); }
+  100% { box-shadow: 0 0 10px rgba(40, 167, 69, 0.7); }
+`;
+
+const shake = keyframes`
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-2px); }
+  50% { transform: translateX(2px); }
+  75% { transform: translateX(-1px); }
+`;
+
+const blink = keyframes`
+  50% { opacity: 0.5; }
+`;
+
+const fade = keyframes`
+  0% { opacity: 1; }
+  50% { opacity: 0.8; }
+  100% { opacity: 1; }
+`;
+
+const grow = keyframes`
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+`;
+
+// Define dynamic styles based on status
+const getAnimation = (status: string) => {
+  switch (status) {
+    case "RUNNING":
+      return css`
+        animation: ${pulse} 1.5s infinite alternate;
+      `;
+    case "ON_STOP":
+      return css`
+        animation: ${blink} 1s infinite;
+      `;
+    case "READY":
+      return css`
+        animation: ${fade} 2s infinite;
+      `;
+    case "INIT":
+      return css`
+        animation: ${grow} 1.2s infinite;
+      `;
+    default:
+      return "";
+  }
+};
+
+// Styled component
+export const WorkStatusButton = styled.div<{ status: string }>`
+  border: 1px solid ${({ status }) => getColor(status)};
+  border-radius: 0.5rem;
+  color: ${({ status }) => getColor(status)};
+  font-weight: bold;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.1);
+  width: 15rem;
+  text-align: center;
+  line-height: 2rem;
+  ${({ status }) => getAnimation(status)}
+`;
+
+// Function to set colors based on status
+const getColor = (status: string) => {
+  switch (status) {
+    case "RUNNING":
+      return "#28A745"; // Green
+    case "ON_STOP":
+      return "#FFC107"; // Yellow
+    case "READY":
+      return "#007BFF"; // Blue
+    case "INIT":
+      return "#17A2B8"; // Teal
+    case "FINISHED":
+      return "#6C757D"; // Gray
+    default:
+      return "#0288D1"; // Default
+  }
+};

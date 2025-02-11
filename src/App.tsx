@@ -72,10 +72,6 @@ const App: React.FC = () => {
               element={<Dashboard />}
             />
             <Route path={sidebarContents.work.path} element={<Work />} />
-            {/* <Route
-              path={sidebarContents.workId.path}
-              element={<WorkDetails />}
-            /> */}
 
             <Route
               path={sidebarContents.codeinfo.path}

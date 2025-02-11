@@ -99,3 +99,12 @@ export const downloadWork = async (body: { [key: string]: any }) => {
 
 // 작업화면 - 발급작업 탭(tab) 현황 상세 API
 export const workAtom = customCreateAtom("work");
+
+// 작업명령 - 작업 명령 API
+export const workControlAtom = customCreateAtom("workControl");
+export const workControl = async (body: { [key: string]: any }) => {
+  const url = "/work/control";
+  const trId = process.env.REACT_APP_TRID_WORK_CONTROL!;
+  return customApiRequest(url, trId, body);
+};
+

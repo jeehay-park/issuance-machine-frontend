@@ -26,8 +26,11 @@ import Error from "../Error";
 import WorkDetails from "./WorkDetails";
 import Pagination from "../../components/Table/Pagination";
 import { useNavigate } from "react-router-dom";
+import { tabStateAtom } from "../../recoil/atoms/selected";
+import { useRecoilState } from "recoil";
 
 const Work: React.FC = () => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<string>("작업화면"); // Default active tab
   const [tabs, setTabs] = useState<string[]>(["작업화면"]); // Start with one tab
   const [filterStatus, setFilterStatus] = useState<string>("전체"); // Filter state for 발급 상태
@@ -37,6 +40,8 @@ const Work: React.FC = () => {
   const workListRecoilData = useRecoilValue(workListAtom);
   const selectedRow = useRecoilValue(selectedRowAtom);
 
+  const [tabState, setTabState] = useRecoilState(tabStateAtom);
+
   const [headers, setHeaders] = useState<string[]>([]);
   const [keyName, setKeyname] = useState<string[] | null>(null);
   const [headerInfos, setHeaderInfos] = useState<dynamicObject[] | null>(null);
@@ -44,8 +49,6 @@ const Work: React.FC = () => {
   const [totCnt, setTotCnt] = useState<number | null>(null);
   const [error, setError] = useState<dynamicObject | null>(null);
   const itemsPerPage = 5;
-
-  const navigate = useNavigate();
 
   const [params, setParams] = useState<FetchListParams>({
     isHeaderInfo: true,
@@ -116,15 +119,19 @@ const Work: React.FC = () => {
     }
   }, [workListRecoilData]);
 
-  const handleAddTab = (tabName: string) => {
+  const handleAddTab = (row: { [key: string]: any }) => {
+    const tabName = row.work_no;
     if (!tabs.includes(tabName)) {
       setTabs((prevTabs) => [...prevTabs, tabName]); // Add new tab if not already added
     }
     setActiveTab(tabName);
-    navigate(tabName === "작업화면" ? `/work` : `/work/${tabName}`, {
-      state : {selectedRow : selectedRow}
-    });
-   
+
+    setTabState((prev) => ({
+      ...prev,
+      [tabName]: row,
+    }));
+
+    navigate(tabName === "작업화면" ? `/work` : `/work/${tabName}`);
   };
 
   // Function to remove a tab
@@ -245,9 +252,7 @@ const Work: React.FC = () => {
             active={activeTab === tab}
             onClick={() => {
               setActiveTab(tab);
-              navigate(tab === "작업화면" ? `/work` : `/work/${tab}`, {
-                state : {selectedRow : selectedRow}
-              });
+              navigate(tab === "작업화면" ? `/work` : `/work/${tab}`);
             }}
           >
             {tab}
