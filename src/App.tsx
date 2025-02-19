@@ -20,6 +20,8 @@ import ScriptConfigDetails from "./pages/SettingScriptConfig/ScriptConfigDetails
 import CodeEnum from "./pages/CodeEnum/CodeEnum";
 import ProgramDetails from "./pages/Program/ProgramDetails";
 import Work from "./pages/WorkInfo/Work";
+import User from "./pages/User/User";
+import ErrorModal from "./components/Modal/ErrorModal";
 
 const App: React.FC = () => {
   const sidebarContents = {
@@ -59,6 +61,7 @@ const App: React.FC = () => {
     },
     codeinfo: { path: "/codeinfo", description: "코드 정보" },
     codeenum: { path: "/codeinfo/codeenum", description: "코드 ENUM 정보" },
+    user: { path: "/user", description: "사용자 정보" },
   };
 
   return (
@@ -123,9 +126,12 @@ const App: React.FC = () => {
               path={sidebarContents.codeenum.path}
               element={<CodeEnum />}
             />
+            <Route path={sidebarContents.user.path} element={<User />} />
           </Route>
           <Route path="*" element={<NotFound />} />
+
         </Routes>
+        <ErrorModal><span></span></ErrorModal>
       </Router>
     </>
   );

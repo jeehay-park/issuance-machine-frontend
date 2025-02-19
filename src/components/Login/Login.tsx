@@ -8,10 +8,11 @@ import {
   Button,
 } from "../../styles/styledLogin";
 import { useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { authAtom } from "../../recoil/atoms/auth";
 import { useNavigate } from "react-router-dom";
 import { login } from "../../recoil/atoms/auth";
+import { errorAtom } from "../../recoil/atoms/error";
 
 interface FormData {
   userId: string | null;
@@ -21,6 +22,7 @@ interface FormData {
 // 로그인
 const Login: React.FC = () => {
   const setAuthState = useSetRecoilState(authAtom);
+  const [error, setError] = useRecoilState(errorAtom);
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState<FormData>({
@@ -40,17 +42,19 @@ const Login: React.FC = () => {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    // const result = await login({
-    //   ...formData,
-    // });
+    const result = await login({
+      ...formData,
+    });
 
-    // if (result?.header?.rtnCode === "000000") {
-    //   setAuthState(result.body);
-    //   navigate("/dashboard");
-    // } else {
-    //   console.error("Error:", result);
-    // }
-    navigate("/dashboard");
+    if (result?.header?.rtnCode === "000000") {
+      setAuthState(result.body);
+      navigate("/dashboard");
+    } else {
+      if (result?.header) {
+        setError(result.header);
+      }
+      console.error("Error:", result);
+    }
   };
 
   return (
