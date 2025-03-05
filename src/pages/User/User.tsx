@@ -21,6 +21,8 @@ import {
   deleteUser,
   userListAtom,
 } from "../../recoil/atoms/user";
+import EditUser from "./EditUser";
+import DeleteUser from "./DeleteUser";
 
 // 사용자 관리
 const User: React.FC = () => {
@@ -149,8 +151,13 @@ const User: React.FC = () => {
               <Button>등록</Button>
             </SignUp>
 
-            <Button disabled={selectedRow === null}>변경</Button>
-            <Button disabled={selectedRow === null}>삭제</Button>
+            <EditUser handleRefresh={handleRefresh}>
+              <Button disabled={selectedRow === null}>변경</Button>
+            </EditUser>
+
+            <DeleteUser handleRefresh={handleRefresh}>
+              <Button disabled={selectedRow === null}>삭제</Button>
+            </DeleteUser>
           </div>
         </div>
 

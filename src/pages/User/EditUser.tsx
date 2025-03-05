@@ -17,7 +17,7 @@ import {
   ModalContent,
 } from "../../styles/styledModal";
 import { selectedRowAtom } from "../../recoil/atoms/selected";
-import { useSetRecoilState } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import success from "../../components/assets/green-tick.png";
 import {
   FormContainer,
@@ -27,46 +27,46 @@ import {
   FormError,
 } from "../../styles/styledForm";
 import { MdClose, MdCheck } from "react-icons/md";
-import { signUp } from "../../recoil/atoms/auth";
+import Card from "../../components/Layout/Card";
+import { editUser } from "../../recoil/atoms/user";
 
 // Define the shape of form data and error messages
 interface FormData {
-  userId: string | undefined;
-  password: string | undefined;
-  passwordConfirm: string | undefined;
-  name: string | undefined;
-  email: string | undefined;
+  userId: string;
+  name?: string;
+  email?: string;
+  password?: string;
+  passwordConfirm?: string;
 }
 
 interface FormErrors {
-  userId: string | undefined;
-  password: string | undefined;
-  passwordConfirm: string | undefined;
-  name: string | undefined;
-  email: string | undefined;
+  userId: string;
+  name: string;
+  email: string;
+  password: string;
+  passwordConfirm: string;
 }
 
 interface WarningType {
-  userIdWarning: string | null;
-  passwordWarning: string | null;
-  passwordConfirmWarning: string | null;
-  nameWarning: string | null;
-  emailWarning: string | null;
+  name: string | null;
+  email: string | null;
+  password: string | null;
+  passwordConfirm: string | null;
 }
 
-// 사용자 등록
-const SignUp: React.FC<{
+// 사용자 정보 변경
+const EditUser: React.FC<{
   children: ReactNode;
   handleRefresh: () => void;
 }> = ({ children, handleRefresh }) => {
   const initialValues = {
     userId: "",
-    password: "",
-    passwordConfirm: "",
     name: "",
     email: "",
+    password: "",
+    passwordConfirm: "",
   };
-
+  const selectedRow = useRecoilValue(selectedRowAtom);
   const setSelectedRow = useSetRecoilState(selectedRowAtom);
   const [isModalOpen, setModalOpen] = useState(false);
   const [responseMessage, setResponseMessage] = useState<string | null>(null);
@@ -77,24 +77,15 @@ const SignUp: React.FC<{
   const formContainerRef = useRef<HTMLDivElement>(null);
 
   const [warning, setWarning] = useState<WarningType>({
-    userIdWarning: null,
-    passwordWarning: null,
-    passwordConfirmWarning: null,
-    nameWarning: null,
-    emailWarning: null,
+    name: null,
+    email: null,
+    password: null,
+    passwordConfirm: null,
   });
 
   const [formData, setFormData] = useState<FormData>(initialValues);
   const [errors, setErrors] = useState<FormErrors>(initialValues);
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
-
-  const isCountable = (cnt: string | number) => {
-    if (Number.isInteger(Number(cnt))) {
-      return true;
-    } else {
-      return false;
-    }
-  };
 
   useEffect(() => {
     if (formContainerRef.current) {
@@ -107,28 +98,30 @@ const SignUp: React.FC<{
     setResponseMessage(null);
     setModalOpen(true);
     setFormHeight(0); // Reset height when opening modal
-    setFormData(initialValues);
+    setFormData({
+      userId: selectedRow?.user_id,
+      name: "",
+      email: "",
+      password: "",
+      passwordConfirm: "",
+    });
     setErrors(initialValues);
     setWarning({
-      userIdWarning: null,
-      passwordWarning: null,
-      passwordConfirmWarning: null,
-      nameWarning: null,
-      emailWarning: null,
+      name: null,
+      email: null,
+      password: null,
+      passwordConfirm: null,
     });
   };
 
   const closeModal = () => {
     setModalOpen(false);
-    setFormData(initialValues);
-    setErrors(initialValues);
     setFormHeight(0); // Reset the height when closing the modal
     setWarning({
-      userIdWarning: null,
-      passwordWarning: null,
-      passwordConfirmWarning: null,
-      nameWarning: null,
-      emailWarning: null,
+      name: null,
+      email: null,
+      password: null,
+      passwordConfirm: null,
     });
     setSelectedRow(null);
   };
@@ -152,44 +145,61 @@ const SignUp: React.FC<{
 
     setWarning((prev) => ({
       ...prev,
-      userIdWarning: null,
-      passwordWarning: null,
-      passwordConfirmWarning: null,
-      nameWarning: null,
-      emailWarning: null,
+      name: null,
+      email: null,
+      password: null,
+      passwordConfirm: null,
     }));
   };
 
-  // Validate form inputs
-  const validate = (): boolean => {
-    let tempErrors: FormErrors = initialValues;
-    let isValid = true;
+  const isTwoPasswordTheSame = (p1: string, p2: string): boolean => {
+    let isValid: boolean;
 
-    if (!formData.userId) {
-      tempErrors.userId = "UserId is required";
+    if (p1 !== "" && p2 !== "" && p1 === p2) isValid = true;
+    else {
       isValid = false;
     }
 
-    setErrors(tempErrors);
     return isValid;
   };
 
   // Handle form submission
   const handleSubmit = async (event: React.MouseEvent<HTMLDivElement>) => {
-    if (validate()) {
-      try {
-        const result = await signUp(formData);
-        if (result) {
-          // handleRefresh();
-          setResponseMessage(result.header.rtnMessage);
-          // Refresh data after creation
-          handleRefresh();
-        } else {
-          setResponseMessage("Failed to create profile.");
-        }
-      } catch (error) {
-        setResponseMessage("An error occurred while creating the profile.");
+    event.preventDefault();
+    // Filter out empty string values except for userId
+    let updatedFormData: Partial<FormData> = Object.fromEntries(
+      Object.entries(formData).filter(
+        ([key, value]) => key === "userId" || value !== ""
+      )
+    );
+
+    // Validate passwords before sending request
+    if (updatedFormData.password && updatedFormData.passwordConfirm) {
+      if (
+        !isTwoPasswordTheSame(
+          updatedFormData.password,
+          updatedFormData.passwordConfirm
+        )
+      ) {
+        setResponseMessage("입력하신 비밀번호가 일치하지 않습니다.");
+        return; // Stop execution if passwords do not match
       }
+    }
+
+    // Remove passwordConfirm from the final request payload
+    delete updatedFormData.passwordConfirm;
+
+    try {
+      const result = await editUser(updatedFormData);
+      if (result) {
+        handleRefresh();
+        setResponseMessage(result.header.rtnMessage);
+        // Refresh data after creation
+      } else {
+        setResponseMessage("Failed to edit code info.");
+      }
+    } catch (error) {
+      setResponseMessage("An error occurred while editing the code info.");
     }
   };
 
@@ -201,16 +211,15 @@ const SignUp: React.FC<{
           <ModalPadding>
             <ModalHeader backgroundColor="var(--layoutBlue)">
               <ModalHeaderTitle>
-                <h3 style={{ color: "white" }}>사용자 등록</h3>
+                <h3 style={{ color: "white" }}>사용자 정보 변경</h3>
               </ModalHeaderTitle>
               <CloseButton onClick={closeModal}>&times;</CloseButton>
             </ModalHeader>
           </ModalPadding>
           <ModalContent>
             {responseMessage ? (
-              <FormContainer
+              <div
                 style={{
-                  // padding: "20px 20px",
                   display: "flex",
                   justifyContent: "center",
                   alignItems: "center",
@@ -218,22 +227,13 @@ const SignUp: React.FC<{
                   height: `${formHeight}px`,
                 }}
               >
-                <div
-                  style={{
-                    // padding: "20px 20px",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    width: `${formWidth}px`,
-                    height: `${formHeight}px`,
-                  }}
-                >
+                <Card>
                   <img src={success} width={"40px"} />
                   <p style={{ padding: "5px 5px", fontWeight: "bold" }}>
                     {responseMessage}
                   </p>
-                </div>
-              </FormContainer>
+                </Card>
+              </div>
             ) : (
               <FormContainer ref={formContainerRef}>
                 <form>
@@ -245,6 +245,7 @@ const SignUp: React.FC<{
                       name="userId"
                       onChange={handleChange}
                       value={formData.userId}
+                      disabled
                       // required
                     />
                   </FormRow>
@@ -260,9 +261,24 @@ const SignUp: React.FC<{
                       name="name"
                       onChange={handleChange}
                       value={formData.name}
+                      placeholder="입력한 사항만 변경됩니다."
+                      autoComplete="off"
+                    />
+                  </FormRow>
+                  <FormRow>
+                    <FormLabel htmlFor="email">사용자 이메일</FormLabel>
+                    <FormInput
+                      type="email"
+                      id="email"
+                      name="email"
+                      onChange={handleChange}
+                      value={formData.email}
+                      placeholder="입력한 사항만 변경됩니다."
+                      autoComplete="off"
                       // required
                     />
                   </FormRow>
+
                   <FormRow>
                     <FormLabel htmlFor="password">비밀번호</FormLabel>
                     <FormInput
@@ -271,10 +287,11 @@ const SignUp: React.FC<{
                       name="password"
                       onChange={handleChange}
                       value={formData.password}
-                      // required
+                      placeholder="입력한 사항만 변경됩니다."
+                      autoComplete="off"
                     />
                   </FormRow>
-                  {warning.passwordWarning && <p>{warning.passwordWarning}</p>}
+
                   <FormRow>
                     <FormLabel htmlFor="passwordConfirm">
                       비밀번호 확인
@@ -285,22 +302,10 @@ const SignUp: React.FC<{
                       name="passwordConfirm"
                       onChange={handleChange}
                       value={formData.passwordConfirm}
+                      placeholder="입력한 사항만 변경됩니다."
+                      autoComplete="off"
                     />
                   </FormRow>
-                  {warning.passwordConfirmWarning && (
-                    <p>{warning.passwordConfirmWarning}</p>
-                  )}
-                  <FormRow>
-                    <FormLabel htmlFor="countSum">이메일</FormLabel>
-                    <FormInput
-                      type="text"
-                      id="email"
-                      name="email"
-                      onChange={handleChange}
-                      value={formData.email}
-                    />
-                  </FormRow>
-                  {warning.emailWarning && <p>{warning.emailWarning}</p>}
                 </form>
               </FormContainer>
             )}
@@ -350,4 +355,4 @@ const SignUp: React.FC<{
   );
 };
 
-export default SignUp;
+export default EditUser;
