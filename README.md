@@ -1,46 +1,47 @@
-# Getting Started with Create React App
+###### <div style="text-align: right;">📅 문서 업데이트: 2025-03-05</div>
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+<br><br>
 
-## Available Scripts
+# 📌 발급장비 관리자 페이지
 
-In the project directory, you can run:
+### 프로젝트 개요
+- Spring Boot를 활용한 백엔드와 React 기반의 프론트엔드를 결합하여, 발급장비 관리자 페이지를 리뉴얼 중입니다.
 
-### `npm start`
+- MariaDB 데이터베이스와 연동하여 발급 장비 관련 데이터를 효율적으로 처리하고 관리합니다.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+- [현재 발급장비 테스트 페이지](http://192.168.1.17:7777/work_info.do)
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
 
-### `npm test`
+<br><br><br>
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-### `npm run build`
+### 기술 스택
+- **백엔드**: Spring Boot
+- **프론트엔드**: React, TypeScript, Recoil
+- **데이터베이스**: MariaDB
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+<br><br><br>
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-### `npm run eject`
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+# 📌 프로젝트를 로컬환경에서 실행하는 절차
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### 백엔드 서버 실행 (Spring Boot)
+- 백엔드 서버를 실행하려면 먼저 MariaDB가 준비되어 있어야 합니다.
+- Spring Boot 서버가 실행되면, 자동으로 필요한 테이블이 데이터베이스에 생성됩니다. (`ddl-auto: update` 설정을 통해 테이블을 자동 생성)
+- **로컬 백엔드 소스 위치**: `D:\issuance-machine-server-backend`
+- **MariaDB 접속 정보**:
+  - **사용자**: root
+  - **비밀번호**: oct102024
+  - **포트**: 3306
+- **Swagger API 테스트**: 서버가 실행된 후, `http://localhost:17777/swagger-ui/index.html#`에서 API를 테스트할 수 있습니다.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+<br>
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+### 프론트엔드 실행 (React)
+- 프론트엔드 소스를 실행하기 전에 `node_modules`를 설치해야 합니다.
+- `npm install` 명령어로 필요한 패키지를 설치한 후, React 애플리케이션을 실행할 수 있습니다.
+- **로컬 프론트엔드 소스 위치**: `C:\tasks\issuance-equipment-frontend`
+- **프론트엔드 실행 명령**: `npm run start`
 
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
