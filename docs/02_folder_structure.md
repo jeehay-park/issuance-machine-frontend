@@ -92,7 +92,7 @@ README.md                # 프로젝트 실행 관련 설명
 - **주요 하위 폴더**:
 
   - `components/`: UI 컴포넌트들이 위치하는 폴더
-  - `customHooks/`: 자주 사용되는 로직을 캡슐화한 사용자 정의 훅
+  - `customHooks/`: 자주 사용되는 로직을 캡슐화한 사용자 정의 훅(Hook)
   - `mockData/`: API와의 실제 연결 전에 페이지 구성을 위해 가짜 데이터를 제공
   - `pages/`: 각 페이지 컴포넌트와 그 페이지에서 사용하는 하위 컴포넌트
   - `recoil/`: Recoil 상태 관리 라이브러리 관련 파일
@@ -103,7 +103,7 @@ README.md                # 프로젝트 실행 관련 설명
   - `App.tsx`: 애플리케이션의 최상위 컴포넌트입니다. 다른 컴포넌트를 포함하고, 전체 애플리케이션의 뷰를 구성합니다.
   - `index.css`: 애플리케이션 전반에 적용되는 기본 스타일 시트입니다.
   - `index.tsx`: React 애플리케이션의 진입점(entry point)입니다. `ReactDOM.render()`를 호출하여 `App.tsx` 컴포넌트를 HTML로 렌더링합니다.
-  - `react-app-env.d.ts`: TypeScript가 React 애플리케이션에서 사용하는 환경 변수와 전역 타입을 정의하는 파일입니다.
+  - `react-app-env.d.ts`: TypeScript가 React 애플리케이션에서 사용하는 환경 변수와 전역 타입을 정의하는 파일입니다. 기본적으로 제공되는 타입 선언 파일입니다. 실제로 추가적인 타입을 정의하지 않으면 기능을 하지 않는 것처럼 보일 수 있지만, 삭제하지 말고 그대로 두는 것이 좋습니다. 이 파일은 TypeScript 환경 설정에 중요한 역할을 합니다.
   - `setupTests.ts`: 테스트 환경 설정을 위한 파일입니다. Jest 및 React Testing Library와 같은 테스트 라이브러리를 설정하는 데 사용됩니다.
   - `reportWebVitals.ts`: 웹 성능 측정과 관련된 파일
 
@@ -180,7 +180,7 @@ README.md                # 프로젝트 실행 관련 설명
 
     <br>
 
-   - `useList` 훅(Hook)을 만든 이유는 목록 데이터를 처리하는 과정에서 발생할 수 있는 반복적인 API 호출과 파라미터 실수를 줄이기 위해서입니다. 기존에는 파라미터를 수동으로 변경하면서 API를 호출했는데, 이 과정에서 실수가 발생하거나 코드가 중복되는 경우가 많았습니다. `useList` 훅을 사용하면 파라미터 값을 쉽게 관리하고 필요한 기능들을 재사용할 수 있어 효율적이고 안정적으로 목록 데이터를 처리할 수 있습니다.
+   - 💡 `useList` 훅(Hook)을 만든 이유는 목록 데이터를 처리하는 과정에서 발생할 수 있는 반복적인 API 호출과 파라미터 실수를 줄이기 위해서입니다. 기존에는 파라미터를 수동으로 변경하면서 API를 호출했는데, 이 과정에서 실수가 발생하거나 코드가 중복되는 경우가 많았습니다. `useList` 훅(Hook)을 사용하면 파라미터 값을 쉽게 관리하고 필요한 기능들을 재사용할 수 있어 효율적이고 안정적으로 목록 데이터를 처리할 수 있습니다.
 
     <br>
 
@@ -193,7 +193,7 @@ README.md                # 프로젝트 실행 관련 설명
 
     <br>
 
-   - `useList` 사용자 훅(Hook) 구현
+   - `useList` 사용자 훅(Hook) 구현 예시 코드
 
         ```tsx
         export const useList = (
@@ -207,68 +207,68 @@ README.md                # 프로젝트 실행 관련 설명
             fetchList: Function // 실제 목록 데이터를 가져오는 API 호출 함수
         ) => {
             const [sortOption, setSortOption] = useState({
-            key: params.sortKeyName,
-            order: params.order,
-            });
+                    key: params.sortKeyName,
+                    order: params.order,
+                });
             const [currentPage, setCurrentPage] = useState(1);
 
             // 페이지 변경 처리 함수
             const handlePageChange = (page: number) => {
-            setCurrentPage(page);
-
-            // 새 파라미터 객체 생성 후, API 호출 및 상태 업데이트
-            const newParams = { ...params, startNum: (page - 1) * itemsPerPage };
-            fetchList(newParams);
-            setParams(newParams); // 상태 업데이트
+                setCurrentPage(page);
+           
+                // 새 파라미터 객체 생성 후, API 호출 및 상태 업데이트
+                const newParams = { ...params, startNum: (page - 1) * itemsPerPage };
+                fetchList(newParams);
+                setParams(newParams); // 상태 업데이트
             };
 
             // 정렬 처리 함수
             const handleSort = (headerKey: string) => {
-            const newOrder =
-                sortOption.key === headerKey
-                ? sortOption.order === "ASC"
-                    ? "DESC"
-                    : "ASC"
-                : "ASC";
-            const newParams = {
-                ...params,
-                sortKeyName: headerKey,
-                order: newOrder,
-                startNum: 0,
-            };
+                const newOrder =
+                    sortOption.key === headerKey
+                    ? sortOption.order === "ASC"
+                        ? "DESC"
+                        : "ASC"
+                    : "ASC";
+                const newParams = {
+                    ...params,
+                    sortKeyName: headerKey,
+                    order: newOrder,
+                    startNum: 0,
+                };
 
-            setSortOption({ key: headerKey, order: newOrder });
-            fetchList(newParams);
-            setParams(newParams); // 상태 업데이트
+                setSortOption({ key: headerKey, order: newOrder });
+                fetchList(newParams);
+                setParams(newParams); // 상태 업데이트
             };
 
             // 검색 처리 함수
             const handleSearch = (searchText: string) => {
             const newParams = { ...params, filter: searchText, startNum: 0 };
-            fetchList(newParams);
-            setParams(newParams); // 상태 업데이트
+                fetchList(newParams);
+                setParams(newParams); // 상태 업데이트
             };
 
             // 새로 고침 처리 함수
             const handleRefresh = () => {
-            const newParams = {
-                ...params,
-                filter: null,
-                startNum: 0,
-                sortKeyName: "created_at",
-                order: "DESC",
-            };
-            fetchList(newParams);
-            setParams(newParams); // 상태 업데이트
+                const newParams = {
+                    ...params,
+                    filter: null,
+                    startNum: 0,
+                    sortKeyName: "created_at",
+                    order: "DESC",
+                };
+                fetchList(newParams);
+                setParams(newParams); // 상태 업데이트
             };
 
             return {
-            sortOption,
-            currentPage,
-            handlePageChange,
-            handleSort,
-            handleSearch,
-            handleRefresh,
+                sortOption,
+                currentPage,
+                handlePageChange,
+                handleSort,
+                handleSearch,
+                handleRefresh,
             };
         };
         ```
@@ -288,23 +288,23 @@ README.md                # 프로젝트 실행 관련 설명
 
             // 목록 조회에 필요한 초기 파라미터
             const [params, setParams] = useState<FetchListParams>({
-            isHeaderInfo: true,
-            rowCnt: itemsPerPage,
-            startNum: 0,
-            sortKeyName: "created_at",
-            order: "DESC",
+                isHeaderInfo: true,
+                rowCnt: itemsPerPage,
+                startNum: 0,
+                sortKeyName: "created_at",
+                order: "DESC",
             });
 
             // API 호출 함수 정의
             const fetchListData = async ({
-            isHeaderInfo,
-            rowCnt,
-            startNum,
-            sortKeyName,
-            order,
-            filter,
-            filterArrAndOr,
-            filterArr,
+                isHeaderInfo,
+                rowCnt,
+                startNum,
+                sortKeyName,
+                order,
+                filter,
+                filterArrAndOr,
+                filterArr,
             }: FetchListParams) => {
             const result = await fetchUserList({
                 isHeaderInfo,
@@ -326,12 +326,12 @@ README.md                # 프로젝트 실행 관련 설명
 
             // useList 훅을 활용하여 페이지 변경, 정렬, 검색, 새로 고침 기능을 처리
             const {
-            sortOption,
-            handleSort,
-            currentPage,
-            handlePageChange,
-            handleRefresh,
-            handleSearch,
+                sortOption,
+                handleSort,
+                currentPage,
+                handlePageChange,
+                handleRefresh,
+                handleSearch,
             } = useList(itemsPerPage, params, setParams, fetchListData);
 
             // 컴포넌트 마운트 시 최초 API 호출
@@ -377,7 +377,7 @@ README.md                # 프로젝트 실행 관련 설명
 
    - `customApiRequest`: 비동기 API 호출 처리 함수
 
-   - `customCreateAtom`: 동적 Recoil 상태 관리 함수 (**key**와 defaultValue 값을 매개변수로 받아, 사용자가 원하는 상태 이름과 초기값을 동적으로 설정)
+   - `customCreateAtom`: 동적 Recoil 상태 관리 함수 (key와 defaultValue 값을 매개변수로 받아, 사용자가 원하는 상태 이름과 초기값을 동적으로 설정)
 
    - `customCreateAtom`와 `customApiRequest` 사용 예시: 
 
@@ -462,5 +462,6 @@ README.md                # 프로젝트 실행 관련 설명
     - **fetchListData**에서 `fetchWorkList`를 호출하고, `fetchWorkList`는 다시 `customApiRequest`를 호출하는데 이 함수들이 비동기적으로 처리되므로, await을 사용하여 데이터가 준비될 때까지 기다려야 합니다.
 
     - **await**는 비동기 작업의 결과를 기다리기 위해 사용합니다. 만약 await을 사용하지 않으면, `fetchWorkList`에서 반환된 Promise가 즉시 반환되어 후속 코드가 동기적으로 실행되므로, 비동기 데이터 처리가 완료되기 전에 setWorkList와 같은 상태 업데이트 함수가 실행될 수 있습니다.
+
 
 

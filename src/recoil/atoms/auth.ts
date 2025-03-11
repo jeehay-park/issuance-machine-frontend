@@ -22,7 +22,7 @@ export const login = async (body: { [key: string]: any }) => {
       header: {
         trId: process.env.REACT_APP_TRID_USER_LOGIN_CHALLENGE!,
       },
-      body: body.userId,
+      body: {userId : body.userId},
     };
     const { data: response } = await customAxios.post(url, dataForChallenge);
 
