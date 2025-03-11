@@ -4,60 +4,61 @@
 
 # 📌 배포 및 설정 과정
 
-- 😅 이 프로젝트는 AWS EC2 인스턴스를 사용하여 배포 테스트 했습니다. (이 내용은 슬랙에도 공유했었습니다. 2024-11-01) 개인 계정으로 AWS Free-Tier EC2 인스턴스를 생성하여 배포 테스트했습니다. (free-tier 계정으로 개인적으로 여러 테스트를 진행하니 과금이 발생해 인스턴스를 종료하였습니다.)
-
-- Spring Boot + TypeScript Application 배포 (AWS EC2, Self-Signed Certificate, MariaDB)
-- AWS EC2 인스턴스에 배포. MariaDB를 데이터베이스로 사용하고, 자체 서명된 SSL 인증서를 설정하여 보안을 강화
+- 😅 이 프로젝트는 AWS EC2 인스턴스를 사용하여 배포 테스트를 진행했습니다. (이 내용은 슬랙에 2024-11-01에 공유한 바 있습니다.) 개인 AWS Free-Tier 계정을 이용해 EC2 인스턴스를 생성하여 테스트를 했으나, 여러 테스트를 진행하는 과정에서 과금이 발생하여 인스턴스를 종료했습니다.
 
 <br><br>
 
 ### Spring Boot + TypeScript Application 배포 (AWS EC2, Self-Signed Certificate, MariaDB)
 
+- AWS EC2 인스턴스에 Spring Boot 애플리케이션과 TypeScript 애플리케이션을 배포하고, MariaDB를 데이터베이스로 설정했습니다. 또한, 자체 서명된 SSL 인증서를 사용하여 보안을 강화했습니다.
+
+<br>
+
 - AWS EC2 인스턴스 배포:
-  - AWS Free-tier EC2 인스턴스를 생성하여 Spring Boot 애플리케이션과 TypeScript 애플리케이션을 배포.
-  - Spring Boot 애플리케이션은 별도의 Java 환경 설정 없이 EC2에서 실행.
-  - TypeScript 애플리케이션은 Nginx 서버를 통해 EC2에서 서빙.
+  - AWS Free-tier EC2 인스턴스를 생성하여 Spring Boot 애플리케이션과 TypeScript 애플리케이션을 배포
+  - Spring Boot 애플리케이션은 별도의 Java 환경 설정 없이 EC2에서 실행
+  - TypeScript 애플리케이션은 Nginx 서버를 통해 EC2에서 서빙
 
 <br><br>
 
 - Nginx 설정:
-  - TypeScript 애플리케이션을 EC2에서 서빙할 때 Nginx를 사용.
-  - Nginx는 프론트엔드와 백엔드 간의 API 요청을 처리하고, HTTPS로의 리디렉션 및 로드 밸런싱을 지원.
-  - 포트 설정: Nginx가 80번 포트(HTTP)와 443번 포트(HTTPS)에서 요청을 받아 적절히 처리하도록 설정.
+  - TypeScript 애플리케이션을 EC2에서 서빙할 때 Nginx를 사용
+  - Nginx는 프론트엔드와 백엔드 간의 API 요청을 처리하고, HTTPS로의 리디렉션 및 로드 밸런싱을 지원
+  - 포트 설정: Nginx가 80번 포트(HTTP)와 443번 포트(HTTPS)에서 요청을 받아 적절히 처리하도록 설정
 
 <br><br>
 
 - Spring Boot 애플리케이션 배포:
-  - Spring Boot 애플리케이션은 EC2 인스턴스 내에서 실행.
-  - Spring Boot 애플리케이션의 API는 TypeScript 애플리케이션과 통신하기 위해 적절히 설정됨.
+  - Spring Boot 애플리케이션은 EC2 인스턴스 내에서 실행
+  - Spring Boot 애플리케이션의 API는 TypeScript 애플리케이션과 통신하기 위해 적절히 설정됨
 
 <br><br>
 
 - MariaDB 설정:
 
-  - AWS EC2에 MariaDB를 설치하고 Spring Boot 애플리케이션과 연결할 수 있도록 JDBC URL 및 인증 정보를 설정.
+  - AWS EC2에 MariaDB를 설치하고 Spring Boot 애플리케이션과 연결할 수 있도록 JDBC URL 및 인증 정보를 설정
 
   - user 테이블에 최소한의 사용자 정보를 넣어야 로그인 테스트를 진행할 수 있습니다. 사용자 데이터는 직접 삽입해야 하며, password_hash 값을 생성하여 넣어야 합니다.
 
   - `user` 테이블 예시:
 
-  ```json
-  {
-    "table": "user",
-    "rows": [
-      {
-        "seq": 5,
-        "created_at": "2025-02-19 17:47:28.574363",
-        "email": "jhpark@ictk.com",
-        "name": "admin",
-        "pass_salt": "9db1c12c-fadd-47e5-89e3-9ef04ce08550",
-        "password_hash": "969a232b0df4d47e7373c315c3a55b00993f9d43195b3d858d86eb8bd54209b3e7ed8e3ecb5fd20d791d7bbc141a2dc963ed359cac06b59b4506c549574cdb2b",
-        "updated_at": "2025-03-05 17:28:33.812601",
-        "user_id": "admin"
-      }
-    ]
-  }
-  ```
+    ```json
+    {
+        "table": "user",
+        "rows": [
+        {
+            "seq": 5,
+            "created_at": "2025-02-19 17:47:28.574363",
+            "email": "jhpark@ictk.com",
+            "name": "admin",
+            "pass_salt": "9db1c12c-fadd-47e5-89e3-9ef04ce08550",
+            "password_hash": "969a232b0df4d47e7373c315c3a55b00993f9d43195b3d858d86eb8bd54209b3e7ed8e3ecb5fd20d791d7bbc141a2dc963ed359cac06b59b4506c549574cdb2b",
+            "updated_at": "2025-03-05 17:28:33.812601",
+            "user_id": "admin"
+        }
+        ]
+    }
+    ```
 
     <br><br>
 
