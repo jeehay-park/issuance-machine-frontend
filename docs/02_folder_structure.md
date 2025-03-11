@@ -60,14 +60,15 @@ README.md                # 프로젝트 실행 관련 설명
 #### **2. `docs/`**
 
 - 프로젝트 관련 문서를 보관하는 폴더입니다. 이 폴더 내에는 프로젝트 설명, API 문서, 배포 절차 등 프로젝트 진행에 필요한 다양한 문서들이 포함됩니다.
-- **주요 파일**
 
-  - **`01_project_overview.md`** : 프로젝트의 전반적인 개요
-  - **`02_folder_structure.md`** : 디렉토리 및 코드 구조
-  - **`03_core_features.md`** : 주요 기능 및 로직
-  - **`04_api_guide.md`** : API 통신 및 데이터 관리
-  - **`05_deployment.md`** : 빌드 및 배포 관련 정보
-  - **`06_debugging.md`** : 디버깅
+    - **주요 파일**
+
+    - **`01_project_overview.md`** : 프로젝트의 전반적인 개요
+    - **`02_folder_structure.md`** : 디렉토리 및 코드 구조
+    - **`03_core_features.md`** : 주요 기능 및 로직
+    - **`04_api_guide.md`** : API 통신 및 데이터 관리
+    - **`05_deployment.md`** : 빌드 및 배포 관련 정보
+    - **`06_debugging.md`** : 디버깅
 
 <br><br>
 
@@ -105,6 +106,8 @@ README.md                # 프로젝트 실행 관련 설명
   - `react-app-env.d.ts`: TypeScript가 React 애플리케이션에서 사용하는 환경 변수와 전역 타입을 정의하는 파일입니다.
   - `setupTests.ts`: 테스트 환경 설정을 위한 파일입니다. Jest 및 React Testing Library와 같은 테스트 라이브러리를 설정하는 데 사용됩니다.
   - `reportWebVitals.ts`: 웹 성능 측정과 관련된 파일
+
+<br><br>
 
 #### **6. `package.json`**
 
@@ -166,18 +169,18 @@ README.md                # 프로젝트 실행 관련 설명
 
    - 재사용 가능한 UI 컴포넌트들이 위치합니다.
    - 버튼, 입력 필드 등의 프레젠테이션 컴포넌트가 주로 포함됩니다.
-   - 팝업, 공통 테이블, 페이지네이션, 반복되는 레이아웃 등을 포함합니다.
+   - 모달, 공통 테이블, 페이지네이션, 반복되는 레이아웃 등을 포함합니다.
    - Styled Components를 사용해 스타일링을 매뉴얼로 조정했습니다.
 
 <br><br>
 
-2. 자주 사용되는 로직을 캡슐화한 사용자 정의 훅 - `/customHooks`
+2. 자주 사용되는 로직을 캡슐화한 사용자 정의 훅(Hook) - `/customHooks`
 
-   - 각 훅은 특정 기능을 독립적으로 처리할 수 있도록 설계되어, 코드 재사용성을 높이고, 컴포넌트에서 복잡한 로직을 분리하여 더 깔끔하고 유지보수 가능한 코드를 작성할 수 있게 합니다.
+   - 각 훅(Hook)은 특정 기능을 독립적으로 처리할 수 있도록 설계되어, 코드 재사용성을 높이고, 컴포넌트에서 복잡한 로직을 분리하여 더 깔끔하고 유지보수 가능한 코드를 작성할 수 있게 합니다.
 
     <br>
 
-   - `useList` 훅을 만든 이유는 목록 데이터를 처리하는 과정에서 발생할 수 있는 반복적인 API 호출과 파라미터 실수를 줄이기 위해서입니다. 기존에는 파라미터를 수동으로 변경하면서 API를 호출했는데, 이 과정에서 실수가 발생하거나 코드가 중복되는 경우가 많았습니다. `useList` 훅을 사용하면 파라미터 값을 쉽게 관리하고 필요한 기능들을 재사용할 수 있어 효율적이고 안정적으로 목록 데이터를 처리할 수 있습니다.
+   - `useList` 훅(Hook)을 만든 이유는 목록 데이터를 처리하는 과정에서 발생할 수 있는 반복적인 API 호출과 파라미터 실수를 줄이기 위해서입니다. 기존에는 파라미터를 수동으로 변경하면서 API를 호출했는데, 이 과정에서 실수가 발생하거나 코드가 중복되는 경우가 많았습니다. `useList` 훅을 사용하면 파라미터 값을 쉽게 관리하고 필요한 기능들을 재사용할 수 있어 효율적이고 안정적으로 목록 데이터를 처리할 수 있습니다.
 
     <br>
 
@@ -190,7 +193,7 @@ README.md                # 프로젝트 실행 관련 설명
 
     <br>
 
-   - `useList` 커스텀 훅 구현
+   - `useList` 사용자 훅(Hook) 구현
 
         ```tsx
         export const useList = (
@@ -333,33 +336,33 @@ README.md                # 프로젝트 실행 관련 설명
 
             // 컴포넌트 마운트 시 최초 API 호출
             useEffect(() => {
-            fetchListData(params);
+                fetchListData(params);
             }, []); // params가 변경되지 않으면 최초 호출만 실행
 
             return (
-            <Card>
-                <DynamicTable
-                headers={headers}
-                data={data}
-                keyName={keyName}
-                checkbox={true}
-                headerInfos={headerInfos}
-                sortOption={sortOption}
-                handleSort={handleSort}
-                height="400px"
-                />
-
-                {totCnt !== null && totCnt > 0 && (
-                <div style={{ padding: "10px 10px" }}>
-                    <Pagination
-                    currentPage={currentPage}
-                    totCnt={totCnt}
-                    itemsPerPage={itemsPerPage}
-                    handlePageChange={handlePageChange}
+                <Card>
+                    <DynamicTable
+                        headers={headers}
+                        data={data}
+                        keyName={keyName}
+                        checkbox={true}
+                        headerInfos={headerInfos}
+                        sortOption={sortOption}
+                        handleSort={handleSort}
+                        height="400px"
                     />
-                </div>
-                )}
-            </Card>
+
+                    {totCnt !== null && totCnt > 0 && (
+                    <div style={{ padding: "10px 10px" }}>
+                        <Pagination
+                            currentPage={currentPage}
+                            totCnt={totCnt}
+                            itemsPerPage={itemsPerPage}
+                            handlePageChange={handlePageChange}
+                        />
+                    </div>
+                    )}
+                </Card>
             );
         };
         ```
@@ -418,35 +421,35 @@ README.md                # 프로젝트 실행 관련 설명
                 filterArr,
             }: FetchListParams) => {
                 const result = await fetchWorkList({
-                isHeaderInfo,
-                rowCnt,
-                startNum,
-                sortKeyName,
-                order,
-                filter,
-                filterArrAndOr,
-                filterArr,
+                    isHeaderInfo,
+                    rowCnt,
+                    startNum,
+                    sortKeyName,
+                    order,
+                    filter,
+                    filterArrAndOr,
+                    filterArr,
                 });
 
                 // 결과에 따라 Recoil 상태 업데이트
                 if (result?.body) {
-                setWorkList(result);
+                    setWorkList(result);
                 } else {
-                setError(result?.error);
+                    setError(result?.error);
                 }
             };
 
             // 컴포넌트에서 fetch 호출 예시 (예: 데이터 로딩 시 호출)
             useEffect(() => {
                 const params = {
-                isHeaderInfo: true,
-                rowCnt: 10,
-                startNum: 0,
-                sortKeyName: "created_at",
-                order: "DESC",
-                filter: null,
-                filterArrAndOr: "AND",
-                filterArr: [],
+                    isHeaderInfo: true,
+                    rowCnt: 10,
+                    startNum: 0,
+                    sortKeyName: "created_at",
+                    order: "DESC",
+                    filter: null,
+                    filterArrAndOr: "AND",
+                    filterArr: [],
                 };
                 fetchListData(params);
             }, []);
@@ -456,7 +459,8 @@ README.md                # 프로젝트 실행 관련 설명
     <br>
 
    - 💡`fetchListData`를 `async`로 호출하는 이유: 
-    - **fetchListData**에서 fetchWorkList를 호출하고, fetchWorkList는 다시 customApiRequest를 호출하는데 이 함수들이 비동기적으로 처리되므로, await을 사용하여 데이터가 준비될 때까지 기다려야 합니다.
+    - **fetchListData**에서 `fetchWorkList`를 호출하고, `fetchWorkList`는 다시 `customApiRequest`를 호출하는데 이 함수들이 비동기적으로 처리되므로, await을 사용하여 데이터가 준비될 때까지 기다려야 합니다.
 
-    - **await**는 비동기 작업의 결과를 기다리기 위해 사용합니다. 만약 await을 사용하지 않으면, fetchWorkList에서 반환된 Promise가 즉시 반환되어 후속 코드가 동기적으로 실행되므로, 비동기 데이터 처리가 완료되기 전에 setWorkList와 같은 상태 업데이트 함수가 실행될 수 있습니다.
+    - **await**는 비동기 작업의 결과를 기다리기 위해 사용합니다. 만약 await을 사용하지 않으면, `fetchWorkList`에서 반환된 Promise가 즉시 반환되어 후속 코드가 동기적으로 실행되므로, 비동기 데이터 처리가 완료되기 전에 setWorkList와 같은 상태 업데이트 함수가 실행될 수 있습니다.
+
 
