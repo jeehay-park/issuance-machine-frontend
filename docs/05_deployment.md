@@ -4,25 +4,25 @@
 
 # 📌 배포 및 설정 과정
 
-- 😅 이 프로젝트는 AWS EC2 인스턴스를 사용하여 배포 테스트를 진행했습니다. (이 내용은 슬랙에 2024-11-01에 공유한 바 있습니다.) 개인 AWS Free-Tier 계정을 이용해 EC2 인스턴스를 생성하여 테스트를 했으나, 여러 테스트를 진행하는 과정에서 과금이 발생하여 인스턴스를 종료했습니다.
+- 😅 이 프로젝트는 AWS EC2 인스턴스를 사용하여 배포 테스트를 진행했습니다. (이 내용은 2024-11-01 슬랙에 공유한 바 있습니다.) 개인 AWS Free-Tier 계정을 이용해 EC2 인스턴스를 생성하여 테스트를 했으나, 여러 테스트를 진행하는 과정에서 과금이 발생하여 인스턴스를 종료했습니다.
 
 <br><br>
 
-### Spring Boot + TypeScript Application 배포 (AWS EC2, Self-Signed Certificate, MariaDB)
+### Spring Boot + React TypeScript Application 배포 (AWS EC2, Self-Signed Certificate, MariaDB)
 
-- AWS EC2 인스턴스에 Spring Boot 애플리케이션과 TypeScript 애플리케이션을 배포하고, MariaDB를 데이터베이스로 설정했습니다. 또한, 자체 서명된 SSL 인증서를 사용하여 보안을 강화했습니다.
+- AWS EC2 인스턴스에 Spring Boot 애플리케이션과 React TypeScript 애플리케이션을 배포하고, MariaDB를 데이터베이스로 설정했습니다. 또한, 자체 서명된 SSL 인증서를 사용하여 보안을 강화했습니다.
 
 <br>
 
 - AWS EC2 인스턴스 배포:
-  - AWS Free-tier EC2 인스턴스를 생성하여 Spring Boot 애플리케이션과 TypeScript 애플리케이션을 배포
+  - AWS Free-tier EC2 인스턴스를 생성하여 Spring Boot 애플리케이션과 React TypeScript 애플리케이션을 배포
   - Spring Boot 애플리케이션은 별도의 Java 환경 설정 없이 EC2에서 실행
-  - TypeScript 애플리케이션은 Nginx 서버를 통해 EC2에서 서빙
+  - React TypeScript 애플리케이션은 Nginx 서버를 통해 EC2에서 서빙
 
 <br><br>
 
 - Nginx 설정:
-  - TypeScript 애플리케이션을 EC2에서 서빙할 때 Nginx를 사용
+  - React TypeScript 애플리케이션을 EC2에서 서빙할 때 Nginx를 사용
   - Nginx는 프론트엔드와 백엔드 간의 API 요청을 처리하고, HTTPS로의 리디렉션 및 로드 밸런싱을 지원
   - 포트 설정: Nginx가 80번 포트(HTTP)와 443번 포트(HTTPS)에서 요청을 받아 적절히 처리하도록 설정
 
@@ -30,7 +30,7 @@
 
 - Spring Boot 애플리케이션 배포:
   - Spring Boot 애플리케이션은 EC2 인스턴스 내에서 실행
-  - Spring Boot 애플리케이션의 API는 TypeScript 애플리케이션과 통신하기 위해 적절히 설정됨
+  - Spring Boot 애플리케이션의 API는 React TypeScript 애플리케이션과 통신하기 위해 적절히 설정됨
 
 <br><br>
 
@@ -44,19 +44,19 @@
 
     ```json
     {
-        "table": "user",
-        "rows": [
+      "table": "user",
+      "rows": [
         {
-            "seq": 5,
-            "created_at": "2025-02-19 17:47:28.574363",
-            "email": "jhpark@ictk.com",
-            "name": "admin",
-            "pass_salt": "9db1c12c-fadd-47e5-89e3-9ef04ce08550",
-            "password_hash": "969a232b0df4d47e7373c315c3a55b00993f9d43195b3d858d86eb8bd54209b3e7ed8e3ecb5fd20d791d7bbc141a2dc963ed359cac06b59b4506c549574cdb2b",
-            "updated_at": "2025-03-05 17:28:33.812601",
-            "user_id": "admin"
+          "seq": 5,
+          "created_at": "2025-02-19 17:47:28.574363",
+          "email": "jhpark@ictk.com",
+          "name": "admin",
+          "pass_salt": "9db1c12c-fadd-47e5-89e3-9ef04ce08550",
+          "password_hash": "969a232b0df4d47e7373c315c3a55b00993f9d43195b3d858d86eb8bd54209b3e7ed8e3ecb5fd20d791d7bbc141a2dc963ed359cac06b59b4506c549574cdb2b",
+          "updated_at": "2025-03-05 17:28:33.812601",
+          "user_id": "admin"
         }
-        ]
+      ]
     }
     ```
 
@@ -75,29 +75,21 @@
 <br><br>
 
 - Self-Signed Certificate 설정:
-  - OpenSSL 등을 이용하여 자체 서명된 SSL 인증서를 생성.
-  - Spring Boot와 Nginx 서버에서 HTTPS를 적용하여 데이터를 암호화하여 통신.
+  - OpenSSL 등을 이용하여 자체 서명된 SSL 인증서를 생성
+  - Spring Boot와 Nginx 서버에서 HTTPS를 적용하여 데이터를 암호화하여 통신
 
 <br><br>
 
 - AWS EC2 보안 그룹 설정:
-  - EC2 인스턴스의 보안 그룹에서 필요한 포트(HTTP/HTTPS, MariaDB 등)를 열어 외부 접근을 허용.
+  - EC2 인스턴스의 보안 그룹에서 필요한 포트(HTTP/HTTPS, MariaDB 등)를 열어 외부 접근을 허용
 
 <br><br><br>
 
 ## 프론트엔드 프로젝트 실행 (개발 모드 로컬 환경)
 
-### 1. Git 저장소 복사
-
-```sh
-    git clone https://github.com/jeehay-park/issuance-machine-frontend.git
-
-    cd issuance-machine-frontend
-```
-
 <br>
 
-### 2. 패키지 설치 및 실행
+### 1. 패키지 설치 및 실행
 
 - 💡 로컬 환경에서 실행 시 `.env`의 URL 은 다음과 같은 경로를 사용해야합니다.
 
@@ -117,20 +109,22 @@
 
 <br><br><br>
 
-## 프로젝트 빌드 방법
+### 2. 프로젝트 빌드 방법
 
--💡 빌드 실행 시, `.env`의 URL은 다음과 같은 경로를 사용해야 합니다.
+- 💡 빌드 실행 시, `.env`의 URL은 다음과 같은 경로를 사용해야 합니다.
 
-    ```sh
-        REACT_APP_API_URL=https://43.203.250.0/ictk/issue/admin
-        // AWS ec2로 배포
-    ```
+  ```sh
+      # 💻 To start the React app locally
+      REACT_APP_API_URL=https://43.203.250.0/ictk/issue/admin
+      // 해당 IP
+  ```
 
-<br>
+- 명령어 실행
 
-### 1. 명령어 실행
-
-- 사용 예시
   ```sh
       npm run build
   ```
+
+<br>
+
+
